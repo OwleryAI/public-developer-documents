@@ -158,7 +158,7 @@
             { "fieldId": "N103", "fieldName": "Identification Code Qualifier", "usage": "M", "minLength": 1, "maxLength": 2, "dataType": "ID", "fieldDescription": "Code specifying the system/method of code structure", "allowedValues": [
               { "value": "ZZ", "label": "Mutually Defined" }
             ] },
-            { "fieldId": "N104", "fieldName": "Identification Code", "usage": "M", "minLength": 2, "maxLength": 80, "dataType": "AN", "fieldDescription": "Mutually agreed upon ID. Contact support@owlery.ai for the supported list." }
+            { "fieldId": "N104", "fieldName": "Identification Code", "usage": "M", "minLength": 2, "maxLength": 80, "dataType": "AN", "fieldDescription": "This ID is the Bill-To code of the customer. It should be the unique ID/code of a customer within the carrier. Owlery use this to route the invoice to the correct customer account. The carrier should decide the ID best suited within their system and email support@owlery.ai and integrations@owlery.ai to set up the code in Owlery." }
           ]
         },
         {
