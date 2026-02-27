@@ -1,0 +1,1188 @@
+{
+  "schemaVersion": "1.0",
+  "guidelineTitle": "EDI 204 Motor Carrier Load Tender",
+  "guidelineVersion": "Load Tender v5.10",
+  "transactionCode": "204",
+  "definitions": [
+    {
+      "segmentId": "ISA",
+      "segmentName": "Interchange Control Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To start and identify an interchange of zero or more functional groups and interchange-related control segments",
+      "fields": [
+        {
+          "fieldId": "ISA01",
+          "fieldName": "Authorization Information Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the type of information in the Authorization Information"
+        },
+        {
+          "fieldId": "ISA02",
+          "fieldName": "Authorization Information",
+          "usage": "M",
+          "minLength": 10,
+          "maxLength": 10,
+          "dataType": "AN",
+          "fieldDescription": "Information used for additional identification or authorization of the interchange sender or the data in the interchange"
+        },
+        {
+          "fieldId": "ISA03",
+          "fieldName": "Security Information Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the type of information in the Security Information"
+        },
+        {
+          "fieldId": "ISA04",
+          "fieldName": "Security Information",
+          "usage": "M",
+          "minLength": 10,
+          "maxLength": 10,
+          "dataType": "AN",
+          "fieldDescription": "This is used for identifying the security information about the interchange sender or the data in the interchange"
+        },
+        {
+          "fieldId": "ISA05",
+          "fieldName": "Interchange ID Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the system/method of code structure used to designate the sender or receiver ID element being qualified"
+        },
+        {
+          "fieldId": "ISA06",
+          "fieldName": "Interchange Sender ID",
+          "usage": "M",
+          "minLength": 15,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Identification code published by the sender for other parties to use as the receiver ID to route data to them"
+        },
+        {
+          "fieldId": "ISA07",
+          "fieldName": "Interchange ID Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the system/method of code structure used to designate the sender or receiver ID element being qualified"
+        },
+        {
+          "fieldId": "ISA08",
+          "fieldName": "Interchange Receiver ID",
+          "usage": "M",
+          "minLength": 15,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Identification code published by the receiver of the data"
+        },
+        {
+          "fieldId": "ISA09",
+          "fieldName": "Interchange Date",
+          "usage": "M",
+          "minLength": 6,
+          "maxLength": 6,
+          "dataType": "DT",
+          "fieldDescription": "Date of the interchange (YYMMDD)"
+        },
+        {
+          "fieldId": "ISA10",
+          "fieldName": "Interchange Time",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 4,
+          "dataType": "TM",
+          "fieldDescription": "Time of the interchange"
+        },
+        {
+          "fieldId": "ISA11",
+          "fieldName": "Repetition Separator",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Type is not applicable; the repetition separator is a delimiter and not a data element"
+        },
+        {
+          "fieldId": "ISA12",
+          "fieldName": "Interchange Control Version Number Code",
+          "usage": "M",
+          "minLength": 5,
+          "maxLength": 5,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying the version number of the interchange control segments"
+        },
+        {
+          "fieldId": "ISA13",
+          "fieldName": "Interchange Control Number",
+          "usage": "M",
+          "minLength": 9,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "A control number assigned by the interchange sender"
+        },
+        {
+          "fieldId": "ISA14",
+          "fieldName": "Acknowledgment Requested Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating sender's request for an interchange acknowledgment"
+        },
+        {
+          "fieldId": "ISA15",
+          "fieldName": "Interchange Usage Indicator Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating whether data enclosed by this interchange envelope is test, production or information"
+        },
+        {
+          "fieldId": "ISA16",
+          "fieldName": "Component Data Element Separator",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "-",
+          "fieldDescription": "The component data element separator is a delimiter and not a data element"
+        }
+      ]
+    },
+    {
+      "segmentId": "GS",
+      "segmentName": "Functional Group Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the beginning of a functional group and to provide control information",
+      "fields": [
+        {
+          "fieldId": "GS01",
+          "fieldName": "Functional Identifier Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a group of application related transaction sets"
+        },
+        {
+          "fieldId": "GS02",
+          "fieldName": "Application Sender's Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Code identifying party sending transmission"
+        },
+        {
+          "fieldId": "GS03",
+          "fieldName": "Application Receiver's Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Code identifying party receiving transmission"
+        },
+        {
+          "fieldId": "GS04",
+          "fieldName": "Date",
+          "usage": "M",
+          "minLength": 8,
+          "maxLength": 8,
+          "dataType": "DT",
+          "fieldDescription": "Date expressed as CCYYMMDD"
+        },
+        {
+          "fieldId": "GS05",
+          "fieldName": "Time",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 8,
+          "dataType": "TM",
+          "fieldDescription": "Time expressed in 24-hour clock time"
+        },
+        {
+          "fieldId": "GS06",
+          "fieldName": "Group Control Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "Assigned number originated and maintained by the sender"
+        },
+        {
+          "fieldId": "GS07",
+          "fieldName": "Responsible Agency Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the issuer of the standard"
+        },
+        {
+          "fieldId": "GS08",
+          "fieldName": "Version / Release / Industry Identifier Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 12,
+          "dataType": "AN",
+          "fieldDescription": "Code indicating the version, release, and industry identifier of the EDI Standard"
+        }
+      ]
+    },
+    {
+      "segmentId": "ST",
+      "segmentName": "Transaction Set Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the start of a transaction set and to assign a control number",
+      "fields": [
+        {
+          "fieldId": "ST01",
+          "fieldName": "Transaction Set Identifier Code",
+          "usage": "M",
+          "minLength": 3,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a Transaction Set",
+          "allowedValues": [
+            {
+              "value": "204",
+              "label": "Motor Carrier Load Tender"
+            }
+          ]
+        },
+        {
+          "fieldId": "ST02",
+          "fieldName": "Transaction Set Control Number",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 9,
+          "dataType": "AN",
+          "fieldDescription": "Identifying control number that must be unique within the transaction set functional group"
+        }
+      ]
+    },
+    {
+      "segmentId": "B2A",
+      "segmentName": "Set Purpose",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To allow identification of the purpose of the transaction set",
+      "fields": [
+        {
+          "fieldId": "B2A01",
+          "fieldName": "Transaction Set Purpose Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying purpose of transaction set",
+          "allowedValues": [
+            {
+              "value": "00",
+              "label": "Original"
+            },
+            {
+              "value": "01",
+              "label": "Cancellation"
+            },
+            {
+              "value": "04",
+              "label": "Change"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "segmentId": "B2",
+      "segmentName": "Beginning Segment for Shipment Information Transaction",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To transmit identifying numbers and other basic data relating to the shipment",
+      "fields": [
+        {
+          "fieldId": "B204",
+          "fieldName": "Shipment Identification Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 30,
+          "dataType": "AN",
+          "fieldDescription": "Identification number assigned to the shipment by the shipper. Unique load number"
+        }
+      ]
+    },
+    {
+      "segmentId": "L11",
+      "segmentName": "Business Instructions and Reference Number",
+      "usage": "O",
+      "maxRepeat": 50,
+      "purpose": "To specify instructions or a reference number",
+      "fields": [
+        {
+          "fieldId": "L1101",
+          "fieldName": "Reference Identification",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 30,
+          "dataType": "AN",
+          "fieldDescription": "Reference information as defined for a particular Transaction Set"
+        },
+        {
+          "fieldId": "L1102",
+          "fieldName": "Reference Identification Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the Reference Identification. Code identifying the Reference Identification. For the PRT type, the valid identifications are \"Dry Ice\" and \"Other\".",
+          "allowedValues": [
+            {
+              "value": "PO",
+              "label": "Purchase Order Number"
+            },
+            {
+              "value": "XY",
+              "label": "Other Unlisted Type of Reference Number"
+            },
+            {
+              "value": "BM",
+              "label": "Bill of Lading Number"
+            },
+            {
+              "value": "SO",
+              "label": "Shipper's Order (Invoice Number)"
+            },
+            {
+              "value": "MB",
+              "label": "Master Bill of Lading"
+            },
+            {
+              "value": "P8",
+              "label": "Pickup Reference Number"
+            },
+            {
+              "value": "PRT",
+              "label": "Product Type"
+            },
+            {
+              "value": "TN",
+              "label": "Transaction Reference Number"
+            }
+          ]
+        }
+      ],
+      "syntaxRules": 2
+    },
+    {
+      "segmentId": "NTE",
+      "segmentName": "Note/Special Instruction",
+      "usage": "O",
+      "maxRepeat": 10,
+      "purpose": "To transmit information in a free-form format",
+      "fields": [
+        {
+          "fieldId": "NTE01",
+          "fieldName": "Note Reference Code",
+          "usage": "M",
+          "minLength": 3,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the functional area or purpose for which the note applies. Code identifying the functional area or purpose for which the note applies. Note that custom code TEM will be used to detail the temperature control settings of a reefer load.",
+          "allowedValues": [
+            {
+              "value": "ADD",
+              "label": "Additional Information"
+            },
+            {
+              "value": "TEM",
+              "label": "Temperature control information"
+            }
+          ]
+        },
+        {
+          "fieldId": "NTE02",
+          "fieldName": "Description",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 80,
+          "dataType": "AN",
+          "fieldDescription": "A free-form description to clarify the related data elements"
+        }
+      ]
+    },
+    {
+      "segmentId": "AT5",
+      "segmentName": "Handling Requirements Loop",
+      "usage": "M",
+      "maxRepeat": 1,
+      "isLoopStart": true,
+      "purpose": "Loop containing bill of lading handling requirements",
+      "fields": [],
+      "nestedSegments": [
+        {
+          "segmentId": "AT5",
+          "segmentName": "Bill of Lading Handling Requirements",
+          "usage": "M",
+          "maxRepeat": 1,
+          "purpose": "To specify bill of lading handling requirements",
+          "fields": [
+            {
+              "fieldId": "AT501",
+              "fieldName": "Special Handling Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code specifying special transportation handling instructions. Used for LTL, TL, Partial Shipment and Intermodal",
+              "allowedValues": [
+                {
+                  "value": "LTT",
+                  "label": "Less Than Truckload"
+                },
+                {
+                  "value": "TSC",
+                  "label": "Truckload-Single Operator-Common Carrier"
+                },
+                {
+                  "value": "IMS",
+                  "label": "Intermodal Shipment Service"
+                },
+                {
+                  "value": "OPT",
+                  "label": "Partial Shipment"
+                }
+              ]
+            }
+          ],
+          "syntaxRules": 2
+        }
+      ]
+    },
+    {
+      "segmentId": "N1",
+      "segmentName": "Party Identification Loop",
+      "usage": "M",
+      "maxRepeat": 1,
+      "isLoopStart": true,
+      "purpose": "Loop containing party identification information",
+      "fields": [],
+      "nestedSegments": [
+        {
+          "segmentId": "G61",
+          "segmentName": "Contact",
+          "usage": "M",
+          "maxRepeat": 3,
+          "purpose": "To identify a person or office to whom communication should be directed",
+          "fields": [
+            {
+              "fieldId": "G6101",
+              "fieldName": "Contact Function Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the major duty or responsibility of the person or group named",
+              "allowedValues": [
+                {
+                  "value": "CN",
+                  "label": "General Contact"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6102",
+              "fieldName": "Name",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 60,
+              "dataType": "AN",
+              "fieldDescription": "Free-form name"
+            },
+            {
+              "fieldId": "G6103",
+              "fieldName": "Communication Number Qualifier",
+              "usage": "C",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the type of communication number. Email or phone contact?",
+              "allowedValues": [
+                {
+                  "value": "TE",
+                  "label": "Telephone"
+                },
+                {
+                  "value": "EM",
+                  "label": "Electronic Mail"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6104",
+              "fieldName": "Communication Number",
+              "usage": "C",
+              "minLength": 1,
+              "maxLength": 80,
+              "dataType": "AN",
+              "fieldDescription": "Complete communications number including country or area code when applicable. Email or phone number string"
+            }
+          ],
+          "syntaxRules": 1
+        },
+        {
+          "segmentId": "N1",
+          "segmentName": "Party Identification",
+          "usage": "M",
+          "maxRepeat": 1,
+          "purpose": "To identify a party by type of organization, name, and code",
+          "fields": [
+            {
+              "fieldId": "N101",
+              "fieldName": "Entity Identifier Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
+              "allowedValues": [
+                {
+                  "value": "SH",
+                  "label": "Shipper"
+                }
+              ]
+            },
+            {
+              "fieldId": "N102",
+              "fieldName": "Name",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 60,
+              "dataType": "AN",
+              "fieldDescription": "Free-form name"
+            },
+            {
+              "fieldId": "N103",
+              "fieldName": "Identification Code Qualifier",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code designating the system/method of code structure used for Identification Code",
+              "allowedValues": [
+                {
+                  "value": "ZZ",
+                  "label": "Mutually Defined"
+                }
+              ]
+            },
+            {
+              "fieldId": "N104",
+              "fieldName": "Identification Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 80,
+              "dataType": "AN",
+              "fieldDescription": "Code identifying a party or other code. Mutually agreed upon ID. Contact support@owlery.ai for the supported list."
+            }
+          ],
+          "syntaxRules": 2
+        }
+      ]
+    },
+    {
+      "segmentId": "N7",
+      "segmentName": "Equipment Details Loop",
+      "usage": "M",
+      "maxRepeat": 1,
+      "isLoopStart": true,
+      "purpose": "Loop containing equipment information",
+      "fields": [],
+      "nestedSegments": [
+        {
+          "segmentId": "N7",
+          "segmentName": "Equipment Details",
+          "usage": "M",
+          "maxRepeat": 1,
+          "purpose": "To identify equipment",
+          "fields": [
+            {
+              "fieldId": "N711",
+              "fieldName": "Equipment Description Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Equipment type code",
+              "allowedValues": [
+                {
+                  "value": "TF",
+                  "label": "Trailer, Dry Freight"
+                },
+                {
+                  "value": "RT",
+                  "label": "Controlled Temperature Trailer (Reefer)"
+                }
+              ]
+            }
+          ],
+          "syntaxRules": 3
+        }
+      ]
+    },
+    {
+      "segmentId": "S5",
+      "segmentName": "Stop-off Details Loop",
+      "usage": "M",
+      "maxRepeat": 1,
+      "isLoopStart": true,
+      "purpose": "Loop containing stop-off information",
+      "fields": [],
+      "nestedSegments": [
+        {
+          "segmentId": "L11",
+          "segmentName": "Business Instructions and Reference Number",
+          "usage": "O",
+          "maxRepeat": 50,
+          "purpose": "To specify instructions or a reference number",
+          "fields": [
+            {
+              "fieldId": "L1101",
+              "fieldName": "Reference Identification",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 30,
+              "dataType": "AN",
+              "fieldDescription": "Reference information as defined for a particular Transaction Set"
+            },
+            {
+              "fieldId": "L1102",
+              "fieldName": "Reference Identification Qualifier",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the Reference Identification",
+              "allowedValues": [
+                {
+                  "value": "BM",
+                  "label": "Bill of Lading Number"
+                },
+                {
+                  "value": "PO",
+                  "label": "Purchase Order Number"
+                },
+                {
+                  "value": "XY",
+                  "label": "Other Unlisted Type of Reference Number"
+                },
+                {
+                  "value": "P8",
+                  "label": "Pickup Reference Number"
+                },
+                {
+                  "value": "MB",
+                  "label": "Master Bill of Lading"
+                },
+                {
+                  "value": "SO",
+                  "label": "Shipper's Order (Invoice Number)"
+                }
+              ]
+            }
+          ],
+          "syntaxRules": 2
+        },
+        {
+          "segmentId": "G62",
+          "segmentName": "Date/Time Reference",
+          "usage": "O",
+          "maxRepeat": 999,
+          "purpose": "To specify pertinent dates and times",
+          "fields": [
+            {
+              "fieldId": "G6201",
+              "fieldName": "Date Qualifier",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code specifying type of date",
+              "allowedValues": [
+                {
+                  "value": "RQ",
+                  "label": "The desired date for the stop, as requested by the shipper"
+                },
+                {
+                  "value": "AT",
+                  "label": "The appointment date for the stop, as confirmed by the shipper"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6202",
+              "fieldName": "Date",
+              "usage": "M",
+              "minLength": 8,
+              "maxLength": 8,
+              "dataType": "DT",
+              "fieldDescription": "Date expressed as CCYYMMDD"
+            },
+            {
+              "fieldId": "G6203",
+              "fieldName": "Time Qualifier",
+              "usage": "C",
+              "minLength": 1,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code specifying type of time",
+              "allowedValues": [
+                {
+                  "value": "EP",
+                  "label": "Earliest Pickup Time"
+                },
+                {
+                  "value": "ED",
+                  "label": "Earliest Delivery Time"
+                },
+                {
+                  "value": "LD",
+                  "label": "Latest Delivery Time"
+                },
+                {
+                  "value": "LP",
+                  "label": "Latest Pickup Time"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6204",
+              "fieldName": "Time",
+              "usage": "C",
+              "minLength": 4,
+              "maxLength": 8,
+              "dataType": "TM",
+              "fieldDescription": "Time expressed in 24-hour clock time"
+            }
+          ],
+          "syntaxRules": 3
+        },
+        {
+          "segmentId": "AT8",
+          "segmentName": "Shipment Weight, Packaging, and Quantity Data",
+          "usage": "O",
+          "maxRepeat": 999,
+          "purpose": "To specify shipment weight, packaging, and quantity",
+          "fields": [
+            {
+              "fieldId": "AT802",
+              "fieldName": "Weight Unit Code",
+              "usage": "C",
+              "minLength": 1,
+              "maxLength": 1,
+              "dataType": "ID",
+              "fieldDescription": "Code specifying the weight unit",
+              "allowedValues": [
+                {
+                  "value": "L",
+                  "label": "Pounds"
+                },
+                {
+                  "value": "K",
+                  "label": "Kilograms"
+                }
+              ]
+            },
+            {
+              "fieldId": "AT803",
+              "fieldName": "Weight",
+              "usage": "C",
+              "minLength": 1,
+              "maxLength": 10,
+              "dataType": "R",
+              "fieldDescription": "Numeric value of weight"
+            },
+            {
+              "fieldId": "AT804",
+              "fieldName": "Lading Quantity",
+              "usage": "C",
+              "minLength": 1,
+              "maxLength": 7,
+              "dataType": "N0",
+              "fieldDescription": "Number of units (pieces) of the lading commodity"
+            },
+            {
+              "fieldId": "AT805",
+              "fieldName": "Packaging Form Code",
+              "usage": "C",
+              "minLength": 3,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code specifying the type of packaging",
+              "allowedValues": [
+                {
+                  "value": "PLT",
+                  "label": "Pallet"
+                }
+              ]
+            }
+          ],
+          "syntaxRules": 2
+        },
+        {
+          "segmentId": "N1",
+          "segmentName": "Party Identification Loop",
+          "usage": "M",
+          "maxRepeat": 1,
+          "isLoopStart": true,
+          "purpose": "Loop containing party identification information",
+          "fields": [],
+          "nestedSegments": [
+            {
+              "segmentId": "G61",
+              "segmentName": "Contact",
+              "usage": "O",
+              "maxRepeat": 3,
+              "purpose": "To identify a person or office to whom communication should be directed",
+              "fields": [
+                {
+                  "fieldId": "G6101",
+                  "fieldName": "Contact Function Code",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying the major duty or responsibility of the person or group named",
+                  "allowedValues": [
+                    {
+                      "value": "CN",
+                      "label": "General Contact"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "G6102",
+                  "fieldName": "Name",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 60,
+                  "dataType": "AN",
+                  "fieldDescription": "Free-form name"
+                },
+                {
+                  "fieldId": "G6103",
+                  "fieldName": "Communication Number Qualifier",
+                  "usage": "C",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying the type of communication number. Email or phone number?",
+                  "allowedValues": [
+                    {
+                      "value": "TE",
+                      "label": "Telephone"
+                    },
+                    {
+                      "value": "EM",
+                      "label": "Electronic Mail"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "G6104",
+                  "fieldName": "Communication Number",
+                  "usage": "C",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "dataType": "AN",
+                  "fieldDescription": "Complete communications number including country or area code when applicable. Email or phone number string"
+                }
+              ],
+              "syntaxRules": 1
+            },
+            {
+              "segmentId": "N4",
+              "segmentName": "Geographic Location",
+              "usage": "M",
+              "maxRepeat": 1,
+              "purpose": "To specify the geographic place of the named party",
+              "fields": [
+                {
+                  "fieldId": "N401",
+                  "fieldName": "City Name",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 30,
+                  "dataType": "AN",
+                  "fieldDescription": "Free-form text for city name"
+                },
+                {
+                  "fieldId": "N402",
+                  "fieldName": "State or Province Code",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "State or province code"
+                },
+                {
+                  "fieldId": "N403",
+                  "fieldName": "Postal Code",
+                  "usage": "M",
+                  "minLength": 3,
+                  "maxLength": 15,
+                  "dataType": "ID",
+                  "fieldDescription": "Postal zone code"
+                },
+                {
+                  "fieldId": "N404",
+                  "fieldName": "Country Code",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 3,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying the country"
+                }
+              ],
+              "syntaxRules": 1
+            },
+            {
+              "segmentId": "N1",
+              "segmentName": "Party Identification",
+              "usage": "M",
+              "maxRepeat": 1,
+              "purpose": "To identify a party by type of organization, name, and code",
+              "fields": [
+                {
+                  "fieldId": "N101",
+                  "fieldName": "Entity Identifier Code",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 3,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
+                  "allowedValues": [
+                    {
+                      "value": "WH",
+                      "label": "Warehouse"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "N102",
+                  "fieldName": "Name",
+                  "usage": "M",
+                  "minLength": 1,
+                  "maxLength": 60,
+                  "dataType": "AN",
+                  "fieldDescription": "Free-form name"
+                }
+              ],
+              "syntaxRules": 2
+            },
+            {
+              "segmentId": "N3",
+              "segmentName": "Party Location",
+              "usage": "M",
+              "maxRepeat": 1,
+              "purpose": "To specify the location of the named party",
+              "fields": [
+                {
+                  "fieldId": "N301",
+                  "fieldName": "Address Information",
+                  "usage": "M",
+                  "minLength": 1,
+                  "maxLength": 55,
+                  "dataType": "AN",
+                  "fieldDescription": "Address information. Street Address 1"
+                },
+                {
+                  "fieldId": "N302",
+                  "fieldName": "Address Information",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 55,
+                  "dataType": "AN",
+                  "fieldDescription": "Address information (line 2). Street Address 2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "segmentId": "NTE",
+          "segmentName": "Note/Special Instruction",
+          "usage": "O",
+          "maxRepeat": 20,
+          "purpose": "To transmit information in a free-form format",
+          "fields": [
+            {
+              "fieldId": "NTE01",
+              "fieldName": "Note Reference Code",
+              "usage": "O",
+              "minLength": 3,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the functional area or purpose for which the note applies. Code identifying the functional area or purpose for which the note applies. Note that custom code REQ will be used to detail requirements on the stop. For example, a stop may have two REQ segments, one for requiring liftgate, and another for requiring tradeshow.",
+              "allowedValues": [
+                {
+                  "value": "ADD",
+                  "label": "Additional Information"
+                },
+                {
+                  "value": "REQ",
+                  "label": "Requirements on the stop"
+                }
+              ]
+            },
+            {
+              "fieldId": "NTE02",
+              "fieldName": "Description",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 80,
+              "dataType": "AN",
+              "fieldDescription": "A free-form description to clarify the related data elements"
+            }
+          ]
+        },
+        {
+          "segmentId": "S5",
+          "segmentName": "Stop-off Details",
+          "usage": "M",
+          "maxRepeat": 1,
+          "purpose": "To specify stop-off detail reference numbers and stop reason",
+          "fields": [
+            {
+              "fieldId": "S501",
+              "fieldName": "Stop Sequence Number",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 3,
+              "dataType": "N0",
+              "fieldDescription": "Stop sequence number. Identifying number for the specific stop and the sequence in which the stop is to be performed. Starts at 1."
+            },
+            {
+              "fieldId": "S502",
+              "fieldName": "Stop Reason Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code specifying the reason for the stop. Load = pickup stop, Unload = dropoff stop",
+              "allowedValues": [
+                {
+                  "value": "LD",
+                  "label": "Load"
+                },
+                {
+                  "value": "UL",
+                  "label": "Unload"
+                }
+              ]
+            }
+          ],
+          "syntaxRules": 3
+        }
+      ]
+    },
+    {
+      "segmentId": "L3",
+      "segmentName": "Total Weight and Charges",
+      "usage": "O",
+      "maxRepeat": 1,
+      "purpose": "To specify the total weight, volume, and charges for the shipment",
+      "fields": [
+        {
+          "fieldId": "L301",
+          "fieldName": "Weight",
+          "usage": "C",
+          "minLength": 1,
+          "maxLength": 10,
+          "dataType": "R",
+          "fieldDescription": "Numeric value of weight"
+        },
+        {
+          "fieldId": "L302",
+          "fieldName": "Weight Qualifier",
+          "usage": "C",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying the type of weight",
+          "allowedValues": [
+            {
+              "value": "G",
+              "label": "Gross Weight"
+            }
+          ]
+        },
+        {
+          "fieldId": "L305",
+          "fieldName": "Amount Charged",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 12,
+          "dataType": "N2",
+          "fieldDescription": "Total charges for the shipment. Total price of the load in cents, for example $123.45 would be 12345. The only currently supported currency is USD."
+        },
+        {
+          "fieldId": "L312",
+          "fieldName": "Weight Unit Code",
+          "usage": "C",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying the weight unit",
+          "allowedValues": [
+            {
+              "value": "K",
+              "label": "Kilograms"
+            },
+            {
+              "value": "L",
+              "label": "Pounds"
+            }
+          ]
+        }
+      ],
+      "syntaxRules": 5
+    },
+    {
+      "segmentId": "SE",
+      "segmentName": "Transaction Set Trailer",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the end of the transaction set and provide the count of transmitted segments",
+      "fields": [
+        {
+          "fieldId": "SE01",
+          "fieldName": "Number of Included Segments",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 10,
+          "dataType": "N0",
+          "fieldDescription": "Total number of segments including ST and SE segments"
+        },
+        {
+          "fieldId": "SE02",
+          "fieldName": "Transaction Set Control Number",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 9,
+          "dataType": "AN",
+          "fieldDescription": "Transaction set control number (must match ST02)"
+        }
+      ]
+    }
+  ]
+}

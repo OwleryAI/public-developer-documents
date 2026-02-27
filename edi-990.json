@@ -1,0 +1,398 @@
+{
+  "schemaVersion": "1.0",
+  "guidelineTitle": "EDI 990 Response to a Load Tender",
+  "guidelineVersion": "990 v4",
+  "transactionCode": "990",
+  "definitions": [
+    {
+      "segmentId": "ISA",
+      "segmentName": "Interchange Control Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To start and identify an interchange of zero or more functional groups and interchange-related control segments",
+      "fields": [
+        {
+          "fieldId": "ISA01",
+          "fieldName": "Authorization Information Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the type of information in the Authorization Information"
+        },
+        {
+          "fieldId": "ISA02",
+          "fieldName": "Authorization Information",
+          "usage": "M",
+          "minLength": 10,
+          "maxLength": 10,
+          "dataType": "AN",
+          "fieldDescription": "Information used for additional identification or authorization of the interchange sender or the data in the interchange"
+        },
+        {
+          "fieldId": "ISA03",
+          "fieldName": "Security Information Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the type of information in the Security Information"
+        },
+        {
+          "fieldId": "ISA04",
+          "fieldName": "Security Information",
+          "usage": "M",
+          "minLength": 10,
+          "maxLength": 10,
+          "dataType": "AN",
+          "fieldDescription": "This is used for identifying the security information about the interchange sender or the data in the interchange"
+        },
+        {
+          "fieldId": "ISA05",
+          "fieldName": "Interchange ID Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the system/method of code structure used to designate the sender or receiver ID element being qualified"
+        },
+        {
+          "fieldId": "ISA06",
+          "fieldName": "Interchange Sender ID",
+          "usage": "M",
+          "minLength": 15,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Identification code published by the sender for other parties to use as the receiver ID to route data to them"
+        },
+        {
+          "fieldId": "ISA07",
+          "fieldName": "Interchange ID Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the system/method of code structure used to designate the sender or receiver ID element being qualified"
+        },
+        {
+          "fieldId": "ISA08",
+          "fieldName": "Interchange Receiver ID",
+          "usage": "M",
+          "minLength": 15,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Identification code published by the receiver of the data"
+        },
+        {
+          "fieldId": "ISA09",
+          "fieldName": "Interchange Date",
+          "usage": "M",
+          "minLength": 6,
+          "maxLength": 6,
+          "dataType": "DT",
+          "fieldDescription": "Date of the interchange (YYMMDD)"
+        },
+        {
+          "fieldId": "ISA10",
+          "fieldName": "Interchange Time",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 4,
+          "dataType": "TM",
+          "fieldDescription": "Time of the interchange"
+        },
+        {
+          "fieldId": "ISA11",
+          "fieldName": "Interchange Control Standards Identifier",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code to identify the agency responsible for the control standard used by the message"
+        },
+        {
+          "fieldId": "ISA12",
+          "fieldName": "Interchange Control Version Number Code",
+          "usage": "M",
+          "minLength": 5,
+          "maxLength": 5,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying the version number of the interchange control segments"
+        },
+        {
+          "fieldId": "ISA13",
+          "fieldName": "Interchange Control Number",
+          "usage": "M",
+          "minLength": 9,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "A control number assigned by the interchange sender"
+        },
+        {
+          "fieldId": "ISA14",
+          "fieldName": "Acknowledgment Requested Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating sender's request for an interchange acknowledgment"
+        },
+        {
+          "fieldId": "ISA15",
+          "fieldName": "Interchange Usage Indicator Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating whether data enclosed by this interchange envelope is test, production or information"
+        },
+        {
+          "fieldId": "ISA16",
+          "fieldName": "Component Data Element Separator",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "-",
+          "fieldDescription": "The component data element separator is a delimiter and not a data element"
+        }
+      ]
+    },
+    {
+      "segmentId": "GS",
+      "segmentName": "Functional Group Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the beginning of a functional group and to provide control information",
+      "fields": [
+        {
+          "fieldId": "GS01",
+          "fieldName": "Functional Identifier Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a group of application related transaction sets"
+        },
+        {
+          "fieldId": "GS02",
+          "fieldName": "Application Sender's Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Code identifying party sending transmission"
+        },
+        {
+          "fieldId": "GS03",
+          "fieldName": "Application Receiver's Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Code identifying party receiving transmission"
+        },
+        {
+          "fieldId": "GS04",
+          "fieldName": "Date",
+          "usage": "M",
+          "minLength": 8,
+          "maxLength": 8,
+          "dataType": "DT",
+          "fieldDescription": "Date expressed as CCYYMMDD"
+        },
+        {
+          "fieldId": "GS05",
+          "fieldName": "Time",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 8,
+          "dataType": "TM",
+          "fieldDescription": "Time expressed in 24-hour clock time"
+        },
+        {
+          "fieldId": "GS06",
+          "fieldName": "Group Control Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "Assigned number originated and maintained by the sender"
+        },
+        {
+          "fieldId": "GS07",
+          "fieldName": "Responsible Agency Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the issuer of the standard"
+        },
+        {
+          "fieldId": "GS08",
+          "fieldName": "Version / Release / Industry Identifier Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 12,
+          "dataType": "AN",
+          "fieldDescription": "Code indicating the version, release, and industry identifier of the EDI Standard"
+        }
+      ]
+    },
+    {
+      "segmentId": "ST",
+      "segmentName": "Transaction Set Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the start of a transaction set and to assign a control number",
+      "fields": [
+        {
+          "fieldId": "ST01",
+          "fieldName": "Transaction Set Identifier Code",
+          "usage": "M",
+          "minLength": 3,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a Transaction Set"
+        },
+        {
+          "fieldId": "ST02",
+          "fieldName": "Transaction Set Control Number",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 9,
+          "dataType": "AN",
+          "fieldDescription": "Identifying control number that must be unique within the transaction set functional group"
+        }
+      ]
+    },
+    {
+      "segmentId": "B1",
+      "segmentName": "Beginning Segment for Booking or Pick-up/Delivery",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To transmit identifying numbers and other basic data relating to booking or pick-up/delivery",
+      "fields": [
+        {
+          "fieldId": "B102",
+          "fieldName": "Shipment Identification Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 30,
+          "dataType": "AN",
+          "fieldDescription": "Identification number assigned to the shipment. Unique load number"
+        },
+        {
+          "fieldId": "B104",
+          "fieldName": "Reservation Action Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating action to be taken",
+          "allowedValues": [
+            {
+              "value": "A",
+              "label": "Reservation Accepted"
+            },
+            {
+              "value": "D",
+              "label": "Reservation Cancelled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "segmentId": "L11",
+      "segmentName": "Business Instructions and Reference Number",
+      "usage": "M",
+      "maxRepeat": 2,
+      "purpose": "To specify instructions or a reference number",
+      "fields": [
+        {
+          "fieldId": "L1101",
+          "fieldName": "Reference Identification",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 30,
+          "dataType": "AN",
+          "fieldDescription": "Reference information as defined for a particular Transaction Set"
+        },
+        {
+          "fieldId": "L1102",
+          "fieldName": "Reference Identification Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the Reference Identification",
+          "allowedValues": [
+            {
+              "value": "TN",
+              "label": "Transaction Reference Number"
+            },
+            {
+              "value": "CN",
+              "label": "Carrier's Reference Number (PRO/Invoice)"
+            }
+          ]
+        }
+      ],
+      "syntaxRules": 2
+    },
+    {
+      "segmentId": "K1",
+      "segmentName": "Remarks",
+      "usage": "O",
+      "maxRepeat": 1,
+      "purpose": "To transmit information in a free-form format",
+      "fields": [
+        {
+          "fieldId": "K101",
+          "fieldName": "Free-form Information",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 30,
+          "dataType": "AN",
+          "fieldDescription": "Free-form information. Rejection Reason Code (we may provide a specific set in the future)"
+        },
+        {
+          "fieldId": "K102",
+          "fieldName": "Free-form Information",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 30,
+          "dataType": "AN",
+          "fieldDescription": "Free-form information (line 2). Comment"
+        }
+      ]
+    },
+    {
+      "segmentId": "SE",
+      "segmentName": "Transaction Set Trailer",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the end of the transaction set and provide the count of transmitted segments",
+      "fields": [
+        {
+          "fieldId": "SE01",
+          "fieldName": "Number of Included Segments",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 10,
+          "dataType": "N0",
+          "fieldDescription": "Total number of segments including ST and SE segments"
+        },
+        {
+          "fieldId": "SE02",
+          "fieldName": "Transaction Set Control Number",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 9,
+          "dataType": "AN",
+          "fieldDescription": "Transaction set control number (must match ST02)"
+        }
+      ]
+    }
+  ]
+}

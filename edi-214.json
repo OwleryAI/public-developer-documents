@@ -1,0 +1,1304 @@
+{
+  "schemaVersion": "1.0",
+  "guidelineTitle": "EDI 214 Transportation Carrier Shipment Status Message",
+  "guidelineVersion": "214 v2.3",
+  "transactionCode": "214",
+  "definitions": [
+    {
+      "segmentId": "ISA",
+      "segmentName": "Interchange Control Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To start and identify an interchange of zero or more functional groups and interchange-related control segments",
+      "fields": [
+        {
+          "fieldId": "ISA01",
+          "fieldName": "Authorization Information Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the type of information in the Authorization Information"
+        },
+        {
+          "fieldId": "ISA02",
+          "fieldName": "Authorization Information",
+          "usage": "M",
+          "minLength": 10,
+          "maxLength": 10,
+          "dataType": "AN",
+          "fieldDescription": "Information used for additional identification or authorization of the interchange sender or the data in the interchange"
+        },
+        {
+          "fieldId": "ISA03",
+          "fieldName": "Security Information Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the type of information in the Security Information"
+        },
+        {
+          "fieldId": "ISA04",
+          "fieldName": "Security Information",
+          "usage": "M",
+          "minLength": 10,
+          "maxLength": 10,
+          "dataType": "AN",
+          "fieldDescription": "This is used for identifying the security information about the interchange sender or the data in the interchange"
+        },
+        {
+          "fieldId": "ISA05",
+          "fieldName": "Interchange ID Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the system/method of code structure used to designate the sender or receiver ID element being qualified"
+        },
+        {
+          "fieldId": "ISA06",
+          "fieldName": "Interchange Sender ID",
+          "usage": "M",
+          "minLength": 15,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Identification code published by the sender for other parties to use as the receiver ID to route data to them"
+        },
+        {
+          "fieldId": "ISA07",
+          "fieldName": "Interchange ID Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the system/method of code structure used to designate the sender or receiver ID element being qualified"
+        },
+        {
+          "fieldId": "ISA08",
+          "fieldName": "Interchange Receiver ID",
+          "usage": "M",
+          "minLength": 15,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Identification code published by the receiver of the data"
+        },
+        {
+          "fieldId": "ISA09",
+          "fieldName": "Interchange Date",
+          "usage": "M",
+          "minLength": 6,
+          "maxLength": 6,
+          "dataType": "DT",
+          "fieldDescription": "Date of the interchange (YYMMDD)"
+        },
+        {
+          "fieldId": "ISA10",
+          "fieldName": "Interchange Time",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 4,
+          "dataType": "TM",
+          "fieldDescription": "Time of the interchange"
+        },
+        {
+          "fieldId": "ISA11",
+          "fieldName": "Interchange Control Standards Identifier",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code to identify the agency responsible for the control standard used by the message"
+        },
+        {
+          "fieldId": "ISA12",
+          "fieldName": "Interchange Control Version Number Code",
+          "usage": "M",
+          "minLength": 5,
+          "maxLength": 5,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying the version number of the interchange control segments"
+        },
+        {
+          "fieldId": "ISA13",
+          "fieldName": "Interchange Control Number",
+          "usage": "M",
+          "minLength": 9,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "A control number assigned by the interchange sender"
+        },
+        {
+          "fieldId": "ISA14",
+          "fieldName": "Acknowledgment Requested Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating sender's request for an interchange acknowledgment"
+        },
+        {
+          "fieldId": "ISA15",
+          "fieldName": "Interchange Usage Indicator Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating whether data enclosed by this interchange envelope is test, production or information"
+        },
+        {
+          "fieldId": "ISA16",
+          "fieldName": "Component Data Element Separator",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "-",
+          "fieldDescription": "The component data element separator is a delimiter and not a data element"
+        }
+      ]
+    },
+    {
+      "segmentId": "GS",
+      "segmentName": "Functional Group Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the beginning of a functional group and to provide control information",
+      "fields": [
+        {
+          "fieldId": "GS01",
+          "fieldName": "Functional Identifier Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a group of application related transaction sets"
+        },
+        {
+          "fieldId": "GS02",
+          "fieldName": "Application Sender's Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Code identifying party sending transmission"
+        },
+        {
+          "fieldId": "GS03",
+          "fieldName": "Application Receiver's Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Code identifying party receiving transmission"
+        },
+        {
+          "fieldId": "GS04",
+          "fieldName": "Date",
+          "usage": "M",
+          "minLength": 8,
+          "maxLength": 8,
+          "dataType": "DT",
+          "fieldDescription": "Date expressed as CCYYMMDD"
+        },
+        {
+          "fieldId": "GS05",
+          "fieldName": "Time",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 8,
+          "dataType": "TM",
+          "fieldDescription": "Time expressed in 24-hour clock time"
+        },
+        {
+          "fieldId": "GS06",
+          "fieldName": "Group Control Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "Assigned number originated and maintained by the sender"
+        },
+        {
+          "fieldId": "GS07",
+          "fieldName": "Responsible Agency Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the issuer of the standard"
+        },
+        {
+          "fieldId": "GS08",
+          "fieldName": "Version / Release / Industry Identifier Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 12,
+          "dataType": "AN",
+          "fieldDescription": "Code indicating the version, release, and industry identifier of the EDI Standard"
+        }
+      ]
+    },
+    {
+      "segmentId": "ST",
+      "segmentName": "Transaction Set Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the start of a transaction set and to assign a control number",
+      "fields": [
+        {
+          "fieldId": "ST01",
+          "fieldName": "Transaction Set Identifier Code",
+          "usage": "M",
+          "minLength": 3,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a Transaction Set",
+          "allowedValues": [
+            {
+              "value": "214",
+              "label": "Transportation Carrier Shipment Status Message"
+            }
+          ]
+        },
+        {
+          "fieldId": "ST02",
+          "fieldName": "Transaction Set Control Number",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 9,
+          "dataType": "AN",
+          "fieldDescription": "Identifying control number that must be unique within the transaction set functional group"
+        }
+      ]
+    },
+    {
+      "segmentId": "B10",
+      "segmentName": "Beginning Segment for Transportation Carrier Shipment Status Message",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the beginning of a shipment status message",
+      "fields": [
+        {
+          "fieldId": "B1002",
+          "fieldName": "Shipment Identification Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 30,
+          "dataType": "AN",
+          "fieldDescription": "Identification number assigned to the shipment by the shipper"
+        }
+      ],
+      "syntaxRules": 2
+    },
+    {
+      "segmentId": "LX",
+      "segmentName": "Line Item Loop",
+      "usage": "M",
+      "maxRepeat": 1,
+      "isLoopStart": true,
+      "purpose": "Loop containing line item details",
+      "fields": [],
+      "nestedSegments": [
+        {
+          "segmentId": "AT7",
+          "segmentName": "Shipment Status Details Loop",
+          "usage": "M",
+          "maxRepeat": 1,
+          "isLoopStart": true,
+          "purpose": "Loop containing shipment status details",
+          "fields": [],
+          "nestedSegments": [
+            {
+              "segmentId": "MS1",
+              "segmentName": "Equipment, Shipment, or Real Property Location",
+              "usage": "M",
+              "maxRepeat": 1,
+              "purpose": "To specify the location of equipment, shipment, or real property",
+              "fields": [
+                {
+                  "fieldId": "MS101",
+                  "fieldName": "City Name",
+                  "usage": "C",
+                  "minLength": 2,
+                  "maxLength": 30,
+                  "dataType": "AN",
+                  "fieldDescription": "Free-form text for city name"
+                },
+                {
+                  "fieldId": "MS102",
+                  "fieldName": "State or Province Code",
+                  "usage": "C",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "State or province code"
+                },
+                {
+                  "fieldId": "MS103",
+                  "fieldName": "Country Code",
+                  "usage": "C",
+                  "minLength": 2,
+                  "maxLength": 3,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying the country"
+                },
+                {
+                  "fieldId": "MS104",
+                  "fieldName": "Longitude Code",
+                  "usage": "C",
+                  "minLength": 7,
+                  "maxLength": 7,
+                  "dataType": "ID",
+                  "fieldDescription": "Code specifying the longitude. Code indicating the longitude, for example -122.42"
+                },
+                {
+                  "fieldId": "MS105",
+                  "fieldName": "Latitude Code",
+                  "usage": "C",
+                  "minLength": 7,
+                  "maxLength": 7,
+                  "dataType": "ID",
+                  "fieldDescription": "Code specifying the latitude. Code indicating the latitude, for example -122.42"
+                }
+              ],
+              "syntaxRules": 7
+            },
+            {
+              "segmentId": "AT7",
+              "segmentName": "Shipment Status Details",
+              "usage": "M",
+              "maxRepeat": 1,
+              "purpose": "To specify the details of the shipment status",
+              "fields": [
+                {
+                  "fieldId": "AT701",
+                  "fieldName": "Shipment Status Indicator Code",
+                  "usage": "C",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code indicating the status of a shipment",
+                  "allowedValues": [
+                    {
+                      "value": "D1",
+                      "label": "Completed Unloading at Delivery Location"
+                    },
+                    {
+                      "value": "X1",
+                      "label": "Arrived at Delivery Location"
+                    },
+                    {
+                      "value": "X3",
+                      "label": "Arrived at Pick-up Location"
+                    },
+                    {
+                      "value": "X6",
+                      "label": "En Route to Delivery Location"
+                    },
+                    {
+                      "value": "AF",
+                      "label": "Carrier Departed Pickup Location with Shipment"
+                    },
+                    {
+                      "value": "CP",
+                      "label": "Completed Loading at Pickup Location"
+                    },
+                    {
+                      "value": "CD",
+                      "label": "Carrier Departed Delivery Location"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "AT702",
+                  "fieldName": "Shipment Status or Appointment Reason Code",
+                  "usage": "C",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code for the shipment status or appointment reason",
+                  "allowedValues": [
+                    {
+                      "value": "A1",
+                      "label": "Missed Delivery"
+                    },
+                    {
+                      "value": "A2",
+                      "label": "Incorrect Address"
+                    },
+                    {
+                      "value": "A3",
+                      "label": "Indirect Delivery"
+                    },
+                    {
+                      "value": "A5",
+                      "label": "Unable to Locate"
+                    },
+                    {
+                      "value": "A6",
+                      "label": "Address Corrected - Delivery Attempted"
+                    },
+                    {
+                      "value": "AA",
+                      "label": "Mis-sort"
+                    },
+                    {
+                      "value": "AD",
+                      "label": "Customer Requested Future Delivery"
+                    },
+                    {
+                      "value": "AE",
+                      "label": "Restricted Articles Unacceptable"
+                    },
+                    {
+                      "value": "AF",
+                      "label": "Accident"
+                    },
+                    {
+                      "value": "AG",
+                      "label": "Consignee Related"
+                    },
+                    {
+                      "value": "AH",
+                      "label": "Driver Related"
+                    },
+                    {
+                      "value": "AI",
+                      "label": "Mechanical Breakdown"
+                    },
+                    {
+                      "value": "AJ",
+                      "label": "Other Carrier Related"
+                    },
+                    {
+                      "value": "AK",
+                      "label": "Damaged, Rewrapped in Hub"
+                    },
+                    {
+                      "value": "AL",
+                      "label": "Previous Stop"
+                    },
+                    {
+                      "value": "AM",
+                      "label": "Shipper Related"
+                    },
+                    {
+                      "value": "AN",
+                      "label": "Holiday - Closed"
+                    },
+                    {
+                      "value": "AO",
+                      "label": "Weather or Natural Disaster Related"
+                    },
+                    {
+                      "value": "AP",
+                      "label": "Awaiting Export"
+                    },
+                    {
+                      "value": "AQ",
+                      "label": "Recipient Unavailable - Delivery Delayed"
+                    },
+                    {
+                      "value": "AR",
+                      "label": "Improper International Paperwork"
+                    },
+                    {
+                      "value": "AS",
+                      "label": "Hold Due to Customs Documentation Problems"
+                    },
+                    {
+                      "value": "AT",
+                      "label": "Unable to Contact Recipient for Broker Information"
+                    },
+                    {
+                      "value": "AU",
+                      "label": "Civil Event Related Delay"
+                    },
+                    {
+                      "value": "AV",
+                      "label": "Exceeds Service Limitations"
+                    },
+                    {
+                      "value": "AW",
+                      "label": "Past Cut-off Time"
+                    },
+                    {
+                      "value": "AX",
+                      "label": "Insufficient Pick-up Time"
+                    },
+                    {
+                      "value": "AY",
+                      "label": "Missed Pick-up"
+                    },
+                    {
+                      "value": "AZ",
+                      "label": "Alternate Carrier Delivered"
+                    },
+                    {
+                      "value": "B1",
+                      "label": "Consignee Closed"
+                    },
+                    {
+                      "value": "B2",
+                      "label": "Trap for Customer"
+                    },
+                    {
+                      "value": "B4",
+                      "label": "Held for Payment"
+                    },
+                    {
+                      "value": "B5",
+                      "label": "Held for Consignee"
+                    },
+                    {
+                      "value": "B8",
+                      "label": "Improper Unloading Facility or Equipment"
+                    },
+                    {
+                      "value": "B9",
+                      "label": "Receiving Time Restricted"
+                    },
+                    {
+                      "value": "BB",
+                      "label": "Held per Shipper"
+                    },
+                    {
+                      "value": "BC",
+                      "label": "Missing Documents"
+                    },
+                    {
+                      "value": "BD",
+                      "label": "Border Clearance"
+                    },
+                    {
+                      "value": "BE",
+                      "label": "Road Conditions"
+                    },
+                    {
+                      "value": "BF",
+                      "label": "Carrier Keying Error"
+                    },
+                    {
+                      "value": "BG",
+                      "label": "Other"
+                    },
+                    {
+                      "value": "BH",
+                      "label": "Insufficient Time to Complete Delivery"
+                    },
+                    {
+                      "value": "BI",
+                      "label": "Cartage Agent"
+                    },
+                    {
+                      "value": "BJ",
+                      "label": "Customer Wanted Earlier Delivery"
+                    },
+                    {
+                      "value": "BK",
+                      "label": "Prearranged Appointment"
+                    },
+                    {
+                      "value": "BL",
+                      "label": "Held for Protective Service"
+                    },
+                    {
+                      "value": "BM",
+                      "label": "Flatcar Shortage"
+                    },
+                    {
+                      "value": "BN",
+                      "label": "Failed to Release Billing"
+                    },
+                    {
+                      "value": "BO",
+                      "label": "Railroad Failed to Meet Schedule"
+                    },
+                    {
+                      "value": "BP",
+                      "label": "Load Shifted"
+                    },
+                    {
+                      "value": "BQ",
+                      "label": "Shipment Overweight"
+                    },
+                    {
+                      "value": "BR",
+                      "label": "Train Derailment"
+                    },
+                    {
+                      "value": "BS",
+                      "label": "Refused by Customer"
+                    },
+                    {
+                      "value": "BT",
+                      "label": "Returned to Shipper"
+                    },
+                    {
+                      "value": "C1",
+                      "label": "Waiting for Customer Pick-up"
+                    },
+                    {
+                      "value": "C2",
+                      "label": "Credit Hold"
+                    },
+                    {
+                      "value": "C3",
+                      "label": "Suspended at Customer Request"
+                    },
+                    {
+                      "value": "C4",
+                      "label": "Customer Vacation"
+                    },
+                    {
+                      "value": "C5",
+                      "label": "Customer Strike"
+                    },
+                    {
+                      "value": "C6",
+                      "label": "Waiting Shipping Instructions"
+                    },
+                    {
+                      "value": "C7",
+                      "label": "Waiting for Customer Specified Carrier"
+                    },
+                    {
+                      "value": "C8",
+                      "label": "Collect on Delivery Required"
+                    },
+                    {
+                      "value": "C9",
+                      "label": "Cash Not Available From Consignee"
+                    },
+                    {
+                      "value": "CA",
+                      "label": "Customs (Import or Export)"
+                    },
+                    {
+                      "value": "CB",
+                      "label": "No Requested Arrival Date Provided by Shipper"
+                    },
+                    {
+                      "value": "CC",
+                      "label": "No Requested Arrival Time Provided by Shipper"
+                    },
+                    {
+                      "value": "D1",
+                      "label": "Carrier Dispatch Error"
+                    },
+                    {
+                      "value": "D2",
+                      "label": "Driver Not Available"
+                    },
+                    {
+                      "value": "F1",
+                      "label": "Non-Express Clearance Delay"
+                    },
+                    {
+                      "value": "F2",
+                      "label": "International Non-carrier Delay"
+                    },
+                    {
+                      "value": "HB",
+                      "label": "Held Pending Appointment"
+                    },
+                    {
+                      "value": "NA",
+                      "label": "Normal Appointment"
+                    },
+                    {
+                      "value": "NS",
+                      "label": "Normal Status"
+                    },
+                    {
+                      "value": "P1",
+                      "label": "Processing Delay"
+                    },
+                    {
+                      "value": "P2",
+                      "label": "Waiting Inspection"
+                    },
+                    {
+                      "value": "P3",
+                      "label": "Production Falldown"
+                    },
+                    {
+                      "value": "P4",
+                      "label": "Held for Full Carrier Load"
+                    },
+                    {
+                      "value": "RC",
+                      "label": "Reconsigned"
+                    },
+                    {
+                      "value": "S1",
+                      "label": "Delivery Shortage"
+                    },
+                    {
+                      "value": "T1",
+                      "label": "Tractor With Sleeper Car Not Available"
+                    },
+                    {
+                      "value": "T2",
+                      "label": "Tractor, Conventional, Not Available"
+                    },
+                    {
+                      "value": "T3",
+                      "label": "Trailer not Available"
+                    },
+                    {
+                      "value": "T4",
+                      "label": "Trailer Not Usable Due to Prior Product"
+                    },
+                    {
+                      "value": "T5",
+                      "label": "Trailer Class Not Available"
+                    },
+                    {
+                      "value": "T6",
+                      "label": "Trailer Volume Not Available"
+                    },
+                    {
+                      "value": "T7",
+                      "label": "Insufficient Delivery Time"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "AT703",
+                  "fieldName": "Shipment Appointment Status Code",
+                  "usage": "C",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying the appointment status of a shipment",
+                  "allowedValues": [
+                    {
+                      "value": "AA",
+                      "label": "Pickup Appointment Date and/or Time"
+                    },
+                    {
+                      "value": "AB",
+                      "label": "Delivery Appointment Date and/or Time"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "AT704",
+                  "fieldName": "Shipment Status or Appointment Reason Code",
+                  "usage": "C",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code for the shipment status or appointment reason",
+                  "allowedValues": [
+                    {
+                      "value": "A1",
+                      "label": "Missed Delivery"
+                    },
+                    {
+                      "value": "A2",
+                      "label": "Incorrect Address"
+                    },
+                    {
+                      "value": "A3",
+                      "label": "Indirect Delivery"
+                    },
+                    {
+                      "value": "A5",
+                      "label": "Unable to Locate"
+                    },
+                    {
+                      "value": "A6",
+                      "label": "Address Corrected - Delivery Attempted"
+                    },
+                    {
+                      "value": "AA",
+                      "label": "Mis-sort"
+                    },
+                    {
+                      "value": "AD",
+                      "label": "Customer Requested Future Delivery"
+                    },
+                    {
+                      "value": "AE",
+                      "label": "Restricted Articles Unacceptable"
+                    },
+                    {
+                      "value": "AF",
+                      "label": "Accident"
+                    },
+                    {
+                      "value": "AG",
+                      "label": "Consignee Related"
+                    },
+                    {
+                      "value": "AH",
+                      "label": "Driver Related"
+                    },
+                    {
+                      "value": "AI",
+                      "label": "Mechanical Breakdown"
+                    },
+                    {
+                      "value": "AJ",
+                      "label": "Other Carrier Related"
+                    },
+                    {
+                      "value": "AK",
+                      "label": "Damaged, Rewrapped in Hub"
+                    },
+                    {
+                      "value": "AL",
+                      "label": "Previous Stop"
+                    },
+                    {
+                      "value": "AM",
+                      "label": "Shipper Related"
+                    },
+                    {
+                      "value": "AN",
+                      "label": "Holiday - Closed"
+                    },
+                    {
+                      "value": "AO",
+                      "label": "Weather or Natural Disaster Related"
+                    },
+                    {
+                      "value": "AP",
+                      "label": "Awaiting Export"
+                    },
+                    {
+                      "value": "AQ",
+                      "label": "Recipient Unavailable - Delivery Delayed"
+                    },
+                    {
+                      "value": "AR",
+                      "label": "Improper International Paperwork"
+                    },
+                    {
+                      "value": "AS",
+                      "label": "Hold Due to Customs Documentation Problems"
+                    },
+                    {
+                      "value": "AT",
+                      "label": "Unable to Contact Recipient for Broker Information"
+                    },
+                    {
+                      "value": "AU",
+                      "label": "Civil Event Related Delay"
+                    },
+                    {
+                      "value": "AV",
+                      "label": "Exceeds Service Limitations"
+                    },
+                    {
+                      "value": "AW",
+                      "label": "Past Cut-off Time"
+                    },
+                    {
+                      "value": "AX",
+                      "label": "Insufficient Pickup Time"
+                    },
+                    {
+                      "value": "AY",
+                      "label": "Missed Pickup"
+                    },
+                    {
+                      "value": "AZ",
+                      "label": "Alternate Carrier Delivered"
+                    },
+                    {
+                      "value": "B1",
+                      "label": "Consignee Closed"
+                    },
+                    {
+                      "value": "B2",
+                      "label": "Trap for Customer"
+                    },
+                    {
+                      "value": "B4",
+                      "label": "Held for Payment"
+                    },
+                    {
+                      "value": "B5",
+                      "label": "Held for Consignee"
+                    },
+                    {
+                      "value": "B8",
+                      "label": "Improper Unloading Facility or Equipment"
+                    },
+                    {
+                      "value": "B9",
+                      "label": "Receiving Time Restricted"
+                    },
+                    {
+                      "value": "BB",
+                      "label": "Held per Shipper"
+                    },
+                    {
+                      "value": "BC",
+                      "label": "Missing Documents"
+                    },
+                    {
+                      "value": "BD",
+                      "label": "Border Clearance"
+                    },
+                    {
+                      "value": "BE",
+                      "label": "Road Conditions"
+                    },
+                    {
+                      "value": "BF",
+                      "label": "Carrier Keying Error"
+                    },
+                    {
+                      "value": "BG",
+                      "label": "Other"
+                    },
+                    {
+                      "value": "BH",
+                      "label": "Insufficient Time to Complete Delivery"
+                    },
+                    {
+                      "value": "BI",
+                      "label": "Cartage Agent"
+                    },
+                    {
+                      "value": "BJ",
+                      "label": "Customer Wanted Earlier Delivery"
+                    },
+                    {
+                      "value": "BK",
+                      "label": "Prearranged Appointment"
+                    },
+                    {
+                      "value": "BL",
+                      "label": "Held for Protective Service"
+                    },
+                    {
+                      "value": "BM",
+                      "label": "Flatcar Shortage"
+                    },
+                    {
+                      "value": "BN",
+                      "label": "Failed to Release Billing"
+                    },
+                    {
+                      "value": "BO",
+                      "label": "Railroad Failed to Meet Schedule"
+                    },
+                    {
+                      "value": "BP",
+                      "label": "Load Shifted"
+                    },
+                    {
+                      "value": "BQ",
+                      "label": "Shipment Overweight"
+                    },
+                    {
+                      "value": "BR",
+                      "label": "Train Derailment"
+                    },
+                    {
+                      "value": "BS",
+                      "label": "Refused by Customer"
+                    },
+                    {
+                      "value": "BT",
+                      "label": "Returned to Shipper"
+                    },
+                    {
+                      "value": "C1",
+                      "label": "Waiting for Customer Pickup"
+                    },
+                    {
+                      "value": "C2",
+                      "label": "Credit Hold"
+                    },
+                    {
+                      "value": "C3",
+                      "label": "Suspended at Customer Request"
+                    },
+                    {
+                      "value": "C4",
+                      "label": "Customer Vacation"
+                    },
+                    {
+                      "value": "C5",
+                      "label": "Customer Strike"
+                    },
+                    {
+                      "value": "C6",
+                      "label": "Waiting Shipping Instructions"
+                    },
+                    {
+                      "value": "C7",
+                      "label": "Waiting for Customer Specified Carrier"
+                    },
+                    {
+                      "value": "C8",
+                      "label": "Collect on Delivery Required"
+                    },
+                    {
+                      "value": "C9",
+                      "label": "Cash Not Available From Consignee"
+                    },
+                    {
+                      "value": "CA",
+                      "label": "Customs (Import or Export)"
+                    },
+                    {
+                      "value": "CB",
+                      "label": "No Requested Arrival Date Provided by Shipper"
+                    },
+                    {
+                      "value": "CC",
+                      "label": "No Requested Arrival Time Provided by Shipper"
+                    },
+                    {
+                      "value": "CS",
+                      "label": "Customer Cancelled Shipment"
+                    },
+                    {
+                      "value": "D1",
+                      "label": "Carrier Dispatch Error"
+                    },
+                    {
+                      "value": "D2",
+                      "label": "Driver Not Available"
+                    },
+                    {
+                      "value": "DU",
+                      "label": "Duplicate Pickup Request"
+                    },
+                    {
+                      "value": "F1",
+                      "label": "Non-Express Clearance Delay"
+                    },
+                    {
+                      "value": "F2",
+                      "label": "International Non-carrier Delay"
+                    },
+                    {
+                      "value": "HB",
+                      "label": "Held Pending Appointment"
+                    },
+                    {
+                      "value": "LG",
+                      "label": "Lift Gate Required, Not Requested"
+                    },
+                    {
+                      "value": "MP",
+                      "label": "Missed Pickup - Carrier Was Provided Incorrect Closing Time"
+                    },
+                    {
+                      "value": "MQ",
+                      "label": "Missed Pickup - Dispatcher Error"
+                    },
+                    {
+                      "value": "MR",
+                      "label": "Missed Pickup - Pickup Request Arrived Too Late"
+                    },
+                    {
+                      "value": "MS",
+                      "label": "Missed Pickup - Driver Error"
+                    },
+                    {
+                      "value": "NA",
+                      "label": "Normal Appointment"
+                    },
+                    {
+                      "value": "NF",
+                      "label": "No Freight Available At Time Of Pickup"
+                    },
+                    {
+                      "value": "NS",
+                      "label": "Normal Status"
+                    },
+                    {
+                      "value": "P1",
+                      "label": "Processing Delay"
+                    },
+                    {
+                      "value": "P2",
+                      "label": "Waiting Inspection"
+                    },
+                    {
+                      "value": "P3",
+                      "label": "Production Falldown"
+                    },
+                    {
+                      "value": "P4",
+                      "label": "Held for Full Carrier Load"
+                    },
+                    {
+                      "value": "RC",
+                      "label": "Reconsigned"
+                    },
+                    {
+                      "value": "S1",
+                      "label": "Delivery Shortage"
+                    },
+                    {
+                      "value": "SD",
+                      "label": "Shipper Delivered Shipment To Carrier Dock"
+                    },
+                    {
+                      "value": "SI",
+                      "label": "Shipper Not Informed of Pickup"
+                    },
+                    {
+                      "value": "SN",
+                      "label": "Shipment Not Ready"
+                    },
+                    {
+                      "value": "SR",
+                      "label": "Shipment Rescheduled For A Different Date and or Time"
+                    },
+                    {
+                      "value": "T1",
+                      "label": "Tractor With Sleeper Car Not Available"
+                    },
+                    {
+                      "value": "T2",
+                      "label": "Tractor, Conventional, Not Available"
+                    },
+                    {
+                      "value": "T3",
+                      "label": "Trailer not Available"
+                    },
+                    {
+                      "value": "T4",
+                      "label": "Trailer Not Usable Due to Prior Product"
+                    },
+                    {
+                      "value": "T5",
+                      "label": "Trailer Class Not Available"
+                    },
+                    {
+                      "value": "T6",
+                      "label": "Trailer Volume Not Available"
+                    },
+                    {
+                      "value": "T7",
+                      "label": "Insufficient Delivery Time"
+                    },
+                    {
+                      "value": "UA",
+                      "label": "Service Upgrade - Consignee Request"
+                    },
+                    {
+                      "value": "UB",
+                      "label": "Service Upgrade - Shipper Request"
+                    },
+                    {
+                      "value": "UC",
+                      "label": "Updated Address - Consignee Request"
+                    },
+                    {
+                      "value": "UD",
+                      "label": "Updated Address - Shipper Request"
+                    },
+                    {
+                      "value": "UE",
+                      "label": "Unable to Process Service Upgrade"
+                    },
+                    {
+                      "value": "UF",
+                      "label": "Unable to Process Updated Address"
+                    },
+                    {
+                      "value": "UG",
+                      "label": "Driver Waiting to Pick Up"
+                    },
+                    {
+                      "value": "UH",
+                      "label": "Driver Waiting to Unload"
+                    },
+                    {
+                      "value": "UI",
+                      "label": "Lift Gate Required for Pickup"
+                    },
+                    {
+                      "value": "UJ",
+                      "label": "Lift Gate Required for Delivery"
+                    },
+                    {
+                      "value": "UK",
+                      "label": "Shipment Removed from Hold - Out for Delivery"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "AT705",
+                  "fieldName": "Date",
+                  "usage": "M",
+                  "minLength": 8,
+                  "maxLength": 8,
+                  "dataType": "DT",
+                  "fieldDescription": "Date expressed as CCYYMMDD. Date expressed as CCYYMMDD where CC represents the first two digits of the calendar year. This should always be set in the time zone of the location defined in MS1."
+                },
+                {
+                  "fieldId": "AT706",
+                  "fieldName": "Time",
+                  "usage": "C",
+                  "minLength": 4,
+                  "maxLength": 8,
+                  "dataType": "TM",
+                  "fieldDescription": "Time expressed in 24-hour clock time. Time expressed in 24-hour clock time as follows: HHMM, or HHMMSS, or HHMMSSD, or HHMMSSDD, where H = hours (00-23), M = minutes (00-59), S = integer seconds (00-59) and DD = decimal seconds; decimal seconds are expressed as follows: D = tenths (0-9) and DD = hundredths (00-99). This should always be set in the time zone of the location defined in MS1."
+                }
+              ],
+              "syntaxRules": 5
+            }
+          ]
+        },
+        {
+          "segmentId": "LX",
+          "segmentName": "Transaction Set Line Number",
+          "usage": "M",
+          "maxRepeat": 1,
+          "purpose": "To reference a line number in a transaction set",
+          "fields": [
+            {
+              "fieldId": "LX01",
+              "fieldName": "Assigned Number",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 6,
+              "dataType": "N0",
+              "fieldDescription": "Number assigned for differentiation within a transaction set. This should be the same value as \"(S501) Stop Sequence Number\" on the 204. If an event is not related to a specific stop, use 0."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "segmentId": "SE",
+      "segmentName": "Transaction Set Trailer",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the end of the transaction set and provide the count of transmitted segments",
+      "fields": [
+        {
+          "fieldId": "SE01",
+          "fieldName": "Number of Included Segments",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 10,
+          "dataType": "N0",
+          "fieldDescription": "Total number of segments including ST and SE segments"
+        },
+        {
+          "fieldId": "SE02",
+          "fieldName": "Transaction Set Control Number",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 9,
+          "dataType": "AN",
+          "fieldDescription": "Transaction set control number (must match ST02)"
+        }
+      ]
+    }
+  ]
+}
