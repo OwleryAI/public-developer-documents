@@ -3,6 +3,20 @@
   "guidelineTitle": "EDI 214 Transportation Carrier Shipment Status Message",
   "guidelineVersion": "214 v2.3",
   "transactionCode": "214",
+  "implementationNotes": [
+    {
+      "topic": "LX Assigned Number and Stop Matching",
+      "description": "The LX01 (Assigned Number) directly corresponds to the stop sequence number from the original 204 Load Tender (S501 - Stop Sequence Number). For a standard two-stop load: LX*1 = pickup stop, LX*2 = dropoff stop. Multi-stop loads follow the same sequential mapping. If a tracking event is not related to a specific stop (e.g., en route / X6), use LX*0."
+    },
+    {
+      "topic": "MS1 Location Segment Required",
+      "description": "Each AT7 loop MUST include exactly one MS1 (Equipment, Shipment, or Real Property Location) segment. The MS1 provides the geographic location (city, state, country) of the tracking event. This location is used both for timezone resolution (to correctly interpret the AT7 date/time) and as a secondary validation to confirm stop matching. Omitting the MS1 segment will cause the tracking event to be rejected."
+    },
+    {
+      "topic": "AT7 Date/Time Timezone Convention",
+      "description": "The date (AT705) and time (AT706) in the AT7 segment must be expressed in the local timezone of the location specified in the MS1 segment. The system resolves the timezone from the MS1 city/state or coordinates."
+    }
+  ],
   "definitions": [
     {
       "segmentId": "ISA",
