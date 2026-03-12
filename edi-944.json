@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "guidelineTitle": "EDI 944 Warehouse Stock Transfer Receipt Advice",
-  "guidelineVersion": "944 v4.4",
+  "guidelineVersion": "1.0",
   "transactionCode": "944",
   "definitions": [
     {
