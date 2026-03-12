@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "guidelineTitle": "EDI 945 Warehouse Shipping Advice",
-  "guidelineVersion": "945 v4.3",
+  "guidelineVersion": "1.0",
   "transactionCode": "945",
   "definitions": [
     {
