@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "guidelineTitle": "EDI 990 Response to a Load Tender",
-  "guidelineVersion": "990 v4",
+  "guidelineVersion": "1.0",
   "transactionCode": "990",
   "definitions": [
     {
