@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "guidelineTitle": "EDI 204 Motor Carrier Load Tender",
-  "guidelineVersion": "Load Tender v5.10",
+  "guidelineVersion": "1.0",
   "transactionCode": "204",
   "definitions": [
     {
