@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "guidelineTitle": "EDI 940 Warehouse Shipping Order",
-  "guidelineVersion": "940 v4.2",
+  "guidelineVersion": "1.0",
   "transactionCode": "940",
   "definitions": [
     {
