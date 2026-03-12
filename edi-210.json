@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "guidelineTitle": "EDI 210 Freight Invoice",
-  "guidelineVersion": "4.2",
+  "guidelineVersion": "1.0",
   "transactionCode": "210",
   "definitions": [
     {
