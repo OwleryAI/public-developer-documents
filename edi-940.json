@@ -266,14 +266,14 @@
       ]
     },
     {
-      "segmentId": "W06",
+      "segmentId": "W05",
       "segmentName": "Warehouse Shipping Order Identification",
       "usage": "M",
       "maxRepeat": 1,
       "purpose": "To identify the warehouse shipping order being transmitted",
       "fields": [
         {
-          "fieldId": "W0601",
+          "fieldId": "W0501",
           "fieldName": "Reporting Code",
           "usage": "M",
           "minLength": 1,
@@ -300,7 +300,7 @@
           ]
         },
         {
-          "fieldId": "W0602",
+          "fieldId": "W0502",
           "fieldName": "Depositor Order Number",
           "usage": "M",
           "minLength": 1,
@@ -309,7 +309,7 @@
           "fieldDescription": "Number assigned by the depositor to identify the order"
         },
         {
-          "fieldId": "W0606",
+          "fieldId": "W0503",
           "fieldName": "Purchase Order Number",
           "usage": "O",
           "minLength": 1,
@@ -399,6 +399,38 @@
             {
               "value": "DO",
               "label": "Delivery Order Number"
+            },
+            {
+              "value": "PI",
+              "label": "Price Identifier"
+            },
+            {
+              "value": "SI",
+              "label": "Shipper Identifying Number"
+            },
+            {
+              "value": "LO",
+              "label": "Load Planning Number"
+            },
+            {
+              "value": "CR",
+              "label": "Customer Reference Number"
+            },
+            {
+              "value": "CO",
+              "label": "Customer Order Number"
+            },
+            {
+              "value": "CN",
+              "label": "Consignee Order Number"
+            },
+            {
+              "value": "MJ",
+              "label": "Model Number"
+            },
+            {
+              "value": "ZZ",
+              "label": "Mutually Defined"
             }
           ]
         },
@@ -437,6 +469,22 @@
             {
               "value": "02",
               "label": "Delivery Requested on This Date"
+            },
+            {
+              "value": "11",
+              "label": "Pickup Scheduled For"
+            },
+            {
+              "value": "35",
+              "label": "Delivered Date"
+            },
+            {
+              "value": "36",
+              "label": "Expiration Date"
+            },
+            {
+              "value": "70",
+              "label": "Dropoff Scheduled For"
             }
           ]
         },
@@ -448,9 +496,128 @@
           "maxLength": 8,
           "dataType": "DT",
           "fieldDescription": "Date expressed as CCYYMMDD"
+        },
+        {
+          "fieldId": "G6203",
+          "fieldName": "Time Qualifier",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying type of time",
+          "allowedValues": [
+            {
+              "value": "EP",
+              "label": "Earliest Pickup"
+            },
+            {
+              "value": "ED",
+              "label": "Earliest Dropoff"
+            },
+            {
+              "value": "LP",
+              "label": "Latest Pickup"
+            },
+            {
+              "value": "LD",
+              "label": "Latest Dropoff"
+            }
+          ]
+        },
+        {
+          "fieldId": "G6204",
+          "fieldName": "Time",
+          "usage": "O",
+          "minLength": 4,
+          "maxLength": 8,
+          "dataType": "TM",
+          "fieldDescription": "Time expressed in 24-hour clock time (HHMMSS)"
         }
       ],
       "syntaxRules": 3
+    },
+    {
+      "segmentId": "W66",
+      "segmentName": "Warehouse Carrier Information",
+      "usage": "O",
+      "maxRepeat": 1,
+      "purpose": "To specify carrier and shipment method details for the warehouse shipping order",
+      "fields": [
+        {
+          "fieldId": "W6601",
+          "fieldName": "Shipment Method of Payment",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying payment terms for transportation charges",
+          "allowedValues": [
+            {
+              "value": "CC",
+              "label": "Collect"
+            },
+            {
+              "value": "PP",
+              "label": "Prepaid"
+            },
+            {
+              "value": "TP",
+              "label": "Third Party Pay"
+            }
+          ]
+        },
+        {
+          "fieldId": "W6602",
+          "fieldName": "Transportation Method/Type Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying the method or type of transportation for the shipment",
+          "allowedValues": [
+            {
+              "value": "H",
+              "label": "Customer Pickup"
+            },
+            {
+              "value": "J",
+              "label": "Motor"
+            },
+            {
+              "value": "M",
+              "label": "Motor (Common Carrier)"
+            }
+          ]
+        },
+        {
+          "fieldId": "W6603",
+          "fieldName": "Pallet Exchange Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating pallet exchange requirements"
+        },
+        {
+          "fieldId": "W6604",
+          "fieldName": "Unit Load Option Code",
+          "usage": "O",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the unit load option"
+        },
+        {
+          "fieldId": "W6605",
+          "fieldName": "Routing",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 35,
+          "dataType": "AN",
+          "fieldDescription": "Free-form description of the routing or carrier"
+        }
+      ],
+      "syntaxRules": 1
     },
     {
       "segmentId": "LX",
@@ -548,13 +715,70 @@
                   "fieldDescription": "Code specifying the units in which a value is being expressed",
                   "allowedValues": [
                     {
+                      "value": "BG",
+                      "label": "Bag"
+                    },
+                    {
+                      "value": "BO",
+                      "label": "Bottle"
+                    },
+                    {
                       "value": "CA",
                       "label": "Case"
+                    },
+                    {
+                      "value": "CT",
+                      "label": "Carton"
+                    },
+                    {
+                      "value": "EA",
+                      "label": "Each"
+                    },
+                    {
+                      "value": "PA",
+                      "label": "Pail"
+                    },
+                    {
+                      "value": "PL",
+                      "label": "Pallet/Unit Load"
+                    },
+                    {
+                      "value": "RL",
+                      "label": "Roll"
+                    },
+                    {
+                      "value": "SV",
+                      "label": "Skid"
+                    },
+                    {
+                      "value": "TE",
+                      "label": "Tote"
+                    },
+                    {
+                      "value": "PH",
+                      "label": "Pack"
+                    },
+                    {
+                      "value": "LB",
+                      "label": "Pounds"
+                    },
+                    {
+                      "value": "KG",
+                      "label": "Kilograms"
                     }
                   ]
                 },
                 {
-                  "fieldId": "W0106",
+                  "fieldId": "W0103",
+                  "fieldName": "UPC Case Code",
+                  "usage": "O",
+                  "minLength": 12,
+                  "maxLength": 12,
+                  "dataType": "AN",
+                  "fieldDescription": "UPC/EAN case code (Universal Product Code)"
+                },
+                {
+                  "fieldId": "W0104",
                   "fieldName": "Product/Service ID Qualifier",
                   "usage": "M",
                   "minLength": 2,
@@ -569,7 +793,7 @@
                   ]
                 },
                 {
-                  "fieldId": "W0107",
+                  "fieldId": "W0105",
                   "fieldName": "Product/Service ID",
                   "usage": "M",
                   "minLength": 1,
@@ -579,6 +803,52 @@
                 }
               ],
               "syntaxRules": 4
+            },
+            {
+              "segmentId": "W20",
+              "segmentName": "Line Item Detail - Miscellaneous",
+              "usage": "O",
+              "maxRepeat": 1,
+              "purpose": "To specify miscellaneous line item detail for a warehouse shipping order, such as inner pack count",
+              "fields": [
+                {
+                  "fieldId": "W2001",
+                  "fieldName": "Pack",
+                  "usage": "M",
+                  "minLength": 1,
+                  "maxLength": 6,
+                  "dataType": "N0",
+                  "fieldDescription": "Number of inner packs per container"
+                },
+                {
+                  "fieldId": "W2002",
+                  "fieldName": "Size",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 8,
+                  "dataType": "R",
+                  "fieldDescription": "Size of the inner pack"
+                },
+                {
+                  "fieldId": "W2003",
+                  "fieldName": "Unit or Basis for Measurement Code",
+                  "usage": "O",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code specifying the units in which a value is being expressed",
+                  "allowedValues": [
+                    {
+                      "value": "EA",
+                      "label": "Each"
+                    },
+                    {
+                      "value": "CA",
+                      "label": "Case"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -593,52 +863,6 @@
       "purpose": "Loop containing party identification information",
       "fields": [],
       "nestedSegments": [
-        {
-          "segmentId": "N4",
-          "segmentName": "Geographic Location",
-          "usage": "O",
-          "maxRepeat": 1,
-          "purpose": "To specify the geographic place of the named party",
-          "fields": [
-            {
-              "fieldId": "N401",
-              "fieldName": "City Name",
-              "usage": "M",
-              "minLength": 2,
-              "maxLength": 30,
-              "dataType": "AN",
-              "fieldDescription": "Free-form text for city name"
-            },
-            {
-              "fieldId": "N402",
-              "fieldName": "State or Province Code",
-              "usage": "M",
-              "minLength": 2,
-              "maxLength": 2,
-              "dataType": "ID",
-              "fieldDescription": "State or province code"
-            },
-            {
-              "fieldId": "N403",
-              "fieldName": "Postal Code",
-              "usage": "M",
-              "minLength": 3,
-              "maxLength": 15,
-              "dataType": "ID",
-              "fieldDescription": "Postal zone code"
-            },
-            {
-              "fieldId": "N404",
-              "fieldName": "Country Code",
-              "usage": "O",
-              "minLength": 2,
-              "maxLength": 3,
-              "dataType": "ID",
-              "fieldDescription": "Code identifying the country"
-            }
-          ],
-          "syntaxRules": 1
-        },
         {
           "segmentId": "N1",
           "segmentName": "Party Identification",
@@ -670,6 +894,22 @@
                 {
                   "value": "WH",
                   "label": "Warehouse"
+                },
+                {
+                  "value": "BY",
+                  "label": "Buyer"
+                },
+                {
+                  "value": "CN",
+                  "label": "Consignee"
+                },
+                {
+                  "value": "BT",
+                  "label": "Bill To"
+                },
+                {
+                  "value": "CA",
+                  "label": "Carrier"
                 }
               ]
             },
@@ -729,6 +969,131 @@
               "fieldDescription": "Address information (line 2)"
             }
           ]
+        },
+        {
+          "segmentId": "N4",
+          "segmentName": "Geographic Location",
+          "usage": "O",
+          "maxRepeat": 1,
+          "purpose": "To specify the geographic place of the named party",
+          "fields": [
+            {
+              "fieldId": "N401",
+              "fieldName": "City Name",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 30,
+              "dataType": "AN",
+              "fieldDescription": "Free-form text for city name"
+            },
+            {
+              "fieldId": "N402",
+              "fieldName": "State or Province Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "State or province code"
+            },
+            {
+              "fieldId": "N403",
+              "fieldName": "Postal Code",
+              "usage": "M",
+              "minLength": 3,
+              "maxLength": 15,
+              "dataType": "ID",
+              "fieldDescription": "Postal zone code"
+            },
+            {
+              "fieldId": "N404",
+              "fieldName": "Country Code",
+              "usage": "O",
+              "minLength": 2,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the country"
+            },
+            {
+              "fieldId": "N405",
+              "fieldName": "Longitude Code",
+              "usage": "O",
+              "minLength": 1,
+              "maxLength": 10,
+              "dataType": "R",
+              "fieldDescription": "Code for longitude expressed in degrees, minutes, and seconds"
+            },
+            {
+              "fieldId": "N406",
+              "fieldName": "Latitude Code",
+              "usage": "O",
+              "minLength": 1,
+              "maxLength": 10,
+              "dataType": "R",
+              "fieldDescription": "Code for latitude expressed in degrees, minutes, and seconds"
+            }
+          ],
+          "syntaxRules": 1
+        },
+        {
+          "segmentId": "G61",
+          "segmentName": "Contact",
+          "usage": "O",
+          "maxRepeat": 3,
+          "purpose": "To identify a person or office to whom communications should be directed",
+          "fields": [
+            {
+              "fieldId": "G6101",
+              "fieldName": "Contact Function Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the major duty or responsibility of the person or group named",
+              "allowedValues": [
+                {
+                  "value": "CN",
+                  "label": "Contact"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6102",
+              "fieldName": "Name",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 60,
+              "dataType": "AN",
+              "fieldDescription": "Free-form name"
+            },
+            {
+              "fieldId": "G6103",
+              "fieldName": "Communication Number Qualifier",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the type of communication number",
+              "allowedValues": [
+                {
+                  "value": "EM",
+                  "label": "Email"
+                },
+                {
+                  "value": "TE",
+                  "label": "Telephone"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6104",
+              "fieldName": "Communication Number",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 256,
+              "dataType": "AN",
+              "fieldDescription": "Complete communications number including country or area code when applicable"
+            }
+          ]
         }
       ]
     },
@@ -767,24 +1132,12 @@
           "fieldDescription": "Code specifying the units",
           "allowedValues": [
             {
-              "value": "BO",
-              "label": "Bottle"
-            },
-            {
               "value": "BG",
               "label": "Bag"
             },
             {
-              "value": "PA",
-              "label": "Pail"
-            },
-            {
-              "value": "PL",
-              "label": "Pallet/Unit Load"
-            },
-            {
-              "value": "SV",
-              "label": "Skid"
+              "value": "BO",
+              "label": "Bottle"
             },
             {
               "value": "CA",
@@ -799,8 +1152,36 @@
               "label": "Each"
             },
             {
+              "value": "PA",
+              "label": "Pail"
+            },
+            {
+              "value": "PL",
+              "label": "Pallet/Unit Load"
+            },
+            {
               "value": "RL",
               "label": "Roll"
+            },
+            {
+              "value": "SV",
+              "label": "Skid"
+            },
+            {
+              "value": "TE",
+              "label": "Tote"
+            },
+            {
+              "value": "PH",
+              "label": "Pack"
+            },
+            {
+              "value": "LB",
+              "label": "Pounds"
+            },
+            {
+              "value": "KG",
+              "label": "Kilograms"
             }
           ]
         }
