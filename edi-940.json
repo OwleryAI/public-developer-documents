@@ -266,15 +266,15 @@
       ]
     },
     {
-      "segmentId": "W06",
-      "segmentName": "Warehouse Shipping Order Identification",
+      "segmentId": "W05",
+      "segmentName": "Shipping Order Identification",
       "usage": "M",
       "maxRepeat": 1,
-      "purpose": "To identify the warehouse shipping order being transmitted",
+      "purpose": "To identify the shipping order being transmitted",
       "fields": [
         {
-          "fieldId": "W0601",
-          "fieldName": "Reporting Code",
+          "fieldId": "W0501",
+          "fieldName": "Order Status Code",
           "usage": "M",
           "minLength": 1,
           "maxLength": 1,
@@ -300,7 +300,7 @@
           ]
         },
         {
-          "fieldId": "W0602",
+          "fieldId": "W0502",
           "fieldName": "Depositor Order Number",
           "usage": "M",
           "minLength": 1,
@@ -309,7 +309,7 @@
           "fieldDescription": "Number assigned by the depositor to identify the order"
         },
         {
-          "fieldId": "W0606",
+          "fieldId": "W0503",
           "fieldName": "Purchase Order Number",
           "usage": "O",
           "minLength": 1,
@@ -319,6 +319,226 @@
         }
       ],
       "syntaxRules": 1
+    },
+    {
+      "segmentId": "N1",
+      "segmentName": "Party Identification Loop",
+      "usage": "M",
+      "maxRepeat": 1,
+      "isLoopStart": true,
+      "purpose": "Loop containing party identification information",
+      "fields": [],
+      "nestedSegments": [
+        {
+          "segmentId": "N1",
+          "segmentName": "Party Identification",
+          "usage": "M",
+          "maxRepeat": 1,
+          "purpose": "To identify a party by type of organization, name, and code",
+          "fields": [
+            {
+              "fieldId": "N101",
+              "fieldName": "Entity Identifier Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
+              "allowedValues": [
+                {
+                  "value": "SH",
+                  "label": "Shipper"
+                },
+                {
+                  "value": "SF",
+                  "label": "Ship From"
+                },
+                {
+                  "value": "ST",
+                  "label": "Ship To"
+                },
+                {
+                  "value": "WH",
+                  "label": "Warehouse"
+                }
+              ]
+            },
+            {
+              "fieldId": "N102",
+              "fieldName": "Name",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 60,
+              "dataType": "AN",
+              "fieldDescription": "Free-form name"
+            },
+            {
+              "fieldId": "N103",
+              "fieldName": "Identification Code Qualifier",
+              "usage": "O",
+              "minLength": 1,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code designating the system/method of code structure used for Identification Code",
+              "allowedValues": [
+                {
+                  "value": "ZZ",
+                  "label": "Mutually Defined"
+                },
+                {
+                  "value": "93",
+                  "label": "Code assigned by the organization that is the ultimate destination of the transaction set"
+                }
+              ]
+            },
+            {
+              "fieldId": "N104",
+              "fieldName": "Identification Code",
+              "usage": "O",
+              "minLength": 2,
+              "maxLength": 80,
+              "dataType": "AN",
+              "fieldDescription": "Code identifying a party or other code"
+            }
+          ],
+          "syntaxRules": 2
+        },
+        {
+          "segmentId": "N3",
+          "segmentName": "Party Location",
+          "usage": "O",
+          "maxRepeat": 1,
+          "purpose": "To specify the location of the named party",
+          "fields": [
+            {
+              "fieldId": "N301",
+              "fieldName": "Address Information",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 55,
+              "dataType": "AN",
+              "fieldDescription": "Address information"
+            },
+            {
+              "fieldId": "N302",
+              "fieldName": "Address Information",
+              "usage": "O",
+              "minLength": 1,
+              "maxLength": 55,
+              "dataType": "AN",
+              "fieldDescription": "Address information (line 2)"
+            }
+          ]
+        },
+        {
+          "segmentId": "N4",
+          "segmentName": "Geographic Location",
+          "usage": "O",
+          "maxRepeat": 1,
+          "purpose": "To specify the geographic place of the named party",
+          "fields": [
+            {
+              "fieldId": "N401",
+              "fieldName": "City Name",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 30,
+              "dataType": "AN",
+              "fieldDescription": "Free-form text for city name"
+            },
+            {
+              "fieldId": "N402",
+              "fieldName": "State or Province Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "State or province code"
+            },
+            {
+              "fieldId": "N403",
+              "fieldName": "Postal Code",
+              "usage": "M",
+              "minLength": 3,
+              "maxLength": 15,
+              "dataType": "ID",
+              "fieldDescription": "Postal zone code"
+            },
+            {
+              "fieldId": "N404",
+              "fieldName": "Country Code",
+              "usage": "O",
+              "minLength": 2,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the country"
+            }
+          ],
+          "syntaxRules": 1
+        },
+        {
+          "segmentId": "G61",
+          "segmentName": "Contact",
+          "usage": "O",
+          "maxRepeat": 3,
+          "purpose": "To identify a person or office to whom communication should be directed",
+          "fields": [
+            {
+              "fieldId": "G6101",
+              "fieldName": "Contact Function Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the major duty or responsibility of the person or group named",
+              "allowedValues": [
+                {
+                  "value": "CN",
+                  "label": "General Contact"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6102",
+              "fieldName": "Name",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 60,
+              "dataType": "AN",
+              "fieldDescription": "Free-form name"
+            },
+            {
+              "fieldId": "G6103",
+              "fieldName": "Communication Number Qualifier",
+              "usage": "C",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the type of communication number",
+              "allowedValues": [
+                {
+                  "value": "TE",
+                  "label": "Telephone"
+                },
+                {
+                  "value": "EM",
+                  "label": "Electronic Mail"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6104",
+              "fieldName": "Communication Number",
+              "usage": "C",
+              "minLength": 1,
+              "maxLength": 80,
+              "dataType": "AN",
+              "fieldDescription": "Complete communications number including country or area code when applicable"
+            }
+          ],
+          "syntaxRules": 1
+        }
+      ]
     },
     {
       "segmentId": "N9",
@@ -448,9 +668,96 @@
           "maxLength": 8,
           "dataType": "DT",
           "fieldDescription": "Date expressed as CCYYMMDD"
+        },
+        {
+          "fieldId": "G6203",
+          "fieldName": "Time Qualifier",
+          "usage": "C",
+          "minLength": 1,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying type of time"
+        },
+        {
+          "fieldId": "G6204",
+          "fieldName": "Time",
+          "usage": "C",
+          "minLength": 4,
+          "maxLength": 8,
+          "dataType": "TM",
+          "fieldDescription": "Time expressed in 24-hour clock time"
         }
       ],
       "syntaxRules": 3
+    },
+    {
+      "segmentId": "W66",
+      "segmentName": "Warehouse Carrier Information",
+      "usage": "O",
+      "maxRepeat": 1,
+      "purpose": "To specify carrier and route information for a warehouse shipping order",
+      "fields": [
+        {
+          "fieldId": "W6601",
+          "fieldName": "Shipment Method of Payment",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying payment terms for transportation charges",
+          "allowedValues": [
+            {
+              "value": "CC",
+              "label": "Collect"
+            },
+            {
+              "value": "PP",
+              "label": "Prepaid"
+            },
+            {
+              "value": "TP",
+              "label": "Third Party Pay"
+            }
+          ]
+        },
+        {
+          "fieldId": "W6602",
+          "fieldName": "Transportation Method/Type Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying the method or type of transportation for the shipment"
+        },
+        {
+          "fieldId": "W6603",
+          "fieldName": "Pallet Exchange Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating pallet exchange arrangement"
+        },
+        {
+          "fieldId": "W6604",
+          "fieldName": "Unit Load Option Code",
+          "usage": "O",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the type of unit load device"
+        },
+        {
+          "fieldId": "W6605",
+          "fieldName": "Routing",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 35,
+          "dataType": "AN",
+          "fieldDescription": "Free-form description of the routing or route of the shipment"
+        }
+      ],
+      "syntaxRules": 1
     },
     {
       "segmentId": "LX",
@@ -489,6 +796,113 @@
           "fields": [],
           "nestedSegments": [
             {
+              "segmentId": "W01",
+              "segmentName": "Line Item Detail",
+              "usage": "M",
+              "maxRepeat": 1,
+              "purpose": "To specify line item detail for a warehouse shipping order",
+              "fields": [
+                {
+                  "fieldId": "W0101",
+                  "fieldName": "Quantity Ordered",
+                  "usage": "M",
+                  "minLength": 1,
+                  "maxLength": 15,
+                  "dataType": "R",
+                  "fieldDescription": "Quantity ordered"
+                },
+                {
+                  "fieldId": "W0102",
+                  "fieldName": "Unit or Basis for Measurement Code",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code specifying the units in which a value is being expressed",
+                  "allowedValues": [
+                    {
+                      "value": "CA",
+                      "label": "Case"
+                    },
+                    {
+                      "value": "EA",
+                      "label": "Each"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "W0103",
+                  "fieldName": "UPC Case Code",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 12,
+                  "dataType": "AN",
+                  "fieldDescription": "UPC Case Code for the item"
+                },
+                {
+                  "fieldId": "W0115",
+                  "fieldName": "Product/Service ID Qualifier",
+                  "usage": "O",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying the type/source of the descriptive number used in Product/Service ID",
+                  "allowedValues": [
+                    {
+                      "value": "VN",
+                      "label": "Vendor's (Seller's) Item Number"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "W0116",
+                  "fieldName": "Product/Service ID",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 48,
+                  "dataType": "AN",
+                  "fieldDescription": "Identifying number for a product or service"
+                }
+              ],
+              "syntaxRules": 4
+            },
+            {
+              "segmentId": "W20",
+              "segmentName": "Line Item Detail - Miscellaneous",
+              "usage": "O",
+              "maxRepeat": 1,
+              "purpose": "To specify miscellaneous line item detail for a warehouse shipping order",
+              "fields": [
+                {
+                  "fieldId": "W2001",
+                  "fieldName": "Pack",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 6,
+                  "dataType": "N0",
+                  "fieldDescription": "Number of inner containers, or number of eaches if there are no inner containers, per outer container"
+                },
+                {
+                  "fieldId": "W2002",
+                  "fieldName": "Size",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 8,
+                  "dataType": "R",
+                  "fieldDescription": "Size of supplier units in pack"
+                },
+                {
+                  "fieldId": "W2003",
+                  "fieldName": "Unit or Basis for Measurement Code",
+                  "usage": "O",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code specifying the units in which a value is being expressed"
+                }
+              ]
+            },
+            {
               "segmentId": "N9",
               "segmentName": "Extended Reference Information",
               "usage": "O",
@@ -521,212 +935,6 @@
                 }
               ],
               "syntaxRules": 2
-            },
-            {
-              "segmentId": "W01",
-              "segmentName": "Line Item Detail",
-              "usage": "M",
-              "maxRepeat": 1,
-              "purpose": "To specify line item detail for a warehouse shipping order",
-              "fields": [
-                {
-                  "fieldId": "W0101",
-                  "fieldName": "Quantity Ordered",
-                  "usage": "M",
-                  "minLength": 1,
-                  "maxLength": 15,
-                  "dataType": "R",
-                  "fieldDescription": "Quantity ordered"
-                },
-                {
-                  "fieldId": "W0102",
-                  "fieldName": "Unit or Basis for Measurement Code",
-                  "usage": "M",
-                  "minLength": 2,
-                  "maxLength": 2,
-                  "dataType": "ID",
-                  "fieldDescription": "Code specifying the units in which a value is being expressed",
-                  "allowedValues": [
-                    {
-                      "value": "CA",
-                      "label": "Case"
-                    }
-                  ]
-                },
-                {
-                  "fieldId": "W0106",
-                  "fieldName": "Product/Service ID Qualifier",
-                  "usage": "M",
-                  "minLength": 2,
-                  "maxLength": 2,
-                  "dataType": "ID",
-                  "fieldDescription": "Code identifying the type/source of the descriptive number",
-                  "allowedValues": [
-                    {
-                      "value": "VN",
-                      "label": "Vendor's (Seller's) Item Number"
-                    }
-                  ]
-                },
-                {
-                  "fieldId": "W0107",
-                  "fieldName": "Product/Service ID",
-                  "usage": "M",
-                  "minLength": 1,
-                  "maxLength": 48,
-                  "dataType": "AN",
-                  "fieldDescription": "Identifying number for a product or service"
-                }
-              ],
-              "syntaxRules": 4
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "segmentId": "N1",
-      "segmentName": "Party Identification Loop",
-      "usage": "M",
-      "maxRepeat": 1,
-      "isLoopStart": true,
-      "purpose": "Loop containing party identification information",
-      "fields": [],
-      "nestedSegments": [
-        {
-          "segmentId": "N4",
-          "segmentName": "Geographic Location",
-          "usage": "O",
-          "maxRepeat": 1,
-          "purpose": "To specify the geographic place of the named party",
-          "fields": [
-            {
-              "fieldId": "N401",
-              "fieldName": "City Name",
-              "usage": "M",
-              "minLength": 2,
-              "maxLength": 30,
-              "dataType": "AN",
-              "fieldDescription": "Free-form text for city name"
-            },
-            {
-              "fieldId": "N402",
-              "fieldName": "State or Province Code",
-              "usage": "M",
-              "minLength": 2,
-              "maxLength": 2,
-              "dataType": "ID",
-              "fieldDescription": "State or province code"
-            },
-            {
-              "fieldId": "N403",
-              "fieldName": "Postal Code",
-              "usage": "M",
-              "minLength": 3,
-              "maxLength": 15,
-              "dataType": "ID",
-              "fieldDescription": "Postal zone code"
-            },
-            {
-              "fieldId": "N404",
-              "fieldName": "Country Code",
-              "usage": "O",
-              "minLength": 2,
-              "maxLength": 3,
-              "dataType": "ID",
-              "fieldDescription": "Code identifying the country"
-            }
-          ],
-          "syntaxRules": 1
-        },
-        {
-          "segmentId": "N1",
-          "segmentName": "Party Identification",
-          "usage": "M",
-          "maxRepeat": 1,
-          "purpose": "To identify a party by type of organization, name, and code",
-          "fields": [
-            {
-              "fieldId": "N101",
-              "fieldName": "Entity Identifier Code",
-              "usage": "M",
-              "minLength": 2,
-              "maxLength": 3,
-              "dataType": "ID",
-              "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
-              "allowedValues": [
-                {
-                  "value": "ST",
-                  "label": "Ship To"
-                },
-                {
-                  "value": "SH",
-                  "label": "Shipper"
-                },
-                {
-                  "value": "SF",
-                  "label": "Ship From"
-                },
-                {
-                  "value": "WH",
-                  "label": "Warehouse"
-                }
-              ]
-            },
-            {
-              "fieldId": "N102",
-              "fieldName": "Name",
-              "usage": "M",
-              "minLength": 1,
-              "maxLength": 60,
-              "dataType": "AN",
-              "fieldDescription": "Free-form name"
-            },
-            {
-              "fieldId": "N103",
-              "fieldName": "Identification Code Qualifier",
-              "usage": "O",
-              "minLength": 1,
-              "maxLength": 2,
-              "dataType": "ID",
-              "fieldDescription": "Code designating the system/method of code structure used for Identification Code"
-            },
-            {
-              "fieldId": "N104",
-              "fieldName": "Identification Code",
-              "usage": "O",
-              "minLength": 2,
-              "maxLength": 80,
-              "dataType": "AN",
-              "fieldDescription": "Code identifying a party or other code"
-            }
-          ],
-          "syntaxRules": 2
-        },
-        {
-          "segmentId": "N3",
-          "segmentName": "Party Location",
-          "usage": "O",
-          "maxRepeat": 1,
-          "purpose": "To specify the location of the named party",
-          "fields": [
-            {
-              "fieldId": "N301",
-              "fieldName": "Address Information",
-              "usage": "M",
-              "minLength": 1,
-              "maxLength": 55,
-              "dataType": "AN",
-              "fieldDescription": "Address information"
-            },
-            {
-              "fieldId": "N302",
-              "fieldName": "Address Information",
-              "usage": "O",
-              "minLength": 1,
-              "maxLength": 55,
-              "dataType": "AN",
-              "fieldDescription": "Address information (line 2)"
             }
           ]
         }
