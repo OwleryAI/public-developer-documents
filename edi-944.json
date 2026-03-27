@@ -389,6 +389,24 @@
       "fields": [],
       "nestedSegments": [
         {
+          "segmentId": "LX",
+          "segmentName": "Transaction Set Line Number",
+          "usage": "O",
+          "maxRepeat": 1,
+          "purpose": "To reference a line number in a transaction set",
+          "fields": [
+            {
+              "fieldId": "LX01",
+              "fieldName": "Assigned Number",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 6,
+              "dataType": "N0",
+              "fieldDescription": "Number assigned for differentiation within a transaction set"
+            }
+          ]
+        },
+        {
           "segmentId": "W07",
           "segmentName": "Item Detail for Stock Receipt Loop",
           "usage": "M",
