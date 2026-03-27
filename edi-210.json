@@ -534,6 +534,10 @@
             {
               "value": "11",
               "label": "Shipped on This Date"
+            },
+            {
+              "value": "35",
+              "label": "Delivered on This Date"
             }
           ]
         },
@@ -970,7 +974,17 @@
               "minLength": 2,
               "maxLength": 2,
               "dataType": "ID",
-              "fieldDescription": "Code specifying type of date"
+              "fieldDescription": "Code specifying type of date",
+              "allowedValues": [
+                {
+                  "value": "11",
+                  "label": "Shipped on This Date"
+                },
+                {
+                  "value": "35",
+                  "label": "Delivered on This Date"
+                }
+              ]
             },
             {
               "fieldId": "G6202",

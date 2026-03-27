@@ -376,6 +376,10 @@
             {
               "value": "70",
               "label": "Scheduled Delivery Date"
+            },
+            {
+              "value": "35",
+              "label": "Delivered on This Date"
             }
           ]
         },
