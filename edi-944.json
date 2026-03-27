@@ -348,7 +348,7 @@
     {
       "segmentId": "G62",
       "segmentName": "Date/Time Reference",
-      "usage": "M",
+      "usage": "O",
       "maxRepeat": 5,
       "purpose": "To specify pertinent dates and times",
       "fields": [
@@ -359,7 +359,13 @@
           "minLength": 2,
           "maxLength": 2,
           "dataType": "ID",
-          "fieldDescription": "Code specifying type of date"
+          "fieldDescription": "Code specifying type of date",
+          "allowedValues": [
+            {
+              "value": "BS",
+              "label": "Product Receipt Date"
+            }
+          ]
         },
         {
           "fieldId": "G6202",
