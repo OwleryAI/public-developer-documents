@@ -411,7 +411,13 @@
                   "minLength": 2,
                   "maxLength": 3,
                   "dataType": "ID",
-                  "fieldDescription": "Code qualifying the Reference Identification"
+                  "fieldDescription": "Code qualifying the Reference Identification",
+                  "allowedValues": [
+                    {
+                      "value": "LT",
+                      "label": "Lot Number"
+                    }
+                  ]
                 },
                 {
                   "fieldId": "N902",
@@ -439,7 +445,7 @@
                   "minLength": 1,
                   "maxLength": 7,
                   "dataType": "R",
-                  "fieldDescription": "Quantity received"
+                  "fieldDescription": "Quantity of product received"
                 },
                 {
                   "fieldId": "W0702",
@@ -448,27 +454,11 @@
                   "minLength": 2,
                   "maxLength": 2,
                   "dataType": "ID",
-                  "fieldDescription": "Code specifying the units",
+                  "fieldDescription": "Code specifying the units of measurement",
                   "allowedValues": [
                     {
-                      "value": "LB",
-                      "label": "Pound"
-                    },
-                    {
-                      "value": "BO",
-                      "label": "Bottle"
-                    },
-                    {
-                      "value": "BG",
-                      "label": "Bag"
-                    },
-                    {
-                      "value": "PL",
-                      "label": "Pallet/Unit Load"
-                    },
-                    {
-                      "value": "SV",
-                      "label": "Skid"
+                      "value": "EA",
+                      "label": "Each"
                     },
                     {
                       "value": "CA",
@@ -479,8 +469,20 @@
                       "label": "Carton"
                     },
                     {
-                      "value": "EA",
-                      "label": "Each"
+                      "value": "PL",
+                      "label": "Pallet/Unit Load"
+                    },
+                    {
+                      "value": "LB",
+                      "label": "Pound"
+                    },
+                    {
+                      "value": "BG",
+                      "label": "Bag"
+                    },
+                    {
+                      "value": "BO",
+                      "label": "Bottle"
                     },
                     {
                       "value": "RL",
@@ -489,62 +491,224 @@
                     {
                       "value": "PA",
                       "label": "Pail"
+                    },
+                    {
+                      "value": "SV",
+                      "label": "Skid"
+                    },
+                    {
+                      "value": "BX",
+                      "label": "Box"
+                    },
+                    {
+                      "value": "DR",
+                      "label": "Drum"
+                    },
+                    {
+                      "value": "KG",
+                      "label": "Kilogram"
+                    },
+                    {
+                      "value": "PC",
+                      "label": "Piece"
+                    },
+                    {
+                      "value": "BD",
+                      "label": "Bundle"
                     }
                   ]
                 },
                 {
+                  "fieldId": "W0703",
+                  "fieldName": "U.P.C. Case Code",
+                  "usage": "C",
+                  "minLength": 12,
+                  "maxLength": 12,
+                  "dataType": "AN",
+                  "fieldDescription": "UPC Case Code (GTIN-12). At least one of W0703 or W0704 is required to identify the product."
+                },
+                {
                   "fieldId": "W0704",
                   "fieldName": "Product/Service ID Qualifier",
-                  "usage": "M",
+                  "usage": "C",
                   "minLength": 2,
                   "maxLength": 2,
                   "dataType": "ID",
-                  "fieldDescription": "Code identifying the type/source of the descriptive number"
+                  "fieldDescription": "Code identifying the type/source of the descriptive number used in W0705. At least one of W0703 or W0704 is required.",
+                  "allowedValues": [
+                    {
+                      "value": "VN",
+                      "label": "Vendor's (Seller's) Item Number"
+                    },
+                    {
+                      "value": "VA",
+                      "label": "Vendor's Part Number"
+                    },
+                    {
+                      "value": "UP",
+                      "label": "U.P.C. Consumer Package Code (1-5-5-1)"
+                    },
+                    {
+                      "value": "IN",
+                      "label": "Buyer's Item Number"
+                    },
+                    {
+                      "value": "SK",
+                      "label": "Stock Keeping Unit (SKU)"
+                    },
+                    {
+                      "value": "CB",
+                      "label": "Buyer's Catalog Number"
+                    }
+                  ]
                 },
                 {
                   "fieldId": "W0705",
                   "fieldName": "Product/Service ID",
-                  "usage": "M",
+                  "usage": "C",
                   "minLength": 1,
                   "maxLength": 48,
                   "dataType": "AN",
-                  "fieldDescription": "Identifying number for a product or service"
+                  "fieldDescription": "Identifying number for a product or service. Required when W0704 is present."
                 },
                 {
                   "fieldId": "W0706",
-                  "fieldName": "Product/Service ID Qualifier",
+                  "fieldName": "Product/Service ID Qualifier (2nd)",
                   "usage": "O",
-                  "minLength": 1,
+                  "minLength": 2,
                   "maxLength": 2,
                   "dataType": "ID",
-                  "fieldDescription": "Code identifying the type/source of the descriptive number",
+                  "fieldDescription": "Code identifying the type/source of a secondary product identifier in W0707",
                   "allowedValues": [
                     {
                       "value": "SC",
-                      "label": "Seller's Date Code"
+                      "label": "Seller's Date Code (expiration date)"
+                    },
+                    {
+                      "value": "UP",
+                      "label": "U.P.C. Consumer Package Code"
+                    },
+                    {
+                      "value": "CB",
+                      "label": "Buyer's Catalog Number"
+                    },
+                    {
+                      "value": "VA",
+                      "label": "Vendor's Part Number"
                     }
                   ]
                 },
                 {
                   "fieldId": "W0707",
-                  "fieldName": "Product/Service ID",
+                  "fieldName": "Product/Service ID (2nd)",
                   "usage": "O",
                   "minLength": 1,
-                  "maxLength": 1,
+                  "maxLength": 80,
                   "dataType": "AN",
-                  "fieldDescription": "Identifying number for a product or service"
+                  "fieldDescription": "Secondary identifying number for a product or service. Required when W0706 is present."
                 },
                 {
                   "fieldId": "W0708",
                   "fieldName": "Warehouse Lot Number",
-                  "usage": "M",
+                  "usage": "O",
                   "minLength": 1,
                   "maxLength": 12,
                   "dataType": "AN",
-                  "fieldDescription": "Warehouse lot number"
+                  "fieldDescription": "Warehouse lot/batch tracking number. Can also be provided via child N9*LT segment."
+                },
+                {
+                  "fieldId": "W0709",
+                  "fieldName": "Warehouse Detail Adjustment Identifier Code",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 1,
+                  "dataType": "ID",
+                  "fieldDescription": "Code indicating whether this is a normal or reversal adjustment to inventory",
+                  "allowedValues": [
+                    {
+                      "value": "1",
+                      "label": "Adjustment having normal effect on inventory"
+                    },
+                    {
+                      "value": "2",
+                      "label": "Adjustment having reversal effect on inventory"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "W0710",
+                  "fieldName": "Product/Service ID Qualifier (3rd)",
+                  "usage": "O",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying the type/source of a tertiary product identifier in W0711"
+                },
+                {
+                  "fieldId": "W0711",
+                  "fieldName": "Product/Service ID (3rd)",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "dataType": "AN",
+                  "fieldDescription": "Tertiary identifying number for a product or service. Required when W0710 is present."
                 }
               ],
               "syntaxRules": 4
+            },
+            {
+              "segmentId": "G69",
+              "segmentName": "Line Item Detail - Description",
+              "usage": "O",
+              "maxRepeat": 5,
+              "purpose": "To provide free-form text description of the line item",
+              "fields": [
+                {
+                  "fieldId": "G6901",
+                  "fieldName": "Free-form Description",
+                  "usage": "M",
+                  "minLength": 1,
+                  "maxLength": 45,
+                  "dataType": "AN",
+                  "fieldDescription": "Free-form descriptive text for the line item"
+                }
+              ]
+            },
+            {
+              "segmentId": "W20",
+              "segmentName": "Line Item Detail - Packing",
+              "usage": "O",
+              "maxRepeat": 1,
+              "purpose": "To specify packing details for the line item",
+              "fields": [
+                {
+                  "fieldId": "W2001",
+                  "fieldName": "Pack",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 6,
+                  "dataType": "N0",
+                  "fieldDescription": "Number of inner packs per outer container"
+                },
+                {
+                  "fieldId": "W2002",
+                  "fieldName": "Size",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 8,
+                  "dataType": "R",
+                  "fieldDescription": "Size of the inner pack"
+                },
+                {
+                  "fieldId": "W2003",
+                  "fieldName": "Unit or Basis for Measurement Code",
+                  "usage": "O",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code specifying the units for the size"
+                }
+              ]
             },
             {
               "segmentId": "W01",
@@ -561,6 +725,61 @@
                   "maxLength": 45,
                   "dataType": "AN",
                   "fieldDescription": "Free-form descriptive text"
+                }
+              ]
+            },
+            {
+              "segmentId": "W13",
+              "segmentName": "Item Detail Exception",
+              "usage": "O",
+              "maxRepeat": 50,
+              "isLoopStart": true,
+              "purpose": "To report exceptions to the received quantity (damaged, short, over)",
+              "fields": [
+                {
+                  "fieldId": "W1301",
+                  "fieldName": "Quantity",
+                  "usage": "M",
+                  "minLength": 1,
+                  "maxLength": 7,
+                  "dataType": "R",
+                  "fieldDescription": "Quantity of product for this exception"
+                },
+                {
+                  "fieldId": "W1302",
+                  "fieldName": "Unit or Basis for Measurement Code",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code specifying the units of measurement"
+                },
+                {
+                  "fieldId": "W1303",
+                  "fieldName": "Warehouse Detail Adjustment Identifier Code",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 1,
+                  "dataType": "ID",
+                  "fieldDescription": "Code indicating the condition of the exception",
+                  "allowedValues": [
+                    {
+                      "value": "01",
+                      "label": "Damaged"
+                    },
+                    {
+                      "value": "02",
+                      "label": "Over"
+                    },
+                    {
+                      "value": "03",
+                      "label": "Short"
+                    },
+                    {
+                      "value": "04",
+                      "label": "Rejected"
+                    }
+                  ]
                 }
               ]
             }
