@@ -272,6 +272,24 @@
       ]
     },
     {
+      "segmentId": "B2",
+      "segmentName": "Beginning Segment for Shipment Information Transaction",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To transmit identifying numbers and other basic data relating to the shipment",
+      "fields": [
+        {
+          "fieldId": "B204",
+          "fieldName": "Shipment Identification Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 30,
+          "dataType": "AN",
+          "fieldDescription": "Identification number assigned to the shipment by the shipper. Unique load number"
+        }
+      ]
+    },
+    {
       "segmentId": "B2A",
       "segmentName": "Set Purpose",
       "usage": "M",
@@ -304,24 +322,6 @@
       ]
     },
     {
-      "segmentId": "B2",
-      "segmentName": "Beginning Segment for Shipment Information Transaction",
-      "usage": "M",
-      "maxRepeat": 1,
-      "purpose": "To transmit identifying numbers and other basic data relating to the shipment",
-      "fields": [
-        {
-          "fieldId": "B204",
-          "fieldName": "Shipment Identification Number",
-          "usage": "M",
-          "minLength": 1,
-          "maxLength": 30,
-          "dataType": "AN",
-          "fieldDescription": "Identification number assigned to the shipment by the shipper. Unique load number"
-        }
-      ]
-    },
-    {
       "segmentId": "L11",
       "segmentName": "Business Instructions and Reference Number",
       "usage": "O",
@@ -344,7 +344,7 @@
           "minLength": 2,
           "maxLength": 3,
           "dataType": "ID",
-          "fieldDescription": "Code identifying the Reference Identification. Code identifying the Reference Identification. For the PRT type, the valid identifications are \"Dry Ice\" and \"Other\".",
+          "fieldDescription": "Code identifying the Reference Identification. For the PRT type, the valid identifications are \"Dry Ice\" and \"Other\".",
           "allowedValues": [
             {
               "value": "PO",
@@ -377,48 +377,15 @@
             {
               "value": "TN",
               "label": "Transaction Reference Number"
+            },
+            {
+              "value": "OQ",
+              "label": "Order Number"
             }
           ]
         }
       ],
       "syntaxRules": 2
-    },
-    {
-      "segmentId": "NTE",
-      "segmentName": "Note/Special Instruction",
-      "usage": "O",
-      "maxRepeat": 10,
-      "purpose": "To transmit information in a free-form format",
-      "fields": [
-        {
-          "fieldId": "NTE01",
-          "fieldName": "Note Reference Code",
-          "usage": "M",
-          "minLength": 3,
-          "maxLength": 3,
-          "dataType": "ID",
-          "fieldDescription": "Code identifying the functional area or purpose for which the note applies. Code identifying the functional area or purpose for which the note applies. Note that custom code TEM will be used to detail the temperature control settings of a reefer load.",
-          "allowedValues": [
-            {
-              "value": "ADD",
-              "label": "Additional Information"
-            },
-            {
-              "value": "TEM",
-              "label": "Temperature control information"
-            }
-          ]
-        },
-        {
-          "fieldId": "NTE02",
-          "fieldName": "Description",
-          "usage": "M",
-          "minLength": 1,
-          "maxLength": 80,
-          "dataType": "AN",
-          "fieldDescription": "A free-form description to clarify the related data elements"
-        }
-      ]
     },
     {
       "segmentId": "AT5",
@@ -469,6 +436,43 @@
       ]
     },
     {
+      "segmentId": "NTE",
+      "segmentName": "Note/Special Instruction",
+      "usage": "O",
+      "maxRepeat": 10,
+      "purpose": "To transmit information in a free-form format",
+      "fields": [
+        {
+          "fieldId": "NTE01",
+          "fieldName": "Note Reference Code",
+          "usage": "M",
+          "minLength": 3,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the functional area or purpose for which the note applies. Note that custom code TEM will be used to detail the temperature control settings of a reefer load.",
+          "allowedValues": [
+            {
+              "value": "ADD",
+              "label": "Additional Information"
+            },
+            {
+              "value": "TEM",
+              "label": "Temperature control information"
+            }
+          ]
+        },
+        {
+          "fieldId": "NTE02",
+          "fieldName": "Description",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 80,
+          "dataType": "AN",
+          "fieldDescription": "A free-form description to clarify the related data elements"
+        }
+      ]
+    },
+    {
       "segmentId": "N1",
       "segmentName": "Party Identification Loop",
       "usage": "M",
@@ -477,6 +481,64 @@
       "purpose": "Loop containing party identification information",
       "fields": [],
       "nestedSegments": [
+        {
+          "segmentId": "N1",
+          "segmentName": "Party Identification",
+          "usage": "M",
+          "maxRepeat": 1,
+          "purpose": "To identify a party by type of organization, name, and code",
+          "fields": [
+            {
+              "fieldId": "N101",
+              "fieldName": "Entity Identifier Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
+              "allowedValues": [
+                {
+                  "value": "SH",
+                  "label": "Shipper"
+                }
+              ]
+            },
+            {
+              "fieldId": "N102",
+              "fieldName": "Name",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 60,
+              "dataType": "AN",
+              "fieldDescription": "Free-form name"
+            },
+            {
+              "fieldId": "N103",
+              "fieldName": "Identification Code Qualifier",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code designating the system/method of code structure used for Identification Code",
+              "allowedValues": [
+                {
+                  "value": "ZZ",
+                  "label": "Mutually Defined"
+                }
+              ]
+            },
+            {
+              "fieldId": "N104",
+              "fieldName": "Identification Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 80,
+              "dataType": "AN",
+              "fieldDescription": "Code identifying a party or other code. Mutually agreed upon ID. Contact support@owlery.ai for the supported list."
+            }
+          ],
+          "syntaxRules": 2
+        },
         {
           "segmentId": "G61",
           "segmentName": "Contact",
@@ -538,64 +600,6 @@
             }
           ],
           "syntaxRules": 1
-        },
-        {
-          "segmentId": "N1",
-          "segmentName": "Party Identification",
-          "usage": "M",
-          "maxRepeat": 1,
-          "purpose": "To identify a party by type of organization, name, and code",
-          "fields": [
-            {
-              "fieldId": "N101",
-              "fieldName": "Entity Identifier Code",
-              "usage": "M",
-              "minLength": 2,
-              "maxLength": 3,
-              "dataType": "ID",
-              "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
-              "allowedValues": [
-                {
-                  "value": "SH",
-                  "label": "Shipper"
-                }
-              ]
-            },
-            {
-              "fieldId": "N102",
-              "fieldName": "Name",
-              "usage": "M",
-              "minLength": 1,
-              "maxLength": 60,
-              "dataType": "AN",
-              "fieldDescription": "Free-form name"
-            },
-            {
-              "fieldId": "N103",
-              "fieldName": "Identification Code Qualifier",
-              "usage": "M",
-              "minLength": 1,
-              "maxLength": 2,
-              "dataType": "ID",
-              "fieldDescription": "Code designating the system/method of code structure used for Identification Code",
-              "allowedValues": [
-                {
-                  "value": "ZZ",
-                  "label": "Mutually Defined"
-                }
-              ]
-            },
-            {
-              "fieldId": "N104",
-              "fieldName": "Identification Code",
-              "usage": "M",
-              "minLength": 2,
-              "maxLength": 80,
-              "dataType": "AN",
-              "fieldDescription": "Code identifying a party or other code. Mutually agreed upon ID. Contact support@owlery.ai for the supported list."
-            }
-          ],
-          "syntaxRules": 2
         }
       ]
     },
@@ -649,6 +653,44 @@
       "fields": [],
       "nestedSegments": [
         {
+          "segmentId": "S5",
+          "segmentName": "Stop-off Details",
+          "usage": "M",
+          "maxRepeat": 1,
+          "purpose": "To specify stop-off detail reference numbers and stop reason",
+          "fields": [
+            {
+              "fieldId": "S501",
+              "fieldName": "Stop Sequence Number",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 3,
+              "dataType": "N0",
+              "fieldDescription": "Stop sequence number. Identifying number for the specific stop and the sequence in which the stop is to be performed. Starts at 1."
+            },
+            {
+              "fieldId": "S502",
+              "fieldName": "Stop Reason Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code specifying the reason for the stop. Load = pickup stop, Unload = dropoff stop",
+              "allowedValues": [
+                {
+                  "value": "LD",
+                  "label": "Load"
+                },
+                {
+                  "value": "UL",
+                  "label": "Unload"
+                }
+              ]
+            }
+          ],
+          "syntaxRules": 3
+        },
+        {
           "segmentId": "L11",
           "segmentName": "Business Instructions and Reference Number",
           "usage": "O",
@@ -696,6 +738,10 @@
                 {
                   "value": "SO",
                   "label": "Shipper's Order (Invoice Number)"
+                },
+                {
+                  "value": "OQ",
+                  "label": "Order Number"
                 }
               ]
             }
@@ -777,14 +823,38 @@
           "syntaxRules": 3
         },
         {
-          "segmentId": "AT8",
-          "segmentName": "Shipment Weight, Packaging, and Quantity Data",
+          "segmentId": "LAD",
+          "segmentName": "Lading Detail",
           "usage": "O",
           "maxRepeat": 999,
-          "purpose": "To specify shipment weight, packaging, and quantity",
+          "purpose": "To specify lading detail in terms of packaging, quantity, and weight",
           "fields": [
             {
-              "fieldId": "AT802",
+              "fieldId": "LAD01",
+              "fieldName": "Packaging Form Code",
+              "usage": "C",
+              "minLength": 3,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code specifying the type of packaging",
+              "allowedValues": [
+                {
+                  "value": "PLT",
+                  "label": "Pallet"
+                }
+              ]
+            },
+            {
+              "fieldId": "LAD02",
+              "fieldName": "Lading Quantity",
+              "usage": "C",
+              "minLength": 1,
+              "maxLength": 7,
+              "dataType": "N0",
+              "fieldDescription": "Number of units (pieces) of the lading commodity"
+            },
+            {
+              "fieldId": "LAD05",
               "fieldName": "Weight Unit Code",
               "usage": "C",
               "minLength": 1,
@@ -803,40 +873,53 @@
               ]
             },
             {
-              "fieldId": "AT803",
+              "fieldId": "LAD06",
               "fieldName": "Weight",
               "usage": "C",
               "minLength": 1,
               "maxLength": 10,
               "dataType": "R",
               "fieldDescription": "Numeric value of weight"
-            },
-            {
-              "fieldId": "AT804",
-              "fieldName": "Lading Quantity",
-              "usage": "C",
-              "minLength": 1,
-              "maxLength": 7,
-              "dataType": "N0",
-              "fieldDescription": "Number of units (pieces) of the lading commodity"
-            },
-            {
-              "fieldId": "AT805",
-              "fieldName": "Packaging Form Code",
-              "usage": "C",
-              "minLength": 3,
-              "maxLength": 3,
-              "dataType": "ID",
-              "fieldDescription": "Code specifying the type of packaging",
-              "allowedValues": [
-                {
-                  "value": "PLT",
-                  "label": "Pallet"
-                }
-              ]
             }
           ],
           "syntaxRules": 2
+        },
+        {
+          "segmentId": "NTE",
+          "segmentName": "Note/Special Instruction",
+          "usage": "O",
+          "maxRepeat": 20,
+          "purpose": "To transmit information in a free-form format",
+          "fields": [
+            {
+              "fieldId": "NTE01",
+              "fieldName": "Note Reference Code",
+              "usage": "O",
+              "minLength": 3,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the functional area or purpose for which the note applies. Note that custom code REQ will be used to detail requirements on the stop. For example, a stop may have two REQ segments, one for requiring liftgate, and another for requiring tradeshow.",
+              "allowedValues": [
+                {
+                  "value": "ADD",
+                  "label": "Additional Information"
+                },
+                {
+                  "value": "REQ",
+                  "label": "Requirements on the stop"
+                }
+              ]
+            },
+            {
+              "fieldId": "NTE02",
+              "fieldName": "Description",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 80,
+              "dataType": "AN",
+              "fieldDescription": "A free-form description to clarify the related data elements"
+            }
+          ]
         },
         {
           "segmentId": "N1",
@@ -847,6 +930,141 @@
           "purpose": "Loop containing party identification information",
           "fields": [],
           "nestedSegments": [
+            {
+              "segmentId": "N1",
+              "segmentName": "Party Identification",
+              "usage": "M",
+              "maxRepeat": 1,
+              "purpose": "To identify a party by type of organization, name, and code",
+              "fields": [
+                {
+                  "fieldId": "N101",
+                  "fieldName": "Entity Identifier Code",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 3,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
+                  "allowedValues": [
+                    {
+                      "value": "WH",
+                      "label": "Warehouse"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "N102",
+                  "fieldName": "Name",
+                  "usage": "M",
+                  "minLength": 1,
+                  "maxLength": 60,
+                  "dataType": "AN",
+                  "fieldDescription": "Free-form name"
+                },
+                {
+                  "fieldId": "N103",
+                  "fieldName": "Identification Code Qualifier",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code designating the system/method of code structure used for Identification Code",
+                  "allowedValues": [
+                    {
+                      "value": "93",
+                      "label": "Code assigned by the organization that is the ultimate destination of the transaction set"
+                    },
+                    {
+                      "value": "ZZ",
+                      "label": "Mutually Defined"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "N104",
+                  "fieldName": "Identification Code",
+                  "usage": "O",
+                  "minLength": 2,
+                  "maxLength": 80,
+                  "dataType": "AN",
+                  "fieldDescription": "Code identifying a party or other code"
+                }
+              ],
+              "syntaxRules": 2
+            },
+            {
+              "segmentId": "N3",
+              "segmentName": "Party Location",
+              "usage": "M",
+              "maxRepeat": 1,
+              "purpose": "To specify the location of the named party",
+              "fields": [
+                {
+                  "fieldId": "N301",
+                  "fieldName": "Address Information",
+                  "usage": "M",
+                  "minLength": 1,
+                  "maxLength": 55,
+                  "dataType": "AN",
+                  "fieldDescription": "Address information. Street Address 1"
+                },
+                {
+                  "fieldId": "N302",
+                  "fieldName": "Address Information",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 55,
+                  "dataType": "AN",
+                  "fieldDescription": "Address information (line 2). Street Address 2"
+                }
+              ]
+            },
+            {
+              "segmentId": "N4",
+              "segmentName": "Geographic Location",
+              "usage": "M",
+              "maxRepeat": 1,
+              "purpose": "To specify the geographic place of the named party",
+              "fields": [
+                {
+                  "fieldId": "N401",
+                  "fieldName": "City Name",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 30,
+                  "dataType": "AN",
+                  "fieldDescription": "Free-form text for city name"
+                },
+                {
+                  "fieldId": "N402",
+                  "fieldName": "State or Province Code",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "State or province code"
+                },
+                {
+                  "fieldId": "N403",
+                  "fieldName": "Postal Code",
+                  "usage": "M",
+                  "minLength": 3,
+                  "maxLength": 15,
+                  "dataType": "ID",
+                  "fieldDescription": "Postal zone code"
+                },
+                {
+                  "fieldId": "N404",
+                  "fieldName": "Country Code",
+                  "usage": "M",
+                  "minLength": 2,
+                  "maxLength": 3,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying the country"
+                }
+              ],
+              "syntaxRules": 1
+            },
             {
               "segmentId": "G61",
               "segmentName": "Contact",
@@ -908,190 +1126,8 @@
                 }
               ],
               "syntaxRules": 1
-            },
-            {
-              "segmentId": "N4",
-              "segmentName": "Geographic Location",
-              "usage": "M",
-              "maxRepeat": 1,
-              "purpose": "To specify the geographic place of the named party",
-              "fields": [
-                {
-                  "fieldId": "N401",
-                  "fieldName": "City Name",
-                  "usage": "M",
-                  "minLength": 2,
-                  "maxLength": 30,
-                  "dataType": "AN",
-                  "fieldDescription": "Free-form text for city name"
-                },
-                {
-                  "fieldId": "N402",
-                  "fieldName": "State or Province Code",
-                  "usage": "M",
-                  "minLength": 2,
-                  "maxLength": 2,
-                  "dataType": "ID",
-                  "fieldDescription": "State or province code"
-                },
-                {
-                  "fieldId": "N403",
-                  "fieldName": "Postal Code",
-                  "usage": "M",
-                  "minLength": 3,
-                  "maxLength": 15,
-                  "dataType": "ID",
-                  "fieldDescription": "Postal zone code"
-                },
-                {
-                  "fieldId": "N404",
-                  "fieldName": "Country Code",
-                  "usage": "M",
-                  "minLength": 2,
-                  "maxLength": 3,
-                  "dataType": "ID",
-                  "fieldDescription": "Code identifying the country"
-                }
-              ],
-              "syntaxRules": 1
-            },
-            {
-              "segmentId": "N1",
-              "segmentName": "Party Identification",
-              "usage": "M",
-              "maxRepeat": 1,
-              "purpose": "To identify a party by type of organization, name, and code",
-              "fields": [
-                {
-                  "fieldId": "N101",
-                  "fieldName": "Entity Identifier Code",
-                  "usage": "M",
-                  "minLength": 2,
-                  "maxLength": 3,
-                  "dataType": "ID",
-                  "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
-                  "allowedValues": [
-                    {
-                      "value": "WH",
-                      "label": "Warehouse"
-                    }
-                  ]
-                },
-                {
-                  "fieldId": "N102",
-                  "fieldName": "Name",
-                  "usage": "M",
-                  "minLength": 1,
-                  "maxLength": 60,
-                  "dataType": "AN",
-                  "fieldDescription": "Free-form name"
-                }
-              ],
-              "syntaxRules": 2
-            },
-            {
-              "segmentId": "N3",
-              "segmentName": "Party Location",
-              "usage": "M",
-              "maxRepeat": 1,
-              "purpose": "To specify the location of the named party",
-              "fields": [
-                {
-                  "fieldId": "N301",
-                  "fieldName": "Address Information",
-                  "usage": "M",
-                  "minLength": 1,
-                  "maxLength": 55,
-                  "dataType": "AN",
-                  "fieldDescription": "Address information. Street Address 1"
-                },
-                {
-                  "fieldId": "N302",
-                  "fieldName": "Address Information",
-                  "usage": "O",
-                  "minLength": 1,
-                  "maxLength": 55,
-                  "dataType": "AN",
-                  "fieldDescription": "Address information (line 2). Street Address 2"
-                }
-              ]
             }
           ]
-        },
-        {
-          "segmentId": "NTE",
-          "segmentName": "Note/Special Instruction",
-          "usage": "O",
-          "maxRepeat": 20,
-          "purpose": "To transmit information in a free-form format",
-          "fields": [
-            {
-              "fieldId": "NTE01",
-              "fieldName": "Note Reference Code",
-              "usage": "O",
-              "minLength": 3,
-              "maxLength": 3,
-              "dataType": "ID",
-              "fieldDescription": "Code identifying the functional area or purpose for which the note applies. Code identifying the functional area or purpose for which the note applies. Note that custom code REQ will be used to detail requirements on the stop. For example, a stop may have two REQ segments, one for requiring liftgate, and another for requiring tradeshow.",
-              "allowedValues": [
-                {
-                  "value": "ADD",
-                  "label": "Additional Information"
-                },
-                {
-                  "value": "REQ",
-                  "label": "Requirements on the stop"
-                }
-              ]
-            },
-            {
-              "fieldId": "NTE02",
-              "fieldName": "Description",
-              "usage": "M",
-              "minLength": 1,
-              "maxLength": 80,
-              "dataType": "AN",
-              "fieldDescription": "A free-form description to clarify the related data elements"
-            }
-          ]
-        },
-        {
-          "segmentId": "S5",
-          "segmentName": "Stop-off Details",
-          "usage": "M",
-          "maxRepeat": 1,
-          "purpose": "To specify stop-off detail reference numbers and stop reason",
-          "fields": [
-            {
-              "fieldId": "S501",
-              "fieldName": "Stop Sequence Number",
-              "usage": "M",
-              "minLength": 1,
-              "maxLength": 3,
-              "dataType": "N0",
-              "fieldDescription": "Stop sequence number. Identifying number for the specific stop and the sequence in which the stop is to be performed. Starts at 1."
-            },
-            {
-              "fieldId": "S502",
-              "fieldName": "Stop Reason Code",
-              "usage": "M",
-              "minLength": 2,
-              "maxLength": 2,
-              "dataType": "ID",
-              "fieldDescription": "Code specifying the reason for the stop. Load = pickup stop, Unload = dropoff stop",
-              "allowedValues": [
-                {
-                  "value": "LD",
-                  "label": "Load"
-                },
-                {
-                  "value": "UL",
-                  "label": "Unload"
-                }
-              ]
-            }
-          ],
-          "syntaxRules": 3
         }
       ]
     },
