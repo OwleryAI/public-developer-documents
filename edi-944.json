@@ -770,5 +770,23 @@
         }
       ]
     }
+  ],
+  "implementationNotes": [
+    {
+      "topic": "W07 Loop Structure",
+      "description": "The W07 loop (Item Detail for Stock Receipt) is the primary mechanism for reporting received items. Each W07 loop represents one line item and contains: the W07 segment itself (quantity, UOM, product identifiers, lot number), an optional N9 segment for extended references (e.g., N9*LT for lot number as a fallback), and an optional W01 segment for free-form line item descriptions. The loop repeats once per item received."
+    },
+    {
+      "topic": "W07 Product Identification",
+      "description": "W07 supports up to two product identifier pairs (W0704/W0705 and W0706/W0707). The primary pair (W0704/W0705) is required and typically uses qualifier VN (Vendor's Item Number) with the SKU. The secondary pair (W0706/W0707) is optional and can convey additional identifiers: SC (Seller's Date Code) for expiration dates, UP (UPC Consumer Package Code), or CB (Buyer's Catalog Number). Our system resolves the SKU by preferring the pair with qualifier VA (Vendor's Part Number), falling back to the primary pair."
+    },
+    {
+      "topic": "W07 Lot Number",
+      "description": "Warehouse lot number can be provided in two ways: directly in W0708 (Warehouse Lot Number field on the W07 segment), or via a child N9 segment with qualifier LT (N9*LT*<lot_number>). The W07-08 field takes precedence. If both are provided, the direct W07-08 value is used."
+    },
+    {
+      "topic": "G62 Date/Time Reference",
+      "description": "The G62 segment at the header level is optional and conveys dates relevant to the receipt. The primary qualifier is BS (Product Receipt Date), indicating when goods were received at the warehouse. Date is expressed in CCYYMMDD format. Time fields (G6203/G6204) are not used in our 944 implementation."
+    }
   ]
 }
