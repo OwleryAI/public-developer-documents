@@ -540,15 +540,15 @@
                   "minLength": 2,
                   "maxLength": 2,
                   "dataType": "ID",
-                  "fieldDescription": "Code indicating the status of an order or shipment",
+                  "fieldDescription": "Code indicating the status of the shipment line item",
                   "allowedValues": [
                     {
                       "value": "CC",
-                      "label": "Shipment Complete on (Date)"
+                      "label": "Shipment Complete on Date"
                     },
                     {
                       "value": "CP",
-                      "label": "Partial Shipment (items partially shipped)"
+                      "label": "Partial Shipment"
                     }
                   ]
                 },
@@ -557,27 +557,27 @@
                   "fieldName": "Quantity Ordered",
                   "usage": "M",
                   "minLength": 1,
-                  "maxLength": 15,
+                  "maxLength": 7,
                   "dataType": "R",
-                  "fieldDescription": "Quantity ordered"
+                  "fieldDescription": "Quantity originally ordered"
                 },
                 {
                   "fieldId": "W1203",
                   "fieldName": "Number of Units Shipped",
                   "usage": "M",
                   "minLength": 1,
-                  "maxLength": 10,
+                  "maxLength": 7,
                   "dataType": "R",
-                  "fieldDescription": "Numeric value of units shipped"
+                  "fieldDescription": "Quantity actually shipped"
                 },
                 {
                   "fieldId": "W1204",
                   "fieldName": "Quantity Difference",
                   "usage": "M",
                   "minLength": 1,
-                  "maxLength": 9,
+                  "maxLength": 7,
                   "dataType": "R",
-                  "fieldDescription": "Quantity difference between ordered and shipped"
+                  "fieldDescription": "Difference between quantity ordered and quantity shipped"
                 },
                 {
                   "fieldId": "W1205",
@@ -586,51 +586,134 @@
                   "minLength": 2,
                   "maxLength": 2,
                   "dataType": "ID",
-                  "fieldDescription": "Code specifying the units"
+                  "fieldDescription": "Code specifying the units of measurement",
+                  "allowedValues": [
+                    {
+                      "value": "EA",
+                      "label": "Each"
+                    },
+                    {
+                      "value": "CA",
+                      "label": "Case"
+                    },
+                    {
+                      "value": "CT",
+                      "label": "Carton"
+                    },
+                    {
+                      "value": "PL",
+                      "label": "Pallet/Unit Load"
+                    },
+                    {
+                      "value": "LB",
+                      "label": "Pound"
+                    },
+                    {
+                      "value": "BG",
+                      "label": "Bag"
+                    },
+                    {
+                      "value": "BO",
+                      "label": "Bottle"
+                    },
+                    {
+                      "value": "RL",
+                      "label": "Roll"
+                    },
+                    {
+                      "value": "PA",
+                      "label": "Pail"
+                    },
+                    {
+                      "value": "SV",
+                      "label": "Skid"
+                    },
+                    {
+                      "value": "BX",
+                      "label": "Box"
+                    },
+                    {
+                      "value": "DR",
+                      "label": "Drum"
+                    },
+                    {
+                      "value": "KG",
+                      "label": "Kilogram"
+                    },
+                    {
+                      "value": "PC",
+                      "label": "Piece"
+                    },
+                    {
+                      "value": "BD",
+                      "label": "Bundle"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "W1206",
+                  "fieldName": "U.P.C. Case Code",
+                  "usage": "C",
+                  "minLength": 12,
+                  "maxLength": 12,
+                  "dataType": "AN",
+                  "fieldDescription": "UPC Case Code (GTIN-12). At least one of W1206 or W1207 is required to identify the product."
                 },
                 {
                   "fieldId": "W1207",
                   "fieldName": "Product/Service ID Qualifier",
-                  "usage": "M",
+                  "usage": "C",
                   "minLength": 2,
                   "maxLength": 2,
                   "dataType": "ID",
-                  "fieldDescription": "Code identifying the type/source of the descriptive number",
+                  "fieldDescription": "Code identifying the type/source of the descriptive number used in W1208. At least one of W1206 or W1207 is required.",
                   "allowedValues": [
                     {
-                      "value": "UK",
-                      "label": "GTIN-14"
+                      "value": "VN",
+                      "label": "Vendor's (Seller's) Item Number"
                     },
                     {
-                      "value": "UP",
-                      "label": "GTIN-12"
-                    },
-                    {
-                      "value": "EO",
-                      "label": "GTIN-8"
-                    },
-                    {
-                      "value": "EN",
-                      "label": "GTIN-13"
+                      "value": "VA",
+                      "label": "Vendor's Part Number"
                     },
                     {
                       "value": "SK",
                       "label": "Stock Keeping Unit (SKU)"
                     },
                     {
-                      "value": "VN",
-                      "label": "Vendor's (Seller's) Item Number"
+                      "value": "UP",
+                      "label": "U.P.C. Consumer Package Code (1-5-5-1)"
+                    },
+                    {
+                      "value": "UK",
+                      "label": "GTIN-14"
+                    },
+                    {
+                      "value": "EN",
+                      "label": "GTIN-13"
+                    },
+                    {
+                      "value": "EO",
+                      "label": "GTIN-8"
+                    },
+                    {
+                      "value": "IN",
+                      "label": "Buyer's Item Number"
+                    },
+                    {
+                      "value": "CB",
+                      "label": "Buyer's Catalog Number"
                     }
                   ]
                 },
                 {
                   "fieldId": "W1208",
                   "fieldName": "Product/Service ID",
-                  "usage": "M",
+                  "usage": "C",
                   "minLength": 1,
                   "maxLength": 48,
                   "dataType": "AN",
-                  "fieldDescription": "Identifying number for a product or service"
+                  "fieldDescription": "Identifying number for a product or service. Required when W1207 is present."
                 },
                 {
                   "fieldId": "W1209",
@@ -639,17 +722,84 @@
                   "minLength": 1,
                   "maxLength": 12,
                   "dataType": "AN",
-                  "fieldDescription": "Warehouse lot number"
+                  "fieldDescription": "Warehouse lot/batch tracking number"
                 },
                 {
-                  "fieldId": "W1213",
-                  "fieldName": "Product/Service ID Qualifier",
+                  "fieldId": "W1210",
+                  "fieldName": "Weight",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 8,
+                  "dataType": "R",
+                  "fieldDescription": "Weight of the line item"
+                },
+                {
+                  "fieldId": "W1211",
+                  "fieldName": "Weight Qualifier",
+                  "usage": "O",
+                  "minLength": 1,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code qualifying the weight",
+                  "allowedValues": [
+                    {
+                      "value": "G",
+                      "label": "Gross Weight"
+                    },
+                    {
+                      "value": "N",
+                      "label": "Net Weight"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "W1212",
+                  "fieldName": "Weight Unit Code",
                   "usage": "O",
                   "minLength": 2,
                   "maxLength": 2,
                   "dataType": "ID",
-                  "fieldDescription": "Code identifying the type/source of the descriptive number",
+                  "fieldDescription": "Code specifying the weight unit",
                   "allowedValues": [
+                    {
+                      "value": "LB",
+                      "label": "Pound"
+                    },
+                    {
+                      "value": "KG",
+                      "label": "Kilogram"
+                    },
+                    {
+                      "value": "OZ",
+                      "label": "Ounce"
+                    }
+                  ]
+                },
+                {
+                  "fieldId": "W1213",
+                  "fieldName": "Product/Service ID Qualifier (2nd)",
+                  "usage": "O",
+                  "minLength": 2,
+                  "maxLength": 2,
+                  "dataType": "ID",
+                  "fieldDescription": "Code identifying a secondary product identifier in W1214",
+                  "allowedValues": [
+                    {
+                      "value": "VN",
+                      "label": "Vendor's (Seller's) Item Number"
+                    },
+                    {
+                      "value": "VA",
+                      "label": "Vendor's Part Number"
+                    },
+                    {
+                      "value": "UP",
+                      "label": "U.P.C. Consumer Package Code"
+                    },
+                    {
+                      "value": "UK",
+                      "label": "GTIN-14"
+                    },
                     {
                       "value": "EN",
                       "label": "GTIN-13"
@@ -659,33 +809,49 @@
                       "label": "GTIN-8"
                     },
                     {
-                      "value": "UK",
-                      "label": "GTIN-14"
+                      "value": "SK",
+                      "label": "Stock Keeping Unit (SKU)"
                     },
                     {
-                      "value": "UP",
-                      "label": "GTIN-12"
+                      "value": "CB",
+                      "label": "Buyer's Catalog Number"
                     }
                   ]
                 },
                 {
                   "fieldId": "W1214",
-                  "fieldName": "Product/Service ID",
+                  "fieldName": "Product/Service ID (2nd)",
                   "usage": "O",
                   "minLength": 1,
                   "maxLength": 48,
                   "dataType": "AN",
-                  "fieldDescription": "Identifying number for a product or service"
+                  "fieldDescription": "Secondary identifying number. Required when W1213 is present."
                 },
                 {
                   "fieldId": "W1215",
-                  "fieldName": "Product/Service ID Qualifier",
+                  "fieldName": "Product/Service ID Qualifier (3rd)",
                   "usage": "O",
                   "minLength": 2,
                   "maxLength": 2,
                   "dataType": "ID",
-                  "fieldDescription": "Code identifying the type/source of the descriptive number",
+                  "fieldDescription": "Code identifying a tertiary product identifier in W1216",
                   "allowedValues": [
+                    {
+                      "value": "VN",
+                      "label": "Vendor's (Seller's) Item Number"
+                    },
+                    {
+                      "value": "VA",
+                      "label": "Vendor's Part Number"
+                    },
+                    {
+                      "value": "UP",
+                      "label": "U.P.C. Consumer Package Code"
+                    },
+                    {
+                      "value": "UK",
+                      "label": "GTIN-14"
+                    },
                     {
                       "value": "EN",
                       "label": "GTIN-13"
@@ -695,23 +861,23 @@
                       "label": "GTIN-8"
                     },
                     {
-                      "value": "UK",
-                      "label": "GTIN-14"
+                      "value": "SK",
+                      "label": "Stock Keeping Unit (SKU)"
                     },
                     {
-                      "value": "UP",
-                      "label": "GTIN-12"
+                      "value": "CB",
+                      "label": "Buyer's Catalog Number"
                     }
                   ]
                 },
                 {
                   "fieldId": "W1216",
-                  "fieldName": "Product/Service ID",
+                  "fieldName": "Product/Service ID (3rd)",
                   "usage": "O",
                   "minLength": 1,
                   "maxLength": 48,
                   "dataType": "AN",
-                  "fieldDescription": "Identifying number for a product or service"
+                  "fieldDescription": "Tertiary identifying number. Required when W1215 is present."
                 },
                 {
                   "fieldId": "W1217",
@@ -720,7 +886,7 @@
                   "minLength": 2,
                   "maxLength": 2,
                   "dataType": "ID",
-                  "fieldDescription": "Code indicating the reason for change in line item"
+                  "fieldDescription": "Code indicating the reason for a line item change or status"
                 }
               ],
               "syntaxRules": 6
