@@ -905,27 +905,5 @@
         }
       ]
     }
-  ],
-  "implementationNotes": [
-    {
-      "topic": "W12 Element Mapping",
-      "description": "The W12 segment contains item detail for warehouse shipping orders. Our parser extracts: W1201 (Shipment Status - CC or CP), W1202 (Quantity), W1205 (Unit of Measure), W1207/W1208 (Product ID Qualifier/ID), and W1209 (Warehouse Lot Number). Fields W1203 (Number of Units Shipped), W1204 (Quantity Difference), and W1213-W1217 (additional product IDs, change reason) are present in the X12 standard but not currently consumed by our business logic."
-    },
-    {
-      "topic": "Header-Level G62 vs Item-Level G62",
-      "description": "The 945 supports G62 at two levels: (1) Header-level G62 with qualifiers 10/02/11/70 for ship/delivery dates - currently optional and not parsed by our system. (2) Item-level G62 nested within the W12 loop with qualifier 36 (Expiration Date) - this IS parsed and mapped to item expiration dates."
-    },
-    {
-      "topic": "MAN (Marks and Numbers) SSCC-18",
-      "description": "The MAN segment carries SSCC-18 barcodes for pallet-level identification. Our parser accepts both AA (EAN.UCC SSCC) and GM (SSCC-18 with Application Identifier) qualifiers, normalizing both to AA internally. The SSCC-18 is extracted and attached to the corresponding LX loop items."
-    },
-    {
-      "topic": "W06 Reporting Code",
-      "description": "W0601 indicates the type of shipment report. F (Final) means complete shipment confirmation. J (Journal/Initial) is a preliminary notification that may be followed by a Final. Our system processes both codes."
-    },
-    {
-      "topic": "Shipment Status and Partial Shipments",
-      "description": "W1201 indicates item-level shipment status. CC (Completed) means the line item was fully shipped. CP (Partial) means only part of the ordered quantity was shipped. Our dispatcher currently only processes CC items - CP items are filtered out during shipment item mapping."
-    }
   ]
 }
