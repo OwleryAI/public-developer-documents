@@ -691,7 +691,6 @@
       "syntaxRules": 3
     },
     {
-    {
       "segmentId": "NTE",
       "segmentName": "Note/Special Instruction",
       "usage": "O",
@@ -724,6 +723,7 @@
         }
       ]
     },
+    {
       "segmentId": "W66",
       "segmentName": "Warehouse Carrier Information",
       "usage": "O",
