@@ -516,6 +516,39 @@
       "syntaxRules": 3
     },
     {
+      "segmentId": "NTE",
+      "segmentName": "Note/Special Instruction",
+      "usage": "O",
+      "maxRepeat": 10,
+      "purpose": "To transmit information in a free-form format",
+      "fields": [
+        {
+          "fieldId": "NTE01",
+          "fieldName": "Note Reference Code",
+          "usage": "M",
+          "minLength": 3,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the functional area or purpose for which the note applies. Owlery uses WHI for order-level warehouse instructions.",
+          "allowedValues": [
+            {
+              "value": "WHI",
+              "label": "Warehouse Instruction"
+            }
+          ]
+        },
+        {
+          "fieldId": "NTE02",
+          "fieldName": "Description",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 80,
+          "dataType": "AN",
+          "fieldDescription": "Free-form warehouse note. Commas, colons, digits, and repeated spaces are allowed. Do not include X12 delimiters such as '*', '~', or '>' in the note text."
+        }
+      ]
+    },
+    {
       "segmentId": "W27",
       "segmentName": "Carrier Detail - Warehouse",
       "usage": "O",
