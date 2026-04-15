@@ -845,7 +845,7 @@
               "segmentName": "Line Item Detail",
               "usage": "M",
               "maxRepeat": 1,
-              "purpose": "To specify line item detail for a warehouse shipping order. Elements W01-04 through W01-14 are intentionally left empty to match the Orderful EDI format verified on production. The VN qualifier and SKU are placed at positions W01-15 and W01-16.",
+              "purpose": "To specify line item detail for a warehouse shipping order. Elements W01-04 through W01-14 are intentionally left empty. The VN qualifier and SKU are placed at positions W01-15 and W01-16.",
               "fields": [
                 {
                   "fieldId": "W0101",
@@ -941,7 +941,7 @@
                   "fieldName": "Product/Service ID Qualifier/ID Pairs 1-5 (Reserved)",
                   "usage": "O",
                   "dataType": "AN",
-                  "fieldDescription": "Elements W01-04 through W01-14 are reserved positional slots. Owlery generates these as empty values to maintain Orderful EDI format compatibility."
+                  "fieldDescription": "Elements W01-04 through W01-14 are reserved positional slots. Owlery generates these as empty values."
                 },
                 {
                   "fieldId": "W0115",
