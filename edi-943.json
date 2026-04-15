@@ -284,6 +284,10 @@
             {
               "value": "J",
               "label": "Original Transaction"
+            },
+            {
+              "value": "F",
+              "label": "Final"
             }
           ]
         },
@@ -319,64 +323,87 @@
     },
     {
       "segmentId": "N1",
-      "segmentName": "Party Identification",
+      "segmentName": "Party Identification Loop",
       "usage": "M",
-      "maxRepeat": 5,
+      "maxRepeat": 10,
       "isLoopStart": true,
-      "purpose": "To identify a party by type of organization, name, and code. Repeats for each party (e.g. SH, SF, WH).",
-      "fields": [
-        {
-          "fieldId": "N101",
-          "fieldName": "Entity Identifier Code",
-          "usage": "M",
-          "minLength": 2,
-          "maxLength": 3,
-          "dataType": "ID",
-          "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
-          "allowedValues": [
-            {
-              "value": "WH",
-              "label": "Warehouse"
-            },
-            {
-              "value": "SF",
-              "label": "Ship From"
-            },
-            {
-              "value": "SH",
-              "label": "Shipper"
-            }
-          ]
-        },
-        {
-          "fieldId": "N102",
-          "fieldName": "Name",
-          "usage": "M",
-          "minLength": 1,
-          "maxLength": 60,
-          "dataType": "AN",
-          "fieldDescription": "Free-form name"
-        },
-        {
-          "fieldId": "N103",
-          "fieldName": "Identification Code Qualifier",
-          "usage": "O",
-          "minLength": 1,
-          "maxLength": 2,
-          "dataType": "ID",
-          "fieldDescription": "Code designating the system/method of code structure used for Identification Code"
-        },
-        {
-          "fieldId": "N104",
-          "fieldName": "Identification Code",
-          "usage": "O",
-          "minLength": 2,
-          "maxLength": 80,
-          "dataType": "AN",
-          "fieldDescription": "Code identifying a party or other code"
-        }
-      ],
+      "purpose": "Loop containing party identification. Repeats for each party (e.g. SH, SF, WH).",
+      "fields": [],
       "nestedSegments": [
+        {
+          "segmentId": "N1",
+          "segmentName": "Party Identification",
+          "usage": "M",
+          "maxRepeat": 1,
+          "purpose": "To identify a party by type of organization, name, and code",
+          "fields": [
+            {
+              "fieldId": "N101",
+              "fieldName": "Entity Identifier Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 3,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
+              "allowedValues": [
+                {
+                  "value": "SH",
+                  "label": "Shipper"
+                },
+                {
+                  "value": "SF",
+                  "label": "Ship From"
+                },
+                {
+                  "value": "WH",
+                  "label": "Warehouse"
+                }
+              ]
+            },
+            {
+              "fieldId": "N102",
+              "fieldName": "Name",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 60,
+              "dataType": "AN",
+              "fieldDescription": "Free-form name"
+            },
+            {
+              "fieldId": "N103",
+              "fieldName": "Identification Code Qualifier",
+              "usage": "O",
+              "minLength": 1,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code designating the system/method of code structure used for Identification Code",
+              "allowedValues": [
+                {
+                  "value": "ZZ",
+                  "label": "Mutually Defined"
+                },
+                {
+                  "value": "93",
+                  "label": "Code assigned by the organization that is the ultimate destination of the transaction set"
+                },
+                {
+                  "value": "9",
+                  "label": "DUNS Number"
+                }
+              ]
+            },
+            {
+              "fieldId": "N104",
+              "fieldName": "Identification Code",
+              "usage": "O",
+              "minLength": 2,
+              "maxLength": 80,
+              "dataType": "AN",
+              "fieldDescription": "Code identifying a party or other code"
+            }
+          ],
+          "syntaxRules": 2
+        },
         {
           "segmentId": "N3",
           "segmentName": "Party Location",
@@ -392,6 +419,15 @@
               "maxLength": 55,
               "dataType": "AN",
               "fieldDescription": "Address information"
+            },
+            {
+              "fieldId": "N302",
+              "fieldName": "Address Information",
+              "usage": "O",
+              "minLength": 1,
+              "maxLength": 55,
+              "dataType": "AN",
+              "fieldDescription": "Address information (line 2)"
             }
           ]
         },
@@ -440,6 +476,68 @@
             }
           ],
           "syntaxRules": 1
+        },
+        {
+          "segmentId": "G61",
+          "segmentName": "Contact",
+          "usage": "O",
+          "maxRepeat": 3,
+          "purpose": "To identify a person or office to whom communication should be directed",
+          "fields": [
+            {
+              "fieldId": "G6101",
+              "fieldName": "Contact Function Code",
+              "usage": "M",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the major duty or responsibility of the person or group named",
+              "allowedValues": [
+                {
+                  "value": "CN",
+                  "label": "General Contact"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6102",
+              "fieldName": "Name",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 60,
+              "dataType": "AN",
+              "fieldDescription": "Free-form name"
+            },
+            {
+              "fieldId": "G6103",
+              "fieldName": "Communication Number Qualifier",
+              "usage": "C",
+              "minLength": 2,
+              "maxLength": 2,
+              "dataType": "ID",
+              "fieldDescription": "Code identifying the type of communication number",
+              "allowedValues": [
+                {
+                  "value": "TE",
+                  "label": "Telephone"
+                },
+                {
+                  "value": "EM",
+                  "label": "Electronic Mail"
+                }
+              ]
+            },
+            {
+              "fieldId": "G6104",
+              "fieldName": "Communication Number",
+              "usage": "C",
+              "minLength": 1,
+              "maxLength": 80,
+              "dataType": "AN",
+              "fieldDescription": "Complete communications number including country or area code when applicable"
+            }
+          ],
+          "syntaxRules": 1
         }
       ]
     },
@@ -447,7 +545,7 @@
       "segmentId": "N9",
       "segmentName": "Extended Reference Information",
       "usage": "O",
-      "maxRepeat": 1,
+      "maxRepeat": 200,
       "purpose": "To transmit identifying information as specified by the Reference Identification Qualifier",
       "fields": [
         {
@@ -495,11 +593,11 @@
           "allowedValues": [
             {
               "value": "11",
-              "label": "Shipped on This Date"
+              "label": "Pickup Scheduled For"
             },
             {
               "value": "70",
-              "label": "Scheduled Delivery Date"
+              "label": "Dropoff Scheduled For"
             }
           ]
         },
@@ -519,8 +617,8 @@
       "segmentId": "NTE",
       "segmentName": "Note/Special Instruction",
       "usage": "O",
-      "maxRepeat": 10,
-      "purpose": "To transmit information in a free-form format",
+      "maxRepeat": 20,
+      "purpose": "To transmit information in a free-form format. Long notes are split into multiple NTE segments (max 20 segments, 80 chars each, total 1600 chars). First segment uses WHI, continuation segments use ADD.",
       "fields": [
         {
           "fieldId": "NTE01",
@@ -529,11 +627,15 @@
           "minLength": 3,
           "maxLength": 3,
           "dataType": "ID",
-          "fieldDescription": "Code identifying the functional area or purpose for which the note applies. Owlery uses WHI for order-level warehouse instructions.",
+          "fieldDescription": "Code identifying the functional area or purpose for which the note applies. WHI for the first segment, ADD for continuation segments.",
           "allowedValues": [
             {
               "value": "WHI",
-              "label": "Warehouse Instruction"
+              "label": "Warehouse Instruction (first segment)"
+            },
+            {
+              "value": "ADD",
+              "label": "Additional Information (continuation segments)"
             }
           ]
         },
@@ -544,7 +646,7 @@
           "minLength": 1,
           "maxLength": 80,
           "dataType": "AN",
-          "fieldDescription": "Free-form warehouse note. Commas, colons, digits, and repeated spaces are allowed. Do not include X12 delimiters such as '*', '~', or '>' in the note text."
+          "fieldDescription": "Free-form warehouse note, max 80 chars per segment. X12 delimiters (*, ~, >) are stripped by sanitization."
         }
       ]
     },
@@ -633,6 +735,58 @@
             {
               "value": "EA",
               "label": "Each"
+            },
+            {
+              "value": "CT",
+              "label": "Carton"
+            },
+            {
+              "value": "PL",
+              "label": "Pallet/Unit Load"
+            },
+            {
+              "value": "BG",
+              "label": "Bag"
+            },
+            {
+              "value": "BO",
+              "label": "Bottle"
+            },
+            {
+              "value": "RL",
+              "label": "Roll"
+            },
+            {
+              "value": "PA",
+              "label": "Pail"
+            },
+            {
+              "value": "SV",
+              "label": "Skid"
+            },
+            {
+              "value": "BX",
+              "label": "Box"
+            },
+            {
+              "value": "DR",
+              "label": "Drum"
+            },
+            {
+              "value": "LB",
+              "label": "Pound"
+            },
+            {
+              "value": "KG",
+              "label": "Kilogram"
+            },
+            {
+              "value": "PC",
+              "label": "Piece"
+            },
+            {
+              "value": "BD",
+              "label": "Bundle"
             }
           ]
         },
