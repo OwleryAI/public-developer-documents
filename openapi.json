@@ -357,6 +357,15 @@
                       }
                     }
                   ],
+                  "orders": [
+                    {
+                      "orderNumber": "ORD-10001",
+                      "pickupStopIndex": 0,
+                      "dropOffStopIndex": 1,
+                      "pickupSequenceNumber": 0,
+                      "dropoffSequenceNumber": 0
+                    }
+                  ],
                   "price": {
                     "total": 125000,
                     "currencyCode": "USD"
@@ -2334,7 +2343,7 @@
       },
       "TenderWebhookMessage": {
         "type": "object",
-        "required": ["id", "referenceNumbers", "mode", "equipmentType", "isTeamRate", "isContractRate", "isDirectTender", "shipmentMode", "stops", "price", "broker", "status", "updatedAtInMs", "updatedBy"],
+        "required": ["id", "referenceNumbers", "mode", "equipmentType", "isTeamRate", "isContractRate", "isDirectTender", "shipmentMode", "stops", "orders", "price", "broker", "status", "updatedAtInMs", "updatedBy"],
         "properties": {
           "id": {
             "type": "string",
@@ -2386,7 +2395,14 @@
             "items": {
               "$ref": "#/components/schemas/TenderWebhookStop"
             },
-            "description": "Array of tender stops with zero-based route index, stop-type-local pickup/dropoff index, facility/date information, and associated order numbers."
+            "description": "Array of tender stops with zero-based route index, facility/date information, freight items, and associated order numbers."
+          },
+          "orders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TenderWebhookOrderStopMapping"
+            },
+            "description": "Order-level mapping to pickup/dropoff route stops and zero-based stop-type sequence numbers."
           },
           "price": {
             "$ref": "#/components/schemas/TenderWebhookPrice"
@@ -2530,7 +2546,7 @@
             "items": {
               "$ref": "#/components/schemas/TenderWebhookOrder"
             },
-            "description": "Orders associated with this stop."
+            "description": "Order numbers associated with this stop."
           },
           "items": {
             "type": "array",
@@ -2554,6 +2570,32 @@
           "orderNumber": {
             "type": "string",
             "description": "Order number associated with the tender stop."
+          }
+        }
+      },
+      "TenderWebhookOrderStopMapping": {
+        "type": "object",
+        "required": ["orderNumber"],
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "Order number associated with the tender."
+          },
+          "pickupStopIndex": {
+            "type": "number",
+            "description": "Zero-based index of the route stop where this order is picked up."
+          },
+          "dropOffStopIndex": {
+            "type": "number",
+            "description": "Zero-based index of the route stop where this order is dropped off."
+          },
+          "pickupSequenceNumber": {
+            "type": "number",
+            "description": "Zero-based sequence of the pickup stop among pickup stops only."
+          },
+          "dropoffSequenceNumber": {
+            "type": "number",
+            "description": "Zero-based sequence of the dropoff stop among dropoff stops only."
           }
         }
       },
