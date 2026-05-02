@@ -56,7 +56,9 @@
   "paths": {
     "/api/ext/v1/plan": {
       "post": {
-        "tags": ["Plan"],
+        "tags": [
+          "Plan"
+        ],
         "summary": "Create a Plan",
         "description": "This endpoint creates a transportation plan for one or more orders.",
         "operationId": "createPlan",
@@ -157,7 +159,9 @@
     "/webhooks/orders-updated": {
       "post": {
         "x-webhook": true,
-        "tags": ["Webhooks"],
+        "tags": [
+          "Webhooks"
+        ],
         "summary": "Orders Updated",
         "description": "Webhook payload sent when orders are updated. Webhooks are sent when orders are marked as `closed` and no webhook has been sent previously (unless manually re-triggered). Orders reach `closed` status through: (1) Owlery API Order Confirmation via `/api/ext/v1/order/confirm`, (2) EDI Transactions (944/945), or (3) Integration Sync (e.g. WMS).",
         "operationId": "webhookOrdersUpdated",
@@ -231,7 +235,9 @@
     "/webhooks/tenders-updated": {
       "post": {
         "x-webhook": true,
-        "tags": ["Webhooks"],
+        "tags": [
+          "Webhooks"
+        ],
         "summary": "Tenders Updated",
         "description": "Webhook payload sent when tenders are created, accepted, or BOLs are generated. Tender webhooks are sent when a tender reaches one of the following statuses: BOL Created, Carrier Selected, or Tendered. The `loadNumber` field is optional at this stage: some carriers do not return a load number until the tender is accepted. Before acceptance, Owlery only sends `loadNumber` when a real load number is already available, or when Universal Shipment ID enforcement is enabled for a supported Manual/EDI-style tender and the carrier/source tender identifier is intentionally used as the Owlery load number.",
         "operationId": "webhookTendersUpdated",
@@ -246,154 +252,475 @@
                   "$ref": "#/components/schemas/TenderWebhookMessage"
                 }
               },
-              "example": [
-                {
-                  "id": "507f1f77bcf86cd799439011",
-                  "loadNumber": "LOAD-12345",
-                  "referenceNumbers": [
-                    { "type": "PO", "value": "PO-12345" },
-                    { "type": "BOL", "value": "BOL-67890" }
-                  ],
-                  "mode": "FTL",
-                  "equipmentType": "Reefer",
-                  "reeferSettings": {
-                    "minTemperature": 34,
-                    "maxTemperature": 38,
-                    "unit": "F",
-                    "preCoolTemperature": 36,
-                    "sentryMode": "Continuous"
-                  },
-                  "isTeamRate": false,
-                  "isContractRate": true,
-                  "isDirectTender": false,
-                  "shipmentMode": "Truck",
-                  "stops": [
+              "examples": {
+                "singleTender": {
+                  "summary": "Single tender",
+                  "value": [
                     {
-                      "index": 0,
-                      "type": "Pickup",
-                      "orders": [
-                        { "orderNumber": "ORD-10001" }
-                      ],
-                      "items": [
+                      "id": "507f1f77bcf86cd799439011",
+                      "loadNumber": "LOAD-12345",
+                      "referenceNumbers": [
                         {
-                          "quantity": {
-                            "count": 10,
-                            "unit": "Pallet"
-                          },
-                          "weight": {
-                            "value": 1200,
-                            "unit": "LB"
-                          },
-                          "description": "Frozen prepared meals"
+                          "type": "PO",
+                          "value": "PO-12345"
+                        },
+                        {
+                          "type": "BOL",
+                          "value": "BOL-67890"
                         }
                       ],
-                      "dates": {
-                        "orderDates": {
-                          "startAt": {
-                            "tsInMs": 1664881200000,
-                            "timeZone": "America/Chicago",
-                            "isDateOnly": false
+                      "mode": "FTL",
+                      "equipmentType": "Reefer",
+                      "reeferSettings": {
+                        "minTemperature": 34,
+                        "maxTemperature": 38,
+                        "unit": "F",
+                        "sentryMode": "Continuous"
+                      },
+                      "isTeamRate": false,
+                      "isContractRate": true,
+                      "isDirectTender": false,
+                      "shipmentMode": "Normal",
+                      "stops": [
+                        {
+                          "index": 0,
+                          "type": "Pickup",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10001"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776758400000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776765600000
+                              }
+                            },
+                            "appointmentDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776762000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776763800000
+                              }
+                            }
                           },
-                          "endAt": {
-                            "tsInMs": 1664881200000,
-                            "timeZone": "America/Chicago",
-                            "isDateOnly": false
+                          "facilityProfile": {
+                            "name": "Origin Warehouse",
+                            "location": {
+                              "street": "123 Main St",
+                              "city": "Chicago",
+                              "state": "IL",
+                              "zipcode": "60601",
+                              "countryCode": "US"
+                            }
+                          }
+                        },
+                        {
+                          "index": 1,
+                          "type": "Dropoff",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10001"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776870000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776873600000
+                              }
+                            }
+                          },
+                          "facilityProfile": {
+                            "name": "Destination DC",
+                            "location": {
+                              "street": "456 First Ave",
+                              "city": "New York",
+                              "state": "NY",
+                              "zipcode": "10001",
+                              "countryCode": "US"
+                            }
                           }
                         }
-                      },
-                      "facilityProfile": {
-                        "name": "Origin Warehouse",
-                        "location": {
-                          "street": "123 Main St",
-                          "city": "Chicago",
-                          "state": "IL",
-                          "zipcode": "60601",
-                          "countryCode": "US"
-                        }
-                      }
-                    },
-                    {
-                      "index": 1,
-                      "type": "Dropoff",
+                      ],
                       "orders": [
-                        { "orderNumber": "ORD-10001" }
-                      ],
-                      "items": [
                         {
-                          "quantity": {
-                            "count": 10,
-                            "unit": "Pallet"
-                          },
-                          "weight": {
-                            "value": 1200,
-                            "unit": "LB"
-                          },
-                          "description": "Frozen prepared meals"
+                          "orderNumber": "ORD-10001",
+                          "pickupStopIndex": 0,
+                          "dropOffStopIndex": 1,
+                          "pickupSequenceNumber": 0,
+                          "dropoffSequenceNumber": 0
                         }
                       ],
-                      "dates": {
-                        "orderDates": {
-                          "startAt": {
-                            "tsInMs": 1665050400000,
-                            "timeZone": "America/New_York",
-                            "isDateOnly": false
+                      "price": {
+                        "total": 125000,
+                        "currencyCode": "USD"
+                      },
+                      "lineItems": [
+                        {
+                          "description": "Line haul",
+                          "category": "lineHaul",
+                          "total": 100000,
+                          "code": "LH001",
+                          "unitCount": 1,
+                          "unitPrice": 100000
+                        },
+                        {
+                          "description": "Fuel surcharge",
+                          "category": "fuelSurcharge",
+                          "total": 25000,
+                          "code": "FSC"
+                        }
+                      ],
+                      "broker": {
+                        "name": "Great Freight LLC",
+                        "address": "789 Carrier Blvd, Dallas, TX 75201",
+                        "phone": "+12145551234",
+                        "email": "dispatch@greatfreight.com",
+                        "mcNumber": "MC123456",
+                        "dotNumber": "DOT789012",
+                        "scac": "GRFT"
+                      },
+                      "status": "Tendered",
+                      "updatedAtInMs": 1776787200000,
+                      "updatedBy": "user@example.com"
+                    }
+                  ]
+                },
+                "consolidatedTender": {
+                  "summary": "Consolidated tender with header-level order mapping",
+                  "value": [
+                    {
+                      "id": "507f1f77bcf86cd799439022",
+                      "loadNumber": "LOAD-98765",
+                      "referenceNumbers": [
+                        {
+                          "type": "PO",
+                          "value": "PO-12345"
+                        },
+                        {
+                          "type": "BOL",
+                          "value": "BOL-67890"
+                        }
+                      ],
+                      "mode": "FTL",
+                      "equipmentType": "Reefer",
+                      "reeferSettings": {
+                        "minTemperature": 34,
+                        "maxTemperature": 38,
+                        "unit": "F",
+                        "sentryMode": "Continuous"
+                      },
+                      "isTeamRate": false,
+                      "isContractRate": true,
+                      "isDirectTender": false,
+                      "shipmentMode": "Normal",
+                      "stops": [
+                        {
+                          "index": 0,
+                          "type": "Pickup",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10001"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776758400000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776765600000
+                              }
+                            },
+                            "appointmentDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776762000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776763800000
+                              }
+                            }
                           },
-                          "endAt": {
-                            "tsInMs": 1665050400000,
-                            "timeZone": "America/New_York",
-                            "isDateOnly": false
+                          "facilityProfile": {
+                            "name": "Origin Warehouse",
+                            "location": {
+                              "street": "123 Main St",
+                              "city": "Chicago",
+                              "state": "IL",
+                              "zipcode": "60601",
+                              "countryCode": "US"
+                            }
+                          }
+                        },
+                        {
+                          "index": 1,
+                          "type": "Pickup",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10002"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776758400000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776765600000
+                              }
+                            },
+                            "appointmentDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776762000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776763800000
+                              }
+                            }
+                          },
+                          "facilityProfile": {
+                            "name": "Second Origin Warehouse",
+                            "location": {
+                              "street": "500 Dock Rd",
+                              "city": "Milwaukee",
+                              "state": "WI",
+                              "zipcode": "53202",
+                              "countryCode": "US"
+                            }
+                          }
+                        },
+                        {
+                          "index": 2,
+                          "type": "Dropoff",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10001"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776870000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776873600000
+                              }
+                            }
+                          },
+                          "facilityProfile": {
+                            "name": "Destination DC",
+                            "location": {
+                              "street": "456 First Ave",
+                              "city": "New York",
+                              "state": "NY",
+                              "zipcode": "10001",
+                              "countryCode": "US"
+                            }
+                          }
+                        },
+                        {
+                          "index": 3,
+                          "type": "Dropoff",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10002"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776870000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776873600000
+                              }
+                            }
+                          },
+                          "facilityProfile": {
+                            "name": "Second Destination DC",
+                            "location": {
+                              "street": "900 Harbor Ave",
+                              "city": "Newark",
+                              "state": "NJ",
+                              "zipcode": "07114",
+                              "countryCode": "US"
+                            }
                           }
                         }
-                      },
-                      "facilityProfile": {
-                        "name": "Destination DC",
-                        "location": {
-                          "street": "456 First Ave",
-                          "city": "New York",
-                          "state": "NY",
-                          "zipcode": "10001",
-                          "countryCode": "US"
+                      ],
+                      "orders": [
+                        {
+                          "orderNumber": "ORD-10001",
+                          "pickupStopIndex": 0,
+                          "dropOffStopIndex": 2,
+                          "pickupSequenceNumber": 0,
+                          "dropoffSequenceNumber": 0
+                        },
+                        {
+                          "orderNumber": "ORD-10002",
+                          "pickupStopIndex": 1,
+                          "dropOffStopIndex": 3,
+                          "pickupSequenceNumber": 1,
+                          "dropoffSequenceNumber": 1
                         }
-                      }
+                      ],
+                      "price": {
+                        "total": 125000,
+                        "currencyCode": "USD"
+                      },
+                      "lineItems": [
+                        {
+                          "description": "Line haul",
+                          "category": "lineHaul",
+                          "total": 100000,
+                          "code": "LH001",
+                          "unitCount": 1,
+                          "unitPrice": 100000
+                        },
+                        {
+                          "description": "Fuel surcharge",
+                          "category": "fuelSurcharge",
+                          "total": 25000,
+                          "code": "FSC"
+                        }
+                      ],
+                      "broker": {
+                        "name": "Great Freight LLC",
+                        "address": "789 Carrier Blvd, Dallas, TX 75201",
+                        "phone": "+12145551234",
+                        "email": "dispatch@greatfreight.com",
+                        "mcNumber": "MC123456",
+                        "dotNumber": "DOT789012",
+                        "scac": "GRFT"
+                      },
+                      "status": "Tendered",
+                      "updatedAtInMs": 1776787200000,
+                      "updatedBy": "user@example.com"
                     }
-                  ],
-                  "orders": [
-                    {
-                      "orderNumber": "ORD-10001",
-                      "pickupStopIndex": 0,
-                      "dropOffStopIndex": 1,
-                      "pickupSequenceNumber": 0,
-                      "dropoffSequenceNumber": 0
-                    }
-                  ],
-                  "price": {
-                    "total": 125000,
-                    "currencyCode": "USD"
-                  },
-                  "lineItems": [
-                    {
-                      "description": "Line haul",
-                      "category": "lineHaul",
-                      "total": 100000,
-                      "code": "LH001",
-                      "unitCount": 1,
-                      "unitPrice": 100000
-                    }
-                  ],
-                  "broker": {
-                    "name": "Great Freight LLC",
-                    "address": "789 Carrier Blvd, Dallas, TX 75201",
-                    "phone": "+12145551234",
-                    "email": "dispatch@greatfreight.com",
-                    "mcNumber": "MC123456",
-                    "dotNumber": "DOT789012",
-                    "scac": "GRFT"
-                  },
-                  "status": "Tendered",
-                  "updatedAtInMs": 1664881200000,
-                  "updatedBy": "user@example.com"
+                  ]
                 }
-              ]
+              }
             }
           }
         },
@@ -415,6 +742,108 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Receiver rejected the webhook as invalid. Owlery logs the failed delivery and does not mark that payload as sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidPayload": {
+                    "summary": "Invalid payload",
+                    "value": {
+                      "error": "Bad Request",
+                      "message": "Missing required field: id",
+                      "details": [
+                        "id is required"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Receiver rejected the webhook because custom authentication headers were missing or invalid. Owlery logs the failed delivery and does not mark that payload as sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "error": "Unauthorized",
+                      "message": "Invalid webhook signature or API key"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Receiver failed while processing the webhook. Owlery logs the failed delivery and does not mark that payload as sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "receiverError": {
+                    "summary": "Receiver error",
+                    "value": {
+                      "error": "Internal Server Error",
+                      "message": "Unable to process tender webhook"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -422,7 +851,9 @@
     "/webhooks/order-load-stop-dates-updated": {
       "post": {
         "x-webhook": true,
-        "tags": ["Webhooks"],
+        "tags": [
+          "Webhooks"
+        ],
         "summary": "Order Load Stop Dates Updated",
         "description": "Webhook payload sent when a tendered order's related load stop estimated, appointment, or actual dates are first populated or later changed. This includes the initial tender when those load dates first become available. The payload is order-based: each stop `index` is zero-based within the order itself, not within the underlying load, so the index is `0` for pickup and `1` for dropoff even when the load is consolidated across more stops. Owlery only sends this webhook for orders it tendered, because Owlery must have the order-to-load stop mapping from the tender/BOL flow.",
         "operationId": "webhookOrderLoadStopDatesUpdated",
@@ -437,55 +868,180 @@
                   "$ref": "#/components/schemas/OrderLoadStopDatesUpdatedWebhook"
                 }
               },
-              "example": [
-                {
-                  "orderNumber": "SO-10001",
-                  "loadNumber": "LOAD-12345",
-                  "source": "NetSuite",
-                  "sourceId": "123456",
-                  "stops": [
+              "examples": {
+                "singleOrder": {
+                  "summary": "Single order on a load",
+                  "value": [
                     {
-                      "index": 0,
-                      "stopType": "pickup",
-                      "estimatedDates": {
-                        "startAt": {
-                          "dateTime": "2026-04-21T08:00:00.000Z",
-                          "timeZone": "America/Chicago",
-                          "isDateOnly": false
+                      "orderNumber": "SO-10001",
+                      "loadNumber": "LOAD-12345",
+                      "source": "NetSuite",
+                      "sourceId": "123456",
+                      "stops": [
+                        {
+                          "index": 0,
+                          "stopType": "pickup",
+                          "orderDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T08:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            },
+                            "endAt": {
+                              "dateTime": "2026-04-21T10:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          },
+                          "estimatedDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T08:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            },
+                            "endAt": {
+                              "dateTime": "2026-04-21T10:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          },
+                          "appointmentDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T09:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            },
+                            "endAt": {
+                              "dateTime": "2026-04-21T09:30:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          }
                         },
-                        "endAt": {
-                          "dateTime": "2026-04-21T10:00:00.000Z",
-                          "timeZone": "America/Chicago",
-                          "isDateOnly": false
+                        {
+                          "index": 1,
+                          "stopType": "dropoff",
+                          "estimatedDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-22T15:00:00.000Z",
+                              "timeZone": "America/New_York",
+                              "isDateOnly": false
+                            }
+                          },
+                          "actualDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-22T15:12:00.000Z",
+                              "timeZone": "America/New_York",
+                              "isDateOnly": false
+                            }
+                          }
                         }
-                      },
-                      "appointmentDates": {
-                        "startAt": {
-                          "dateTime": "2026-04-21T09:00:00.000Z",
-                          "timeZone": "America/Chicago",
-                          "isDateOnly": false
+                      ]
+                    }
+                  ]
+                },
+                "consolidatedLoad": {
+                  "summary": "Multiple orders on one load",
+                  "value": [
+                    {
+                      "orderNumber": "SO-10001",
+                      "loadNumber": "LOAD-12345",
+                      "source": "NetSuite",
+                      "sourceId": "123456",
+                      "stops": [
+                        {
+                          "index": 0,
+                          "stopType": "pickup",
+                          "orderDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T08:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            },
+                            "endAt": {
+                              "dateTime": "2026-04-21T10:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          },
+                          "estimatedDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T08:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            },
+                            "endAt": {
+                              "dateTime": "2026-04-21T10:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          },
+                          "appointmentDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T09:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            },
+                            "endAt": {
+                              "dateTime": "2026-04-21T09:30:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          }
                         },
-                        "endAt": {
-                          "dateTime": "2026-04-21T09:30:00.000Z",
-                          "timeZone": "America/Chicago",
-                          "isDateOnly": false
+                        {
+                          "index": 1,
+                          "stopType": "dropoff",
+                          "estimatedDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-22T15:00:00.000Z",
+                              "timeZone": "America/New_York",
+                              "isDateOnly": false
+                            }
+                          },
+                          "actualDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-22T15:12:00.000Z",
+                              "timeZone": "America/New_York",
+                              "isDateOnly": false
+                            }
+                          }
                         }
-                      }
+                      ]
                     },
                     {
-                      "index": 1,
-                      "stopType": "dropoff",
-                      "estimatedDates": {
-                        "startAt": {
-                          "dateTime": "2026-04-22T15:00:00.000Z",
-                          "timeZone": "America/New_York",
-                          "isDateOnly": false
+                      "orderNumber": "SO-10002",
+                      "loadNumber": "LOAD-12345",
+                      "source": "NetSuite",
+                      "sourceId": "789012",
+                      "stops": [
+                        {
+                          "index": 0,
+                          "stopType": "pickup",
+                          "estimatedDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T11:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          }
+                        },
+                        {
+                          "index": 1,
+                          "stopType": "dropoff",
+                          "estimatedDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-23T09:00:00.000Z",
+                              "timeZone": "America/New_York",
+                              "isDateOnly": false
+                            }
+                          }
                         }
-                      }
+                      ]
                     }
                   ]
                 }
-              ]
+              }
             }
           }
         },
@@ -507,6 +1063,108 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Receiver rejected the webhook as invalid. Owlery logs the failed delivery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidPayload": {
+                    "summary": "Invalid payload",
+                    "value": {
+                      "error": "Bad Request",
+                      "message": "Missing required field: orderNumber",
+                      "details": [
+                        "orderNumber is required"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Receiver rejected the webhook because custom authentication headers were missing or invalid. Owlery logs the failed delivery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "error": "Unauthorized",
+                      "message": "Invalid webhook signature or API key"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Receiver failed while processing the webhook. Owlery logs the failed delivery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "receiverError": {
+                    "summary": "Receiver error",
+                    "value": {
+                      "error": "Internal Server Error",
+                      "message": "Unable to process order load stop date webhook"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -514,7 +1172,9 @@
     "/webhooks/invoices-updated": {
       "post": {
         "x-webhook": true,
-        "tags": ["Webhooks"],
+        "tags": [
+          "Webhooks"
+        ],
         "summary": "Invoices Updated",
         "description": "Webhook payload sent when invoices are created or updated in Owlery. Sent when invoices are created or modified, when invoice status changes (e.g., from unpaid to paid), or when invoices are associated with loads.",
         "operationId": "webhookInvoicesUpdated",
@@ -532,7 +1192,10 @@
               "example": [
                 {
                   "invoiceNumber": "INV-2024-001",
-                  "loadNumbers": ["LOAD-12345", "LOAD-12346"],
+                  "loadNumbers": [
+                    "LOAD-12345",
+                    "LOAD-12346"
+                  ],
                   "invoicedAt": "2024-01-15T10:30:00Z",
                   "dueAt": "2024-02-15T23:59:59Z",
                   "total": 250000,
@@ -595,10 +1258,18 @@
                     }
                   },
                   "referenceNumbers": [
-                    { "type": "BOL", "value": "BOL-12345" },
-                    { "type": "PO", "value": "PO-67890" }
+                    {
+                      "type": "BOL",
+                      "value": "BOL-12345"
+                    },
+                    {
+                      "type": "PO",
+                      "value": "PO-67890"
+                    }
                   ],
-                  "notes": ["Rush delivery requested"]
+                  "notes": [
+                    "Rush delivery requested"
+                  ]
                 }
               ]
             }
@@ -628,7 +1299,9 @@
     },
     "/api/ext/v1/invoices": {
       "post": {
-        "tags": ["Invoice"],
+        "tags": [
+          "Invoice"
+        ],
         "summary": "Submit Invoices",
         "description": "This endpoint allows brokers to submit invoices directly to Owlery. The source system is determined from the broker profile associated with the API key.",
         "operationId": "submitInvoices",
@@ -710,10 +1383,18 @@
                     }
                   },
                   "referenceNumbers": [
-                    { "type": "BOL", "value": "BOL-12345" },
-                    { "type": "PO", "value": "PO-67890" }
+                    {
+                      "type": "BOL",
+                      "value": "BOL-12345"
+                    },
+                    {
+                      "type": "PO",
+                      "value": "PO-67890"
+                    }
                   ],
-                  "notes": ["Rush delivery requested"],
+                  "notes": [
+                    "Rush delivery requested"
+                  ],
                   "isTest": false
                 }
               ]
@@ -769,7 +1450,9 @@
     },
     "/api/ext/v1/order/confirm": {
       "post": {
-        "tags": ["Order"],
+        "tags": [
+          "Order"
+        ],
         "summary": "Confirm Orders",
         "description": "This endpoint confirms one or more orders, updating their status and items.",
         "operationId": "confirmOrders",
@@ -813,7 +1496,9 @@
                   "$ref": "#/components/schemas/ConfirmOrderResponse"
                 },
                 "example": {
-                  "confirmedOrderNumbers": ["SO11112"],
+                  "confirmedOrderNumbers": [
+                    "SO11112"
+                  ],
                   "errors": []
                 }
               }
@@ -827,8 +1512,12 @@
                   "$ref": "#/components/schemas/ConfirmOrderResponse"
                 },
                 "example": {
-                  "confirmedOrderNumbers": ["SO11112"],
-                  "errors": ["Failed to confirm order SO11113"]
+                  "confirmedOrderNumbers": [
+                    "SO11112"
+                  ],
+                  "errors": [
+                    "Failed to confirm order SO11113"
+                  ]
                 }
               }
             }
@@ -842,7 +1531,9 @@
                 },
                 "example": {
                   "confirmedOrderNumbers": [],
-                  "errors": ["Order number must be provided"]
+                  "errors": [
+                    "Order number must be provided"
+                  ]
                 }
               }
             }
@@ -852,7 +1543,9 @@
     },
     "/api/ext/v1/loads": {
       "post": {
-        "tags": ["Loads"],
+        "tags": [
+          "Loads"
+        ],
         "summary": "Create Loads",
         "description": "This endpoint allows brokers to create one or more loads in Owlery using the standardized external payload.",
         "operationId": "createLoads",
@@ -882,7 +1575,10 @@
                     },
                     "priceInCents": 125000,
                     "referenceNumbers": [
-                      { "type": "PO", "value": "PO-12345" }
+                      {
+                        "type": "PO",
+                        "value": "PO-12345"
+                      }
                     ],
                     "carrier": {
                       "dotNumber": "1234567",
@@ -917,9 +1613,20 @@
                         "items": [
                           {
                             "description": "Packaged produce",
-                            "quantity": { "count": 10, "unit": "Pallet" },
-                            "weight": { "value": 5000, "unit": "LB" },
-                            "dimensions": { "length": 48, "width": 40, "height": 72, "unit": "IN" },
+                            "quantity": {
+                              "count": 10,
+                              "unit": "Pallet"
+                            },
+                            "weight": {
+                              "value": 5000,
+                              "unit": "LB"
+                            },
+                            "dimensions": {
+                              "length": 48,
+                              "width": 40,
+                              "height": 72,
+                              "unit": "IN"
+                            },
                             "isStackable": true,
                             "isTurnable": false,
                             "class": "70",
@@ -928,7 +1635,10 @@
                           }
                         ],
                         "referenceNumbers": [
-                          { "type": "PO", "value": "PO-12345" }
+                          {
+                            "type": "PO",
+                            "value": "PO-12345"
+                          }
                         ]
                       },
                       {
@@ -950,9 +1660,20 @@
                         "items": [
                           {
                             "description": "Packaged produce",
-                            "quantity": { "count": 10, "unit": "Pallet" },
-                            "weight": { "value": 5000, "unit": "LB" },
-                            "dimensions": { "length": 48, "width": 40, "height": 72, "unit": "IN" },
+                            "quantity": {
+                              "count": 10,
+                              "unit": "Pallet"
+                            },
+                            "weight": {
+                              "value": 5000,
+                              "unit": "LB"
+                            },
+                            "dimensions": {
+                              "length": 48,
+                              "width": 40,
+                              "height": 72,
+                              "unit": "IN"
+                            },
                             "isStackable": true,
                             "isTurnable": false,
                             "class": "70",
@@ -961,7 +1682,10 @@
                           }
                         ],
                         "referenceNumbers": [
-                          { "type": "BOL", "value": "BOL-67890" }
+                          {
+                            "type": "BOL",
+                            "value": "BOL-67890"
+                          }
                         ]
                       }
                     ]
@@ -981,7 +1705,9 @@
                 },
                 "example": {
                   "createdLoads": [
-                    { "loadNumber": "OWL-LOAD-1001" }
+                    {
+                      "loadNumber": "OWL-LOAD-1001"
+                    }
                   ],
                   "failures": []
                 }
@@ -997,7 +1723,9 @@
                 },
                 "example": {
                   "createdLoads": [
-                    { "loadNumber": "OWL-LOAD-1001" }
+                    {
+                      "loadNumber": "OWL-LOAD-1001"
+                    }
                   ],
                   "failures": [
                     {
@@ -1014,7 +1742,9 @@
     },
     "/api/ext/v1/loads/tracking": {
       "post": {
-        "tags": ["Loads"],
+        "tags": [
+          "Loads"
+        ],
         "summary": "Tracking Updated",
         "description": "Push tracking status of a load to Owlery. The `at` field represents when the tracking event occurred or when the status changed (event metadata). For `AppointmentScheduled` status, the `appointment` field contains the actual appointment time range.",
         "operationId": "trackingUpdated",
@@ -1035,7 +1765,10 @@
                   "at": "2025-01-29T05:15:02.254Z",
                   "stopIndex": 0,
                   "location": {
-                    "coordinates": { "lat": 34.052235, "lng": -118.243683 },
+                    "coordinates": {
+                      "lat": 34.052235,
+                      "lng": -118.243683
+                    },
                     "street": "123 Main St",
                     "city": "Los Angeles",
                     "state": "CA",
@@ -1053,7 +1786,10 @@
                     "endAt": "2025-01-30T10:00:00.000Z"
                   },
                   "location": {
-                    "coordinates": { "lat": 40.712776, "lng": -74.005974 },
+                    "coordinates": {
+                      "lat": 40.712776,
+                      "lng": -74.005974
+                    },
                     "street": "456 Second Ave",
                     "city": "New York",
                     "state": "NY",
@@ -1067,7 +1803,10 @@
                   "at": "2025-02-01T05:15:02.254Z",
                   "stopIndex": 1,
                   "location": {
-                    "coordinates": { "lat": 34.052235, "lng": -118.243683 },
+                    "coordinates": {
+                      "lat": 34.052235,
+                      "lng": -118.243683
+                    },
                     "street": "123 Main St",
                     "city": "Los Angeles",
                     "state": "CA",
@@ -1088,7 +1827,10 @@
                   "$ref": "#/components/schemas/TrackingSuccessResponse"
                 },
                 "example": {
-                  "success": ["1228832", "1334833"]
+                  "success": [
+                    "1228832",
+                    "1334833"
+                  ]
                 }
               }
             }
@@ -1101,8 +1843,12 @@
                   "$ref": "#/components/schemas/TrackingPartialResponse"
                 },
                 "example": {
-                  "success": ["1228832"],
-                  "missing": ["1334833"]
+                  "success": [
+                    "1228832"
+                  ],
+                  "missing": [
+                    "1334833"
+                  ]
                 }
               }
             }
@@ -1112,7 +1858,9 @@
     },
     "/api/ext/v1/loads/search": {
       "post": {
-        "tags": ["Loads"],
+        "tags": [
+          "Loads"
+        ],
         "summary": "Search Loads",
         "description": "Search for loads using reference numbers.",
         "operationId": "searchLoads",
@@ -1124,7 +1872,9 @@
                 "$ref": "#/components/schemas/LoadSearchRequest"
               },
               "example": {
-                "referenceNumbers": ["TEST-1234"]
+                "referenceNumbers": [
+                  "TEST-1234"
+                ]
               }
             }
           }
@@ -1142,7 +1892,10 @@
                     {
                       "loadNumber": "12338165",
                       "referenceNumbers": [
-                        { "type": "BOL", "value": "TEST-1234" }
+                        {
+                          "type": "BOL",
+                          "value": "TEST-1234"
+                        }
                       ],
                       "mode": "FTL",
                       "status": "Delivered",
@@ -1196,7 +1949,10 @@
                               "countryCode": "US",
                               "zipcode": "60436",
                               "timeZone": "America/Chicago",
-                              "coordinates": { "lat": 41.513944, "lng": -88.143961 }
+                              "coordinates": {
+                                "lat": 41.513944,
+                                "lng": -88.143961
+                              }
                             }
                           }
                         },
@@ -1249,13 +2005,19 @@
                               "countryCode": "US",
                               "zipcode": "08344",
                               "timeZone": "America/New_York",
-                              "coordinates": { "lat": 39.574001, "lng": -75.010948 }
+                              "coordinates": {
+                                "lat": 39.574001,
+                                "lng": -75.010948
+                              }
                             }
                           }
                         }
                       ],
                       "brokerProfiles": [
-                        { "name": "Great Freight LLC", "scac": "GRFT" }
+                        {
+                          "name": "Great Freight LLC",
+                          "scac": "GRFT"
+                        }
                       ],
                       "brokerProfile": {
                         "name": "Great Freight LLC",
@@ -1278,7 +2040,9 @@
     },
     "/api/ext/v1/documents/search": {
       "get": {
-        "tags": ["Documents"],
+        "tags": [
+          "Documents"
+        ],
         "summary": "Search Documents",
         "description": "Search documents attached to loads and orders in the authenticated organization. If `searchText` is shorter than 2 characters, the response is an empty result set.",
         "operationId": "searchDocuments",
@@ -1362,7 +2126,9 @@
     },
     "/api/ext/v1/documents/{id}/download": {
       "get": {
-        "tags": ["Documents"],
+        "tags": [
+          "Documents"
+        ],
         "summary": "Download Document",
         "description": "Download a single document by ID. The response is a file stream with download headers.",
         "operationId": "downloadDocument",
@@ -1427,7 +2193,9 @@
     },
     "/api/ext/v1/items": {
       "post": {
-        "tags": ["Items"],
+        "tags": [
+          "Items"
+        ],
         "summary": "Create or Update Items",
         "description": "This endpoint allows shippers to create or update one or more inventory items in Owlery. When the SKU already exists, the item with the same SKU will be updated.",
         "operationId": "createOrUpdateItems",
@@ -1450,7 +2218,10 @@
                     "packaging": [
                       {
                         "type": "Case",
-                        "weight": { "value": 20, "unit": "LB" }
+                        "weight": {
+                          "value": 20,
+                          "unit": "LB"
+                        }
                       }
                     ],
                     "reeferSettings": {
@@ -1476,7 +2247,9 @@
                 },
                 "example": {
                   "upsertedItems": [
-                    { "sku": "A01-COFFEE" }
+                    {
+                      "sku": "A01-COFFEE"
+                    }
                   ],
                   "failures": []
                 }
@@ -1492,10 +2265,15 @@
                 },
                 "example": {
                   "upsertedItems": [
-                    { "sku": "A01-COFFEE" }
+                    {
+                      "sku": "A01-COFFEE"
+                    }
                   ],
                   "failures": [
-                    { "sku": "A01-TEA", "error": "Reason why failed" }
+                    {
+                      "sku": "A01-TEA",
+                      "error": "Reason why failed"
+                    }
                   ]
                 }
               }
@@ -1506,7 +2284,9 @@
     },
     "/api/ext/v1/items/sku/{sku}": {
       "put": {
-        "tags": ["Items"],
+        "tags": [
+          "Items"
+        ],
         "summary": "Update Item by SKU",
         "description": "This endpoint allows shippers to update an existing inventory item by its SKU.",
         "operationId": "updateItemBySku",
@@ -1537,7 +2317,10 @@
                 "packaging": [
                   {
                     "type": "Pallet",
-                    "weight": { "value": 1000, "unit": "LB" }
+                    "weight": {
+                      "value": 1000,
+                      "unit": "LB"
+                    }
                   }
                 ],
                 "reeferSettings": {
@@ -1590,7 +2373,9 @@
         }
       },
       "delete": {
-        "tags": ["Items"],
+        "tags": [
+          "Items"
+        ],
         "summary": "Delete Item by SKU",
         "description": "This endpoint allows shippers to delete an inventory item by its SKU.",
         "operationId": "deleteItemBySku",
@@ -1648,7 +2433,9 @@
     },
     "/api/ext/v1/rate-quote": {
       "post": {
-        "tags": ["Rate Quote"],
+        "tags": [
+          "Rate Quote"
+        ],
         "summary": "Create Rate Quote from Existing Order",
         "description": "Request a freight rate quote using an existing order. Either `orderNumber` or `orderReferenceNumber` is required.",
         "operationId": "createRateQuoteFromOrder",
@@ -1677,7 +2464,10 @@
                   }
                 },
                 "additionalReferenceNumbers": [
-                  { "type": "PO", "value": "PO-9876" }
+                  {
+                    "type": "PO",
+                    "value": "PO-9876"
+                  }
                 ]
               }
             }
@@ -1700,7 +2490,9 @@
         }
       },
       "get": {
-        "tags": ["Rate Quote"],
+        "tags": [
+          "Rate Quote"
+        ],
         "summary": "Get Rate Quote",
         "description": "Retrieve a rate quote and all of its carrier responses by short ID.",
         "operationId": "getRateQuote",
@@ -1732,7 +2524,10 @@
                     "shortId": "RQ-0042",
                     "equipmentType": "Dryvan",
                     "referenceNumbers": [
-                      { "type": "PO", "value": "PO-9876" }
+                      {
+                        "type": "PO",
+                        "value": "PO-9876"
+                      }
                     ],
                     "stops": [
                       {
@@ -1755,8 +2550,16 @@
                         },
                         "dates": {
                           "orderDates": {
-                            "startAt": { "epoch": 1748736000000, "timeZone": "America/Chicago", "isDateOnly": true },
-                            "endAt": { "epoch": 1748822400000, "timeZone": "America/Chicago", "isDateOnly": true }
+                            "startAt": {
+                              "epoch": 1748736000000,
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": true
+                            },
+                            "endAt": {
+                              "epoch": 1748822400000,
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": true
+                            }
                           }
                         },
                         "referenceNumbers": [],
@@ -1789,17 +2592,30 @@
                       {
                         "responseId": "507f1f77bcf86cd799439012",
                         "status": "open",
-                        "price": { "cents": 250000, "currencyCode": "USD" },
-                        "carrier": { "name": "Example Carrier", "scac": "EXCA" },
+                        "price": {
+                          "cents": 250000,
+                          "currencyCode": "USD"
+                        },
+                        "carrier": {
+                          "name": "Example Carrier",
+                          "scac": "EXCA"
+                        },
                         "mode": "FTL",
-                        "transitDays": { "min": 2, "max": 4 },
+                        "transitDays": {
+                          "min": 2,
+                          "max": 4
+                        },
                         "expiresAt": "2025-06-02",
                         "stops": [
                           {
                             "index": 0,
                             "type": "Pickup",
                             "estimatedDates": {
-                              "startAt": { "epoch": 1748736000000, "timeZone": "America/Chicago", "isDateOnly": true }
+                              "startAt": {
+                                "epoch": 1748736000000,
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": true
+                              }
                             }
                           }
                         ]
@@ -1851,7 +2667,9 @@
     },
     "/api/ext/v1/rate-quote/create": {
       "post": {
-        "tags": ["Rate Quote"],
+        "tags": [
+          "Rate Quote"
+        ],
         "summary": "Create Standalone Rate Quote",
         "description": "Request freight rate quotes without an existing order. At least one `pickup` and one `dropoff` stop are required. Returns the rate quote ID and any responses received synchronously from integrations.",
         "operationId": "createStandaloneRateQuote",
@@ -1882,14 +2700,23 @@
                     },
                     "items": [
                       {
-                        "weight": { "value": 500, "unit": "LB" },
+                        "weight": {
+                          "value": 500,
+                          "unit": "LB"
+                        },
                         "class": "70",
-                        "quantity": { "count": 2, "unit": "Pallet" },
+                        "quantity": {
+                          "count": 2,
+                          "unit": "Pallet"
+                        },
                         "description": "Pallets of coffee"
                       }
                     ],
                     "referenceNumbers": [
-                      { "type": "PO", "value": "PO-9876" }
+                      {
+                        "type": "PO",
+                        "value": "PO-9876"
+                      }
                     ]
                   },
                   {
@@ -1908,7 +2735,10 @@
                 ],
                 "equipmentType": "Dryvan",
                 "referenceNumbers": [
-                  { "type": "PO", "value": "PO-9876" }
+                  {
+                    "type": "PO",
+                    "value": "PO-9876"
+                  }
                 ]
               }
             }
@@ -1928,25 +2758,46 @@
                     {
                       "responseId": "507f1f77bcf86cd799439012",
                       "status": "open",
-                      "price": { "cents": 250000, "currencyCode": "USD" },
-                      "carrier": { "name": "Example Carrier", "scac": "EXCA" },
+                      "price": {
+                        "cents": 250000,
+                        "currencyCode": "USD"
+                      },
+                      "carrier": {
+                        "name": "Example Carrier",
+                        "scac": "EXCA"
+                      },
                       "mode": "FTL",
-                      "transitDays": { "min": 2, "max": 4 },
+                      "transitDays": {
+                        "min": 2,
+                        "max": 4
+                      },
                       "expiresAt": "2025-06-02",
                       "stops": [
                         {
                           "index": 0,
                           "type": "Pickup",
                           "estimatedDates": {
-                            "startAt": { "epoch": 1748736000000, "timeZone": "America/Chicago", "isDateOnly": true },
-                            "endAt": { "epoch": 1748822400000, "timeZone": "America/Chicago", "isDateOnly": true }
+                            "startAt": {
+                              "epoch": 1748736000000,
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": true
+                            },
+                            "endAt": {
+                              "epoch": 1748822400000,
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": true
+                            }
                           }
                         },
                         {
                           "index": 1,
                           "type": "Dropoff",
                           "estimatedDates": {
-                            "startAt": { "epoch": 1748995200000, "timeZone": "America/New_York", "isDateOnly": true }
+                            "startAt": {
+                              "epoch": 1748995200000,
+                              "timeZone": "America/New_York",
+                              "isDateOnly": true
+                            }
                           }
                         }
                       ]
@@ -1981,7 +2832,9 @@
     },
     "/api/ext/v1/tender": {
       "post": {
-        "tags": ["Tender"],
+        "tags": [
+          "Tender"
+        ],
         "summary": "Create Tender",
         "description": "Tender (accept) a specific rate quote response at its quoted price. This initiates the booking with the carrier. Returns the updated tender status and load number if one was created.",
         "operationId": "createTender",
@@ -2053,7 +2906,9 @@
         }
       },
       "get": {
-        "tags": ["Tender"],
+        "tags": [
+          "Tender"
+        ],
         "summary": "Get Tender Status",
         "description": "Retrieve the current tender status for a rate quote response.",
         "operationId": "getTenderStatus",
@@ -2136,11 +2991,23 @@
     "schemas": {
       "UpsertOrder": {
         "type": "object",
-        "required": ["type", "isTest", "source", "sourceId", "status", "stops", "items"],
+        "required": [
+          "type",
+          "isTest",
+          "source",
+          "sourceId",
+          "status",
+          "stops",
+          "items"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["transfer", "purchase", "sales"],
+            "enum": [
+              "transfer",
+              "purchase",
+              "sales"
+            ],
             "description": "The type of the order."
           },
           "isTest": {
@@ -2153,7 +3020,11 @@
           },
           "source": {
             "type": "string",
-            "enum": ["NetSuite", "WebIntegrated", "SugarCRM"],
+            "enum": [
+              "NetSuite",
+              "WebIntegrated",
+              "SugarCRM"
+            ],
             "description": "The system the order originates from. Email support@owlery.ai to add new sources."
           },
           "sourceId": {
@@ -2162,7 +3033,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["open", "inProgress", "closed", "cancelled"],
+            "enum": [
+              "open",
+              "inProgress",
+              "closed",
+              "cancelled"
+            ],
             "description": "The status of the order."
           },
           "stops": {
@@ -2183,14 +3059,22 @@
       },
       "Stop": {
         "type": "object",
-        "required": ["facility", "type", "index", "preventSendOrder"],
+        "required": [
+          "facility",
+          "type",
+          "index",
+          "preventSendOrder"
+        ],
         "properties": {
           "facility": {
             "$ref": "#/components/schemas/Facility"
           },
           "type": {
             "type": "string",
-            "enum": ["pickup", "dropoff"],
+            "enum": [
+              "pickup",
+              "dropoff"
+            ],
             "description": "The type of stop."
           },
           "index": {
@@ -2218,7 +3102,11 @@
       },
       "ShipmentItem": {
         "type": "object",
-        "required": ["expectedQuantity", "unitOfMeasure", "inventory"],
+        "required": [
+          "expectedQuantity",
+          "unitOfMeasure",
+          "inventory"
+        ],
         "properties": {
           "lotCode": {
             "type": "string",
@@ -2230,7 +3118,21 @@
           },
           "unitOfMeasure": {
             "type": "string",
-            "enum": ["each", "bottle", "bag", "pack", "case", "carton", "pallet", "skid", "roll", "pail", "tote", "kd", "poly"],
+            "enum": [
+              "each",
+              "bottle",
+              "bag",
+              "pack",
+              "case",
+              "carton",
+              "pallet",
+              "skid",
+              "roll",
+              "pail",
+              "tote",
+              "kd",
+              "poly"
+            ],
             "description": "Unit of measure."
           },
           "expirationDate": {
@@ -2244,11 +3146,20 @@
       },
       "WebhookOrder": {
         "type": "object",
-        "required": ["type", "items"],
+        "required": [
+          "type",
+          "items"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["transfer", "purchase", "sales", "inbound", "outbound"],
+            "enum": [
+              "transfer",
+              "purchase",
+              "sales",
+              "inbound",
+              "outbound"
+            ],
             "description": "The type of the order."
           },
           "orderNumber": {
@@ -2261,7 +3172,11 @@
           },
           "source": {
             "type": "string",
-            "enum": ["NetSuite", "WebIntegrated", "SugarCRM"],
+            "enum": [
+              "NetSuite",
+              "WebIntegrated",
+              "SugarCRM"
+            ],
             "description": "The system the order originates from."
           },
           "sourceId": {
@@ -2279,7 +3194,9 @@
       },
       "WebhookItem": {
         "type": "object",
-        "required": ["sku"],
+        "required": [
+          "sku"
+        ],
         "properties": {
           "expectedQuantity": {
             "type": "number",
@@ -2291,7 +3208,21 @@
           },
           "unitOfMeasure": {
             "type": "string",
-            "enum": ["each", "bottle", "bag", "pack", "case", "carton", "pallet", "skid", "roll", "pail", "tote", "kd", "poly"],
+            "enum": [
+              "each",
+              "bottle",
+              "bag",
+              "pack",
+              "case",
+              "carton",
+              "pallet",
+              "skid",
+              "roll",
+              "pail",
+              "tote",
+              "kd",
+              "poly"
+            ],
             "description": "Unit of measure."
           },
           "sku": {
@@ -2328,7 +3259,21 @@
           },
           "unitOfMeasure": {
             "type": "string",
-            "enum": ["each", "bottle", "bag", "pack", "case", "carton", "pallet", "skid", "roll", "pail", "tote", "kd", "poly"],
+            "enum": [
+              "each",
+              "bottle",
+              "bag",
+              "pack",
+              "case",
+              "carton",
+              "pallet",
+              "skid",
+              "roll",
+              "pail",
+              "tote",
+              "kd",
+              "poly"
+            ],
             "description": "Unit of measure."
           },
           "expirationDate": {
@@ -2343,7 +3288,23 @@
       },
       "TenderWebhookMessage": {
         "type": "object",
-        "required": ["id", "referenceNumbers", "mode", "equipmentType", "isTeamRate", "isContractRate", "isDirectTender", "shipmentMode", "stops", "orders", "price", "broker", "status", "updatedAtInMs", "updatedBy"],
+        "required": [
+          "id",
+          "referenceNumbers",
+          "mode",
+          "equipmentType",
+          "isTeamRate",
+          "isContractRate",
+          "isDirectTender",
+          "shipmentMode",
+          "stops",
+          "orders",
+          "price",
+          "broker",
+          "status",
+          "updatedAtInMs",
+          "updatedBy"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -2362,12 +3323,25 @@
           },
           "mode": {
             "type": "string",
-            "enum": ["FTL", "LTL", "PTL", "VLTL", "Consolidation", "IMDL"],
+            "enum": [
+              "FTL",
+              "LTL",
+              "PTL",
+              "VLTL",
+              "Consolidation",
+              "IMDL"
+            ],
             "description": "Transportation mode."
           },
           "equipmentType": {
             "type": "string",
-            "enum": ["Dryvan", "Reefer", "Flatbed", "Drayage", "Tanker"],
+            "enum": [
+              "Dryvan",
+              "Reefer",
+              "Flatbed",
+              "Drayage",
+              "Tanker"
+            ],
             "description": "Equipment type."
           },
           "reeferSettings": {
@@ -2387,7 +3361,10 @@
           },
           "shipmentMode": {
             "type": "string",
-            "enum": ["Normal", "Expedited"],
+            "enum": [
+              "Normal",
+              "Expedited"
+            ],
             "description": "Shipment mode."
           },
           "stops": {
@@ -2419,7 +3396,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["BOLCreated", "CarrierSelected", "Tendered", "Accepted"],
+            "enum": [
+              "BOLCreated",
+              "CarrierSelected",
+              "Tendered",
+              "Accepted"
+            ],
             "description": "Tender status."
           },
           "updatedAtInMs": {
@@ -2434,7 +3416,10 @@
       },
       "TenderWebhookPrice": {
         "type": "object",
-        "required": ["total", "currencyCode"],
+        "required": [
+          "total",
+          "currencyCode"
+        ],
         "properties": {
           "total": {
             "type": "number",
@@ -2448,7 +3433,11 @@
       },
       "TenderWebhookLineItem": {
         "type": "object",
-        "required": ["category", "total", "code"],
+        "required": [
+          "category",
+          "total",
+          "code"
+        ],
         "properties": {
           "description": {
             "type": "string",
@@ -2456,7 +3445,14 @@
           },
           "category": {
             "type": "string",
-            "enum": ["lineHaul", "fuelSurcharge", "detention", "lumper", "discount", "other"],
+            "enum": [
+              "lineHaul",
+              "fuelSurcharge",
+              "detention",
+              "lumper",
+              "discount",
+              "other"
+            ],
             "description": "Category of the charge."
           },
           "total": {
@@ -2479,7 +3475,9 @@
       },
       "TenderWebhookBrokerProfile": {
         "type": "object",
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -2513,11 +3511,16 @@
       },
       "StopViewModel": {
         "type": "object",
-        "required": ["type"],
+        "required": [
+          "type"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["Pickup", "Dropoff"],
+            "enum": [
+              "Pickup",
+              "Dropoff"
+            ],
             "description": "Type of stop."
           },
           "dates": {
@@ -2530,7 +3533,11 @@
       },
       "TenderWebhookStop": {
         "type": "object",
-        "required": ["index", "type", "orders"],
+        "required": [
+          "index",
+          "type",
+          "orders"
+        ],
         "properties": {
           "index": {
             "type": "number",
@@ -2538,7 +3545,10 @@
           },
           "type": {
             "type": "string",
-            "enum": ["Pickup", "Dropoff"],
+            "enum": [
+              "Pickup",
+              "Dropoff"
+            ],
             "description": "Type of stop."
           },
           "orders": {
@@ -2565,7 +3575,9 @@
       },
       "TenderWebhookOrder": {
         "type": "object",
-        "required": ["orderNumber"],
+        "required": [
+          "orderNumber"
+        ],
         "properties": {
           "orderNumber": {
             "type": "string",
@@ -2575,7 +3587,9 @@
       },
       "TenderWebhookOrderStopMapping": {
         "type": "object",
-        "required": ["orderNumber"],
+        "required": [
+          "orderNumber"
+        ],
         "properties": {
           "orderNumber": {
             "type": "string",
@@ -2630,7 +3644,10 @@
       },
       "LocationViewModel": {
         "type": "object",
-        "required": ["city", "state"],
+        "required": [
+          "city",
+          "state"
+        ],
         "properties": {
           "street": {
             "type": "string",
@@ -2659,7 +3676,9 @@
       },
       "Facility": {
         "type": "object",
-        "required": ["location"],
+        "required": [
+          "location"
+        ],
         "properties": {
           "lookupCode": {
             "type": "string",
@@ -2683,7 +3702,12 @@
       },
       "Location": {
         "type": "object",
-        "required": ["street", "city", "state", "zipcode"],
+        "required": [
+          "street",
+          "city",
+          "state",
+          "zipcode"
+        ],
         "properties": {
           "street": {
             "type": "string",
@@ -2712,7 +3736,10 @@
       },
       "Coordinates": {
         "type": "object",
-        "required": ["lat", "lng"],
+        "required": [
+          "lat",
+          "lng"
+        ],
         "properties": {
           "lat": {
             "type": "number",
@@ -2726,7 +3753,9 @@
       },
       "DatePair": {
         "type": "object",
-        "required": ["startAt"],
+        "required": [
+          "startAt"
+        ],
         "properties": {
           "startAt": {
             "type": "string",
@@ -2740,7 +3769,9 @@
       },
       "Contact": {
         "type": "object",
-        "required": ["email"],
+        "required": [
+          "email"
+        ],
         "properties": {
           "email": {
             "type": "string",
@@ -2758,7 +3789,9 @@
       },
       "Inventory": {
         "type": "object",
-        "required": ["sku"],
+        "required": [
+          "sku"
+        ],
         "properties": {
           "sku": {
             "type": "string",
@@ -2772,11 +3805,27 @@
       },
       "ReferenceNumber": {
         "type": "object",
-        "required": ["type", "value"],
+        "required": [
+          "type",
+          "value"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["PO", "SO", "BOL", "MBOL", "Pickup", "Dropoff", "Unknown", "Order", "ProNumber", "FreightPO", "TrailerSealNumber", "TrailerNumber"],
+            "enum": [
+              "PO",
+              "SO",
+              "BOL",
+              "MBOL",
+              "Pickup",
+              "Dropoff",
+              "Unknown",
+              "Order",
+              "ProNumber",
+              "FreightPO",
+              "TrailerSealNumber",
+              "TrailerNumber"
+            ],
             "description": "The type of the reference number."
           },
           "value": {
@@ -2806,7 +3855,9 @@
       },
       "CreatedOrder": {
         "type": "object",
-        "required": ["orderNumber"],
+        "required": [
+          "orderNumber"
+        ],
         "properties": {
           "orderNumber": {
             "type": "string",
@@ -2816,7 +3867,9 @@
       },
       "Failure": {
         "type": "object",
-        "required": ["failureErrorString"],
+        "required": [
+          "failureErrorString"
+        ],
         "properties": {
           "failureErrorString": {
             "type": "string",
@@ -2826,11 +3879,18 @@
       },
       "OrderConfirmation": {
         "type": "object",
-        "required": ["type", "orderNumber", "items"],
+        "required": [
+          "type",
+          "orderNumber",
+          "items"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["inbound", "outbound"],
+            "enum": [
+              "inbound",
+              "outbound"
+            ],
             "description": "The type of the order."
           },
           "orderNumber": {
@@ -2852,7 +3912,11 @@
       },
       "OrderConfirmationItem": {
         "type": "object",
-        "required": ["sku", "actualQuantity", "unitOfMeasure"],
+        "required": [
+          "sku",
+          "actualQuantity",
+          "unitOfMeasure"
+        ],
         "properties": {
           "sku": {
             "type": "string",
@@ -2872,7 +3936,21 @@
           },
           "unitOfMeasure": {
             "type": "string",
-            "enum": ["each", "bottle", "bag", "pack", "case", "carton", "pallet", "skid", "roll", "pail", "tote", "kd", "poly"],
+            "enum": [
+              "each",
+              "bottle",
+              "bag",
+              "pack",
+              "case",
+              "carton",
+              "pallet",
+              "skid",
+              "roll",
+              "pail",
+              "tote",
+              "kd",
+              "poly"
+            ],
             "description": "Unit of measure."
           },
           "lotCode": {
@@ -2887,7 +3965,10 @@
       },
       "ConfirmOrderResponse": {
         "type": "object",
-        "required": ["confirmedOrderNumbers", "errors"],
+        "required": [
+          "confirmedOrderNumbers",
+          "errors"
+        ],
         "properties": {
           "confirmedOrderNumbers": {
             "type": "array",
@@ -2907,7 +3988,14 @@
       },
       "InvoiceSubmission": {
         "type": "object",
-        "required": ["invoiceNumber", "loadNumber", "total", "currencyCode", "status", "lineItems"],
+        "required": [
+          "invoiceNumber",
+          "loadNumber",
+          "total",
+          "currencyCode",
+          "status",
+          "lineItems"
+        ],
         "properties": {
           "invoiceNumber": {
             "type": "string",
@@ -2931,12 +4019,19 @@
           },
           "currencyCode": {
             "type": "string",
-            "enum": ["USD", "CAD", "MXN"],
+            "enum": [
+              "USD",
+              "CAD",
+              "MXN"
+            ],
             "description": "ISO currency code."
           },
           "status": {
             "type": "string",
-            "enum": ["unpaid", "paid"],
+            "enum": [
+              "unpaid",
+              "paid"
+            ],
             "description": "Invoice status."
           },
           "lineItems": {
@@ -2971,7 +4066,11 @@
       },
       "InvoiceLineItem": {
         "type": "object",
-        "required": ["category", "total", "code"],
+        "required": [
+          "category",
+          "total",
+          "code"
+        ],
         "properties": {
           "description": {
             "type": "string",
@@ -2979,7 +4078,17 @@
           },
           "category": {
             "type": "string",
-            "enum": ["lineHaul", "fuelSurcharge", "detention", "lumper", "discount", "reweigh", "californiaComplianceSurcharge", "guarantee", "other"],
+            "enum": [
+              "lineHaul",
+              "fuelSurcharge",
+              "detention",
+              "lumper",
+              "discount",
+              "reweigh",
+              "californiaComplianceSurcharge",
+              "guarantee",
+              "other"
+            ],
             "description": "Line item category."
           },
           "total": {
@@ -3000,7 +4109,21 @@
           },
           "unitOfMeasure": {
             "type": "string",
-            "enum": ["each", "bottle", "bag", "pack", "case", "carton", "pallet", "skid", "roll", "pail", "tote", "kd", "poly"],
+            "enum": [
+              "each",
+              "bottle",
+              "bag",
+              "pack",
+              "case",
+              "carton",
+              "pallet",
+              "skid",
+              "roll",
+              "pail",
+              "tote",
+              "kd",
+              "poly"
+            ],
             "description": "Unit of measure."
           },
           "weight": {
@@ -3008,7 +4131,26 @@
           },
           "class": {
             "type": "string",
-            "enum": ["50", "55", "60", "65", "70", "77.5", "85", "92.5", "100", "110", "125", "150", "175", "200", "250", "300", "400", "500"],
+            "enum": [
+              "50",
+              "55",
+              "60",
+              "65",
+              "70",
+              "77.5",
+              "85",
+              "92.5",
+              "100",
+              "110",
+              "125",
+              "150",
+              "175",
+              "200",
+              "250",
+              "300",
+              "400",
+              "500"
+            ],
             "description": "Freight class."
           }
         }
@@ -3033,7 +4175,12 @@
       },
       "Address": {
         "type": "object",
-        "required": ["street", "city", "state", "zipcode"],
+        "required": [
+          "street",
+          "city",
+          "state",
+          "zipcode"
+        ],
         "properties": {
           "street": {
             "type": "string",
@@ -3059,7 +4206,10 @@
       },
       "Party": {
         "type": "object",
-        "required": ["name", "location"],
+        "required": [
+          "name",
+          "location"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -3072,7 +4222,10 @@
       },
       "BillToParty": {
         "type": "object",
-        "required": ["name", "location"],
+        "required": [
+          "name",
+          "location"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -3089,7 +4242,10 @@
       },
       "Weight": {
         "type": "object",
-        "required": ["value", "unit"],
+        "required": [
+          "value",
+          "unit"
+        ],
         "properties": {
           "value": {
             "type": "number",
@@ -3097,7 +4253,10 @@
           },
           "unit": {
             "type": "string",
-            "enum": ["lb", "kg"],
+            "enum": [
+              "lb",
+              "kg"
+            ],
             "description": "Weight unit."
           }
         }
@@ -3123,7 +4282,10 @@
       },
       "CreatedInvoice": {
         "type": "object",
-        "required": ["invoiceNumber", "id"],
+        "required": [
+          "invoiceNumber",
+          "id"
+        ],
         "properties": {
           "invoiceNumber": {
             "type": "string",
@@ -3137,7 +4299,10 @@
       },
       "InvoiceFailure": {
         "type": "object",
-        "required": ["invoiceNumber", "error"],
+        "required": [
+          "invoiceNumber",
+          "error"
+        ],
         "properties": {
           "invoiceNumber": {
             "type": "string",
@@ -3151,7 +4316,13 @@
       },
       "InvoiceWebhook": {
         "type": "object",
-        "required": ["invoiceNumber", "total", "currencyCode", "status", "lineItems"],
+        "required": [
+          "invoiceNumber",
+          "total",
+          "currencyCode",
+          "status",
+          "lineItems"
+        ],
         "properties": {
           "invoiceNumber": {
             "type": "string",
@@ -3178,12 +4349,19 @@
           },
           "currencyCode": {
             "type": "string",
-            "enum": ["USD", "CAD", "MXN"],
+            "enum": [
+              "USD",
+              "CAD",
+              "MXN"
+            ],
             "description": "ISO currency code."
           },
           "status": {
             "type": "string",
-            "enum": ["unpaid", "paid"],
+            "enum": [
+              "unpaid",
+              "paid"
+            ],
             "description": "Invoice status."
           },
           "lineItems": {
@@ -3214,7 +4392,11 @@
       },
       "OrderLoadStopDatesUpdatedWebhook": {
         "type": "object",
-        "required": ["orderNumber", "source", "stops"],
+        "required": [
+          "orderNumber",
+          "source",
+          "stops"
+        ],
         "properties": {
           "orderNumber": {
             "type": "string",
@@ -3243,7 +4425,10 @@
       },
       "OrderLoadStopDatesUpdatedStop": {
         "type": "object",
-        "required": ["index", "stopType"],
+        "required": [
+          "index",
+          "stopType"
+        ],
         "properties": {
           "index": {
             "type": "number",
@@ -3251,8 +4436,14 @@
           },
           "stopType": {
             "type": "string",
-            "enum": ["pickup", "dropoff"],
+            "enum": [
+              "pickup",
+              "dropoff"
+            ],
             "description": "Type of the order stop."
+          },
+          "orderDates": {
+            "$ref": "#/components/schemas/StartEndDatePair"
           },
           "estimatedDates": {
             "$ref": "#/components/schemas/StartEndDatePair"
@@ -3278,7 +4469,11 @@
       },
       "DateTimeWithZone": {
         "type": "object",
-        "required": ["dateTime", "timeZone", "isDateOnly"],
+        "required": [
+          "dateTime",
+          "timeZone",
+          "isDateOnly"
+        ],
         "properties": {
           "dateTime": {
             "type": "string",
@@ -3297,7 +4492,12 @@
       },
       "TrackingStatus": {
         "type": "object",
-        "required": ["loadNumber", "status", "at", "location"],
+        "required": [
+          "loadNumber",
+          "status",
+          "at",
+          "location"
+        ],
         "properties": {
           "loadNumber": {
             "type": "string",
@@ -3305,7 +4505,19 @@
           },
           "status": {
             "type": "string",
-            "enum": ["AppointmentScheduled", "DriverAssigned", "DispatchedToPickup", "ArrivedAtPickup", "LoadingBegin", "PickedUp", "InTransit", "InTransitDelayed", "ArrivedAtDropoff", "UnloadingBegin", "DroppedOff"],
+            "enum": [
+              "AppointmentScheduled",
+              "DriverAssigned",
+              "DispatchedToPickup",
+              "ArrivedAtPickup",
+              "LoadingBegin",
+              "PickedUp",
+              "InTransit",
+              "InTransitDelayed",
+              "ArrivedAtDropoff",
+              "UnloadingBegin",
+              "DroppedOff"
+            ],
             "description": "Status of the tracking event."
           },
           "at": {
@@ -3327,7 +4539,9 @@
       },
       "AppointmentWindow": {
         "type": "object",
-        "required": ["startAt"],
+        "required": [
+          "startAt"
+        ],
         "properties": {
           "startAt": {
             "type": "string",
@@ -3343,7 +4557,9 @@
       },
       "TrackingSuccessResponse": {
         "type": "object",
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "properties": {
           "success": {
             "type": "array",
@@ -3356,7 +4572,10 @@
       },
       "TrackingPartialResponse": {
         "type": "object",
-        "required": ["success", "missing"],
+        "required": [
+          "success",
+          "missing"
+        ],
         "properties": {
           "success": {
             "type": "array",
@@ -3376,7 +4595,9 @@
       },
       "LoadSearchRequest": {
         "type": "object",
-        "required": ["referenceNumbers"],
+        "required": [
+          "referenceNumbers"
+        ],
         "properties": {
           "referenceNumbers": {
             "type": "array",
@@ -3389,7 +4610,9 @@
       },
       "LoadSearchResponse": {
         "type": "object",
-        "required": ["loads"],
+        "required": [
+          "loads"
+        ],
         "properties": {
           "loads": {
             "type": "array",
@@ -3402,7 +4625,13 @@
       },
       "LoadViewModel": {
         "type": "object",
-        "required": ["loadNumber", "referenceNumbers", "mode", "status", "stops"],
+        "required": [
+          "loadNumber",
+          "referenceNumbers",
+          "mode",
+          "status",
+          "stops"
+        ],
         "properties": {
           "loadNumber": {
             "type": "string",
@@ -3417,7 +4646,10 @@
           },
           "mode": {
             "type": "string",
-            "enum": ["FTL", "LTL"],
+            "enum": [
+              "FTL",
+              "LTL"
+            ],
             "description": "Mode of transportation."
           },
           "status": {
@@ -3447,7 +4679,13 @@
           },
           "equipmentType": {
             "type": "string",
-            "enum": ["Dryvan", "Reefer", "Flatbed", "Drayage", "Tanker"],
+            "enum": [
+              "Dryvan",
+              "Reefer",
+              "Flatbed",
+              "Drayage",
+              "Tanker"
+            ],
             "description": "Equipment type."
           },
           "trackingNumber": {
@@ -3458,11 +4696,18 @@
       },
       "LoadStop": {
         "type": "object",
-        "required": ["type", "dates", "facilityProfile"],
+        "required": [
+          "type",
+          "dates",
+          "facilityProfile"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["pickup", "dropoff"],
+            "enum": [
+              "pickup",
+              "dropoff"
+            ],
             "description": "Type of stop."
           },
           "dates": {
@@ -3489,7 +4734,10 @@
       },
       "DateWithTimeZone": {
         "type": "object",
-        "required": ["startAt", "endAt"],
+        "required": [
+          "startAt",
+          "endAt"
+        ],
         "properties": {
           "startAt": {
             "$ref": "#/components/schemas/TimeStampWithZone"
@@ -3501,7 +4749,11 @@
       },
       "TimeStampWithZone": {
         "type": "object",
-        "required": ["tsInMs", "timeZone", "isDateOnly"],
+        "required": [
+          "tsInMs",
+          "timeZone",
+          "isDateOnly"
+        ],
         "properties": {
           "tsInMs": {
             "type": "number",
@@ -3519,7 +4771,10 @@
       },
       "FacilityProfile": {
         "type": "object",
-        "required": ["name", "location"],
+        "required": [
+          "name",
+          "location"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -3532,7 +4787,15 @@
       },
       "LocationWithTimeZone": {
         "type": "object",
-        "required": ["street", "city", "state", "countryCode", "zipcode", "timeZone", "coordinates"],
+        "required": [
+          "street",
+          "city",
+          "state",
+          "countryCode",
+          "zipcode",
+          "timeZone",
+          "coordinates"
+        ],
         "properties": {
           "street": {
             "type": "string",
@@ -3565,7 +4828,9 @@
       },
       "BrokerProfile": {
         "type": "object",
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -3579,7 +4844,9 @@
       },
       "CarrierProfile": {
         "type": "object",
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -3593,7 +4860,9 @@
       },
       "CreateLoadsRequest": {
         "type": "object",
-        "required": ["loads"],
+        "required": [
+          "loads"
+        ],
         "properties": {
           "loads": {
             "type": "array",
@@ -3625,7 +4894,9 @@
       },
       "CreatedLoadSummary": {
         "type": "object",
-        "required": ["loadNumber"],
+        "required": [
+          "loadNumber"
+        ],
         "properties": {
           "loadNumber": {
             "type": "string",
@@ -3635,7 +4906,9 @@
       },
       "CreateLoadFailure": {
         "type": "object",
-        "required": ["error"],
+        "required": [
+          "error"
+        ],
         "properties": {
           "loadNumber": {
             "type": "string",
@@ -3649,7 +4922,13 @@
       },
       "CreateLoad": {
         "type": "object",
-        "required": ["loadNumber", "status", "mode", "currencyCode", "stops"],
+        "required": [
+          "loadNumber",
+          "status",
+          "mode",
+          "currencyCode",
+          "stops"
+        ],
         "properties": {
           "loadNumber": {
             "type": "string",
@@ -3657,27 +4936,53 @@
           },
           "status": {
             "type": "string",
-            "enum": ["Open", "InProgress", "Delivered", "Cancelled"],
+            "enum": [
+              "Open",
+              "InProgress",
+              "Delivered",
+              "Cancelled"
+            ],
             "description": "Source status."
           },
           "mode": {
             "type": "string",
-            "enum": ["FTL", "LTL", "PTL", "VLTL", "Consolidation", "IMDL"],
+            "enum": [
+              "FTL",
+              "LTL",
+              "PTL",
+              "VLTL",
+              "Consolidation",
+              "IMDL"
+            ],
             "description": "Transportation mode."
           },
           "shipmentMode": {
             "type": "string",
-            "enum": ["Ocean", "Air", "Truck", "Rail"],
+            "enum": [
+              "Ocean",
+              "Air",
+              "Truck",
+              "Rail"
+            ],
             "description": "Shipment mode."
           },
           "driverMode": {
             "type": "string",
-            "enum": ["Team", "Solo"],
+            "enum": [
+              "Team",
+              "Solo"
+            ],
             "description": "Driver mode."
           },
           "equipmentType": {
             "type": "string",
-            "enum": ["Dryvan", "Reefer", "Flatbed", "Drayage", "Tanker"],
+            "enum": [
+              "Dryvan",
+              "Reefer",
+              "Flatbed",
+              "Drayage",
+              "Tanker"
+            ],
             "description": "Equipment type."
           },
           "currencyCode": {
@@ -3718,7 +5023,12 @@
       },
       "CreateLoadStop": {
         "type": "object",
-        "required": ["index", "type", "orderDates", "facility"],
+        "required": [
+          "index",
+          "type",
+          "orderDates",
+          "facility"
+        ],
         "properties": {
           "index": {
             "type": "number",
@@ -3726,17 +5036,31 @@
           },
           "type": {
             "type": "string",
-            "enum": ["Pickup", "Dropoff"],
+            "enum": [
+              "Pickup",
+              "Dropoff"
+            ],
             "description": "Stop type."
           },
           "liveDropType": {
             "type": "string",
-            "enum": ["Live", "Drop"],
+            "enum": [
+              "Live",
+              "Drop"
+            ],
             "description": "Live/drop classification. Defaults to `Live` when omitted."
           },
           "timezone": {
             "type": "string",
-            "enum": ["America/New_York", "America/Chicago", "America/Denver", "America/Phoenix", "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu"],
+            "enum": [
+              "America/New_York",
+              "America/Chicago",
+              "America/Denver",
+              "America/Phoenix",
+              "America/Los_Angeles",
+              "America/Anchorage",
+              "Pacific/Honolulu"
+            ],
             "description": "Stop timezone."
           },
           "orderDates": {
@@ -3776,7 +5100,10 @@
       },
       "CreateFacility": {
         "type": "object",
-        "required": ["name", "location"],
+        "required": [
+          "name",
+          "location"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -3793,7 +5120,11 @@
       },
       "FacilityLocation": {
         "type": "object",
-        "required": ["city", "state", "zipcode"],
+        "required": [
+          "city",
+          "state",
+          "zipcode"
+        ],
         "properties": {
           "street": {
             "type": "string",
@@ -3813,7 +5144,11 @@
           },
           "countryCode": {
             "type": "string",
-            "enum": ["US", "CA", "MX"],
+            "enum": [
+              "US",
+              "CA",
+              "MX"
+            ],
             "description": "ISO-3166-1 Alpha-2 country code. If omitted, the system will automatically infer the country code based on the state code."
           }
         }
@@ -3848,7 +5183,26 @@
           },
           "class": {
             "type": "string",
-            "enum": ["50", "55", "60", "65", "70", "77.5", "85", "92.5", "100", "110", "125", "150", "175", "200", "250", "300", "400", "500"],
+            "enum": [
+              "50",
+              "55",
+              "60",
+              "65",
+              "70",
+              "77.5",
+              "85",
+              "92.5",
+              "100",
+              "110",
+              "125",
+              "150",
+              "175",
+              "200",
+              "250",
+              "300",
+              "400",
+              "500"
+            ],
             "description": "Freight class."
           },
           "nmfcCode": {
@@ -3859,7 +5213,10 @@
       },
       "Quantity": {
         "type": "object",
-        "required": ["count", "unit"],
+        "required": [
+          "count",
+          "unit"
+        ],
         "properties": {
           "count": {
             "type": "number",
@@ -3867,14 +5224,29 @@
           },
           "unit": {
             "type": "string",
-            "enum": ["Each", "Bottle", "Bag", "Pack", "Case", "Carton", "Pallet", "Skid", "Roll", "Pail", "Tote"],
+            "enum": [
+              "Each",
+              "Bottle",
+              "Bag",
+              "Pack",
+              "Case",
+              "Carton",
+              "Pallet",
+              "Skid",
+              "Roll",
+              "Pail",
+              "Tote"
+            ],
             "description": "Quantity unit."
           }
         }
       },
       "ItemWeight": {
         "type": "object",
-        "required": ["value", "unit"],
+        "required": [
+          "value",
+          "unit"
+        ],
         "properties": {
           "value": {
             "type": "number",
@@ -3882,14 +5254,22 @@
           },
           "unit": {
             "type": "string",
-            "enum": ["LB", "KG"],
+            "enum": [
+              "LB",
+              "KG"
+            ],
             "description": "Weight unit."
           }
         }
       },
       "Dimensions": {
         "type": "object",
-        "required": ["length", "width", "height", "unit"],
+        "required": [
+          "length",
+          "width",
+          "height",
+          "unit"
+        ],
         "properties": {
           "length": {
             "type": "number",
@@ -3905,14 +5285,20 @@
           },
           "unit": {
             "type": "string",
-            "enum": ["IN", "CM"],
+            "enum": [
+              "IN",
+              "CM"
+            ],
             "description": "Length unit."
           }
         }
       },
       "Distance": {
         "type": "object",
-        "required": ["value", "unit"],
+        "required": [
+          "value",
+          "unit"
+        ],
         "properties": {
           "value": {
             "type": "number",
@@ -3920,18 +5306,28 @@
           },
           "unit": {
             "type": "string",
-            "enum": ["MI", "KM"],
+            "enum": [
+              "MI",
+              "KM"
+            ],
             "description": "Distance unit."
           }
         }
       },
       "ContainerSettings": {
         "type": "object",
-        "required": ["containerSizeInFeet"],
+        "required": [
+          "containerSizeInFeet"
+        ],
         "properties": {
           "containerSizeInFeet": {
             "type": "number",
-            "enum": [20, 40, 48, 53],
+            "enum": [
+              20,
+              40,
+              48,
+              53
+            ],
             "description": "Container size in feet."
           }
         }
@@ -3956,7 +5352,12 @@
       },
       "ReeferSettings": {
         "type": "object",
-        "required": ["minTemperature", "maxTemperature", "unit", "sentryMode"],
+        "required": [
+          "minTemperature",
+          "maxTemperature",
+          "unit",
+          "sentryMode"
+        ],
         "properties": {
           "minTemperature": {
             "type": "number",
@@ -3968,7 +5369,10 @@
           },
           "unit": {
             "type": "string",
-            "enum": ["F", "C"],
+            "enum": [
+              "F",
+              "C"
+            ],
             "description": "Temperature unit."
           },
           "preCoolTemperature": {
@@ -3977,18 +5381,30 @@
           },
           "sentryMode": {
             "type": "string",
-            "enum": ["Cycle", "Continuous"],
+            "enum": [
+              "Cycle",
+              "Continuous"
+            ],
             "description": "Reefer sentry mode."
           }
         }
       },
       "LoadReferenceNumber": {
         "type": "object",
-        "required": ["type", "value"],
+        "required": [
+          "type",
+          "value"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["PO", "SO", "BOL", "MBOL", "ProNumber"],
+            "enum": [
+              "PO",
+              "SO",
+              "BOL",
+              "MBOL",
+              "ProNumber"
+            ],
             "description": "Reference number type."
           },
           "value": {
@@ -3999,7 +5415,12 @@
       },
       "DocumentSearchResponse": {
         "type": "object",
-        "required": ["documents", "totalCount", "page", "pageSize"],
+        "required": [
+          "documents",
+          "totalCount",
+          "page",
+          "pageSize"
+        ],
         "properties": {
           "documents": {
             "type": "array",
@@ -4028,7 +5449,10 @@
       },
       "DocumentViewModel": {
         "type": "object",
-        "required": ["id", "name"],
+        "required": [
+          "id",
+          "name"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -4046,7 +5470,9 @@
       },
       "CreateItemsRequest": {
         "type": "object",
-        "required": ["items"],
+        "required": [
+          "items"
+        ],
         "properties": {
           "items": {
             "type": "array",
@@ -4078,7 +5504,9 @@
       },
       "UpsertedItemSummary": {
         "type": "object",
-        "required": ["sku"],
+        "required": [
+          "sku"
+        ],
         "properties": {
           "sku": {
             "type": "string",
@@ -4088,7 +5516,9 @@
       },
       "UpsertItemFailure": {
         "type": "object",
-        "required": ["error"],
+        "required": [
+          "error"
+        ],
         "properties": {
           "sku": {
             "type": "string",
@@ -4102,7 +5532,9 @@
       },
       "CreateInventoryItem": {
         "type": "object",
-        "required": ["sku"],
+        "required": [
+          "sku"
+        ],
         "properties": {
           "sku": {
             "type": "string",
@@ -4142,11 +5574,27 @@
       },
       "InventoryItemPackaging": {
         "type": "object",
-        "required": ["type"],
+        "required": [
+          "type"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["Each", "Bottle", "Bag", "Pack", "Case", "Carton", "Pallet", "Skid", "Roll", "Pail", "Tote", "Kd", "Poly"],
+            "enum": [
+              "Each",
+              "Bottle",
+              "Bag",
+              "Pack",
+              "Case",
+              "Carton",
+              "Pallet",
+              "Skid",
+              "Roll",
+              "Pail",
+              "Tote",
+              "Kd",
+              "Poly"
+            ],
             "description": "Packaging type."
           },
           "weight": {
@@ -4157,7 +5605,21 @@
           },
           "parentType": {
             "type": "string",
-            "enum": ["Each", "Bottle", "Bag", "Pack", "Case", "Carton", "Pallet", "Skid", "Roll", "Pail", "Tote", "Kd", "Poly"],
+            "enum": [
+              "Each",
+              "Bottle",
+              "Bag",
+              "Pack",
+              "Case",
+              "Carton",
+              "Pallet",
+              "Skid",
+              "Roll",
+              "Pail",
+              "Tote",
+              "Kd",
+              "Poly"
+            ],
             "description": "The parent packaging type in the hierarchy (e.g., Case is parent of Each)."
           },
           "quantityPerParent": {
@@ -4208,7 +5670,9 @@
       },
       "CreateRateQuoteFromExistingOrderResponse": {
         "type": "object",
-        "required": ["shortId"],
+        "required": [
+          "shortId"
+        ],
         "properties": {
           "shortId": {
             "type": "string",
@@ -4218,7 +5682,9 @@
       },
       "CreateRateQuoteRequest": {
         "type": "object",
-        "required": ["stops"],
+        "required": [
+          "stops"
+        ],
         "properties": {
           "stops": {
             "type": "array",
@@ -4229,7 +5695,10 @@
           },
           "equipmentType": {
             "type": "string",
-            "enum": ["Dryvan", "Reefer"],
+            "enum": [
+              "Dryvan",
+              "Reefer"
+            ],
             "description": "Equipment type. Defaults to Dryvan."
           },
           "reeferSettings": {
@@ -4253,11 +5722,17 @@
       },
       "RateQuoteStop": {
         "type": "object",
-        "required": ["type", "facility"],
+        "required": [
+          "type",
+          "facility"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["Pickup", "Dropoff"],
+            "enum": [
+              "Pickup",
+              "Dropoff"
+            ],
             "description": "Stop type."
           },
           "facility": {
@@ -4285,7 +5760,11 @@
       },
       "StopLocation": {
         "type": "object",
-        "required": ["city", "state", "zipcode"],
+        "required": [
+          "city",
+          "state",
+          "zipcode"
+        ],
         "properties": {
           "street": {
             "type": "string",
@@ -4305,7 +5784,11 @@
           },
           "countryCode": {
             "type": "string",
-            "enum": ["US", "CA", "MX"],
+            "enum": [
+              "US",
+              "CA",
+              "MX"
+            ],
             "description": "ISO-3166-1 Alpha-2 country code."
           }
         }
@@ -4324,7 +5807,26 @@
           },
           "class": {
             "type": "string",
-            "enum": ["50", "55", "60", "65", "70", "77.5", "85", "92.5", "100", "110", "125", "150", "175", "200", "250", "300", "400", "500"],
+            "enum": [
+              "50",
+              "55",
+              "60",
+              "65",
+              "70",
+              "77.5",
+              "85",
+              "92.5",
+              "100",
+              "110",
+              "125",
+              "150",
+              "175",
+              "200",
+              "250",
+              "300",
+              "400",
+              "500"
+            ],
             "description": "Freight class."
           },
           "description": {
@@ -4351,7 +5853,12 @@
       },
       "ItemDimensions": {
         "type": "object",
-        "required": ["length", "width", "height", "unit"],
+        "required": [
+          "length",
+          "width",
+          "height",
+          "unit"
+        ],
         "properties": {
           "length": {
             "type": "number",
@@ -4367,14 +5874,20 @@
           },
           "unit": {
             "type": "string",
-            "enum": ["IN", "CM"],
+            "enum": [
+              "IN",
+              "CM"
+            ],
             "description": "Length unit."
           }
         }
       },
       "ItemQuantity": {
         "type": "object",
-        "required": ["count", "unit"],
+        "required": [
+          "count",
+          "unit"
+        ],
         "properties": {
           "count": {
             "type": "number",
@@ -4382,7 +5895,21 @@
           },
           "unit": {
             "type": "string",
-            "enum": ["Each", "Bottle", "Bag", "Pack", "Case", "Carton", "Pallet", "Skid", "Roll", "Pail", "Tote", "Kd", "Poly"],
+            "enum": [
+              "Each",
+              "Bottle",
+              "Bag",
+              "Pack",
+              "Case",
+              "Carton",
+              "Pallet",
+              "Skid",
+              "Roll",
+              "Pail",
+              "Tote",
+              "Kd",
+              "Poly"
+            ],
             "description": "Quantity unit."
           }
         }
@@ -4405,7 +5932,12 @@
       },
       "RateQuoteCreateResponse": {
         "type": "object",
-        "required": ["shortId", "responses", "errors", "infoMessages"],
+        "required": [
+          "shortId",
+          "responses",
+          "errors",
+          "infoMessages"
+        ],
         "properties": {
           "shortId": {
             "type": "string",
@@ -4436,7 +5968,11 @@
       },
       "RateQuote": {
         "type": "object",
-        "required": ["shortId", "stops", "responses"],
+        "required": [
+          "shortId",
+          "stops",
+          "responses"
+        ],
         "properties": {
           "shortId": {
             "type": "string",
@@ -4444,7 +5980,10 @@
           },
           "equipmentType": {
             "type": "string",
-            "enum": ["Dryvan", "Reefer"],
+            "enum": [
+              "Dryvan",
+              "Reefer"
+            ],
             "description": "Equipment type."
           },
           "reeferSettings": {
@@ -4482,11 +6021,20 @@
       },
       "RateQuoteViewStop": {
         "type": "object",
-        "required": ["type", "location", "dates", "referenceNumbers", "items"],
+        "required": [
+          "type",
+          "location",
+          "dates",
+          "referenceNumbers",
+          "items"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["Pickup", "Dropoff"],
+            "enum": [
+              "Pickup",
+              "Dropoff"
+            ],
             "description": "Stop type."
           },
           "location": {
@@ -4517,7 +6065,10 @@
       },
       "LocationView": {
         "type": "object",
-        "required": ["city", "state"],
+        "required": [
+          "city",
+          "state"
+        ],
         "properties": {
           "street": {
             "type": "string",
@@ -4560,7 +6111,10 @@
       },
       "RateQuoteResponse": {
         "type": "object",
-        "required": ["responseId", "status"],
+        "required": [
+          "responseId",
+          "status"
+        ],
         "properties": {
           "responseId": {
             "type": "string",
@@ -4568,7 +6122,13 @@
           },
           "status": {
             "type": "string",
-            "enum": ["open", "tendered", "accepted", "rejected", "cancelled"],
+            "enum": [
+              "open",
+              "tendered",
+              "accepted",
+              "rejected",
+              "cancelled"
+            ],
             "description": "Tender status of this response."
           },
           "price": {
@@ -4579,7 +6139,16 @@
           },
           "mode": {
             "type": "string",
-            "enum": ["FTL", "LTL", "PTL", "VLTL", "Consolidation", "IMDL", "STL", "Unknown"],
+            "enum": [
+              "FTL",
+              "LTL",
+              "PTL",
+              "VLTL",
+              "Consolidation",
+              "IMDL",
+              "STL",
+              "Unknown"
+            ],
             "description": "Transportation mode."
           },
           "transitDays": {
@@ -4600,7 +6169,10 @@
       },
       "Price": {
         "type": "object",
-        "required": ["cents", "currencyCode"],
+        "required": [
+          "cents",
+          "currencyCode"
+        ],
         "properties": {
           "cents": {
             "type": "number",
@@ -4627,7 +6199,10 @@
       },
       "RateQuoteResponseStop": {
         "type": "object",
-        "required": ["index", "type"],
+        "required": [
+          "index",
+          "type"
+        ],
         "properties": {
           "index": {
             "type": "number",
@@ -4635,7 +6210,10 @@
           },
           "type": {
             "type": "string",
-            "enum": ["Pickup", "Dropoff"],
+            "enum": [
+              "Pickup",
+              "Dropoff"
+            ],
             "description": "Stop type."
           },
           "estimatedDates": {
@@ -4656,7 +6234,11 @@
       },
       "DateWithZone": {
         "type": "object",
-        "required": ["epoch", "timeZone", "isDateOnly"],
+        "required": [
+          "epoch",
+          "timeZone",
+          "isDateOnly"
+        ],
         "properties": {
           "epoch": {
             "type": "number",
@@ -4674,7 +6256,9 @@
       },
       "TenderRequest": {
         "type": "object",
-        "required": ["rateQuoteResponseId"],
+        "required": [
+          "rateQuoteResponseId"
+        ],
         "properties": {
           "rateQuoteResponseId": {
             "type": "string",
@@ -4684,7 +6268,10 @@
       },
       "TenderStatusResponse": {
         "type": "object",
-        "required": ["rateQuoteResponseId", "status"],
+        "required": [
+          "rateQuoteResponseId",
+          "status"
+        ],
         "properties": {
           "rateQuoteResponseId": {
             "type": "string",
@@ -4692,7 +6279,13 @@
           },
           "status": {
             "type": "string",
-            "enum": ["open", "tendered", "accepted", "rejected", "cancelled"],
+            "enum": [
+              "open",
+              "tendered",
+              "accepted",
+              "rejected",
+              "cancelled"
+            ],
             "description": "Current tender status."
           },
           "loadNumber": {
