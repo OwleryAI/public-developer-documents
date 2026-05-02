@@ -719,6 +719,296 @@
                       "updatedBy": "user@example.com"
                     }
                   ]
+                },
+                "multiOrderDifferentStopIndexes": {
+                  "summary": "Multiple orders with different route and stop-type indexes",
+                  "description": "Demonstrates that pickupStopIndex/dropOffStopIndex are route stop indexes, while pickupSequenceNumber/dropoffSequenceNumber are zero-based within pickup or dropoff stops only.",
+                  "value": [
+                    {
+                      "id": "507f1f77bcf86cd799439033",
+                      "loadNumber": "LOAD-24680",
+                      "referenceNumbers": [
+                        {
+                          "type": "PO",
+                          "value": "PO-MULTI-ORDER"
+                        },
+                        {
+                          "type": "BOL",
+                          "value": "BOL-MULTI-ORDER"
+                        }
+                      ],
+                      "mode": "FTL",
+                      "equipmentType": "Reefer",
+                      "reeferSettings": {
+                        "minTemperature": 34,
+                        "maxTemperature": 38,
+                        "unit": "F",
+                        "sentryMode": "Continuous"
+                      },
+                      "isTeamRate": false,
+                      "isContractRate": true,
+                      "isDirectTender": false,
+                      "shipmentMode": "Normal",
+                      "stops": [
+                        {
+                          "index": 0,
+                          "type": "Pickup",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10001"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776758400000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776765600000
+                              }
+                            },
+                            "appointmentDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776762000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776763800000
+                              }
+                            }
+                          },
+                          "facilityProfile": {
+                            "name": "Order 10001 Pickup",
+                            "location": {
+                              "street": "123 Main St",
+                              "city": "Chicago",
+                              "state": "IL",
+                              "zipcode": "60601",
+                              "countryCode": "US"
+                            }
+                          }
+                        },
+                        {
+                          "index": 1,
+                          "type": "Pickup",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10002"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776758400000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776765600000
+                              }
+                            },
+                            "appointmentDates": {
+                              "startAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776762000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false,
+                                "tsInMs": 1776763800000
+                              }
+                            }
+                          },
+                          "facilityProfile": {
+                            "name": "Order 10002 Pickup",
+                            "location": {
+                              "street": "500 Dock Rd",
+                              "city": "Milwaukee",
+                              "state": "WI",
+                              "zipcode": "53202",
+                              "countryCode": "US"
+                            }
+                          }
+                        },
+                        {
+                          "index": 2,
+                          "type": "Dropoff",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10002"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776870000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776873600000
+                              }
+                            }
+                          },
+                          "facilityProfile": {
+                            "name": "Order 10002 Dropoff",
+                            "location": {
+                              "street": "456 First Ave",
+                              "city": "New York",
+                              "state": "NY",
+                              "zipcode": "10001",
+                              "countryCode": "US"
+                            }
+                          }
+                        },
+                        {
+                          "index": 3,
+                          "type": "Dropoff",
+                          "orders": [
+                            {
+                              "orderNumber": "ORD-10001"
+                            }
+                          ],
+                          "items": [
+                            {
+                              "quantity": {
+                                "count": 10,
+                                "unit": "Pallet"
+                              },
+                              "weight": {
+                                "value": 1200,
+                                "unit": "LB"
+                              },
+                              "description": "Frozen prepared meals"
+                            }
+                          ],
+                          "dates": {
+                            "orderDates": {
+                              "startAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776870000000
+                              },
+                              "endAt": {
+                                "timeZone": "America/New_York",
+                                "isDateOnly": false,
+                                "tsInMs": 1776873600000
+                              }
+                            }
+                          },
+                          "facilityProfile": {
+                            "name": "Order 10001 Dropoff",
+                            "location": {
+                              "street": "900 Harbor Ave",
+                              "city": "Newark",
+                              "state": "NJ",
+                              "zipcode": "07114",
+                              "countryCode": "US"
+                            }
+                          }
+                        }
+                      ],
+                      "orders": [
+                        {
+                          "orderNumber": "ORD-10001",
+                          "pickupStopIndex": 0,
+                          "dropOffStopIndex": 3,
+                          "pickupSequenceNumber": 0,
+                          "dropoffSequenceNumber": 1
+                        },
+                        {
+                          "orderNumber": "ORD-10002",
+                          "pickupStopIndex": 1,
+                          "dropOffStopIndex": 2,
+                          "pickupSequenceNumber": 1,
+                          "dropoffSequenceNumber": 0
+                        }
+                      ],
+                      "price": {
+                        "total": 125000,
+                        "currencyCode": "USD"
+                      },
+                      "lineItems": [
+                        {
+                          "description": "Line haul",
+                          "category": "lineHaul",
+                          "total": 100000,
+                          "code": "LH001",
+                          "unitCount": 1,
+                          "unitPrice": 100000
+                        },
+                        {
+                          "description": "Fuel surcharge",
+                          "category": "fuelSurcharge",
+                          "total": 25000,
+                          "code": "FSC"
+                        }
+                      ],
+                      "broker": {
+                        "name": "Great Freight LLC",
+                        "address": "789 Carrier Blvd, Dallas, TX 75201",
+                        "phone": "+12145551234",
+                        "email": "dispatch@greatfreight.com",
+                        "mcNumber": "MC123456",
+                        "dotNumber": "DOT789012",
+                        "scac": "GRFT"
+                      },
+                      "status": "Tendered",
+                      "updatedAtInMs": 1776787200000,
+                      "updatedBy": "user@example.com"
+                    }
+                  ]
                 }
               }
             }
