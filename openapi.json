@@ -194,13 +194,15 @@
                           "unitOfMeasure": "case",
                           "actualQuantity": 10,
                           "lotCode": "L123458",
-                          "expirationDate": "2022-01-25"
+                          "expirationDate": "2022-01-25",
+                          "productionDate": "2022-01-25"
                         },
                         {
                           "unitOfMeasure": "case",
                           "actualQuantity": 30,
                           "lotCode": "L123459",
-                          "expirationDate": "2022-01-26"
+                          "expirationDate": "2022-01-26",
+                          "productionDate": "2022-01-26"
                         }
                       ]
                     }
@@ -1768,7 +1770,8 @@
                       "damagedQuantity": 10,
                       "unitOfMeasure": "case",
                       "lotCode": "LOT-001",
-                      "expirationDate": "2023-12-31"
+                      "expirationDate": "2023-12-31",
+                      "productionDate": "2023-10-01"
                     }
                   ],
                   "isTest": false
@@ -3427,7 +3430,13 @@
           },
           "expirationDate": {
             "type": "string",
-            "description": "The expiration date of the item."
+            "format": "date",
+            "description": "The expiration date of the item in YYYY-MM-DD format."
+          },
+          "productionDate": {
+            "type": "string",
+            "format": "date",
+            "description": "The production date of the item in YYYY-MM-DD format."
           },
           "inventory": {
             "$ref": "#/components/schemas/Inventory"
@@ -3568,7 +3577,13 @@
           },
           "expirationDate": {
             "type": "string",
-            "description": "The expiration date of the item."
+            "format": "date",
+            "description": "The expiration date of the item in YYYY-MM-DD format."
+          },
+          "productionDate": {
+            "type": "string",
+            "format": "date",
+            "description": "The production date of the item in YYYY-MM-DD format."
           },
           "sourceId": {
             "type": "string",
@@ -4249,7 +4264,13 @@
           },
           "expirationDate": {
             "type": "string",
-            "description": "The expiration date of the item (for outbound orders only)."
+            "format": "date",
+            "description": "The expiration date of the item in YYYY-MM-DD format (for outbound orders only)."
+          },
+          "productionDate": {
+            "type": "string",
+            "format": "date",
+            "description": "The production date of the item in YYYY-MM-DD format."
           }
         }
       },
