@@ -2196,8 +2196,7 @@
                 },
                 "carrierTenderId": "CARR-789",
                 "proNumber": "PRO-456789",
-                "trackingUrl": "https://carrier.example.com/track/PRO-456789",
-                "notes": "Accepted by carrier dispatch"
+                "trackingUrl": "https://carrier.example.com/track/PRO-456789"
               }
             }
           }
@@ -2271,10 +2270,7 @@
                 "rateQuote": {
                   "id": "RQ-0042",
                   "carrierQuoteId": "carrier-quote-789"
-                },
-                "reason": "No capacity for requested pickup window",
-                "reasonCode": "NO_CAPACITY",
-                "notes": "Can cover next day if shipper is flexible"
+                }
               }
             }
           }
@@ -7293,18 +7289,13 @@
           "trackingUrl": {
             "type": "string",
             "description": "Carrier tracking URL, if available."
-          },
-          "notes": {
-            "type": "string",
-            "description": "Optional carrier notes about the acceptance."
           }
         }
       },
       "CarrierTenderRejectRequest": {
         "type": "object",
         "required": [
-          "rateQuote",
-          "reason"
+          "rateQuote"
         ],
         "properties": {
           "rateQuote": {
@@ -7323,18 +7314,6 @@
                 "description": "Carrier quote ID returned when submitting rate quote responses."
               }
             }
-          },
-          "reason": {
-            "type": "string",
-            "description": "Carrier rejection reason."
-          },
-          "reasonCode": {
-            "type": "string",
-            "description": "Carrier rejection reason code, if available."
-          },
-          "notes": {
-            "type": "string",
-            "description": "Optional carrier notes about the rejection."
           }
         }
       },
