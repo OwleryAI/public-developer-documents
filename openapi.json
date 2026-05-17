@@ -2488,10 +2488,6 @@
                   "unit": "F",
                   "sentryMode": "Continuous"
                 },
-                "price": {
-                  "cents": 150000,
-                  "currencyCode": "USD"
-                },
                 "stops": [
                   {
                     "type": "Pickup",
@@ -2501,7 +2497,8 @@
                         "city": "Chicago",
                         "state": "IL",
                         "zipcode": "60601",
-                        "countryCode": "US"
+                        "countryCode": "US",
+                        "street": "123 W Fulton Market"
                       }
                     },
                     "dates": {
@@ -2528,7 +2525,10 @@
                       "name": "Destination DC",
                       "location": {
                         "zipcode": "10001",
-                        "countryCode": "US"
+                        "countryCode": "US",
+                        "street": "456 9th Ave",
+                        "city": "New York",
+                        "state": "NY"
                       }
                     },
                     "dates": {
@@ -7544,8 +7544,7 @@
         "required": [
           "rateQuote",
           "loadNumber",
-          "stops",
-          "price"
+          "stops"
         ],
         "properties": {
           "rateQuote": {
@@ -7595,15 +7594,12 @@
           "reeferSettings": {
             "$ref": "#/components/schemas/ReeferSettings"
           },
-          "price": {
-            "$ref": "#/components/schemas/Price"
-          },
           "stops": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CarrierWebhookStop"
+              "$ref": "#/components/schemas/CarrierTenderWebhookStop"
             },
-            "description": "Tender stops. Reference numbers are not included before carrier acceptance."
+            "description": "Tender stops. Facility location must include street, city, state, zipcode, and countryCode. Reference numbers are not included before carrier acceptance."
           },
           "items": {
             "type": "array",
@@ -7619,8 +7615,7 @@
         "required": [
           "rateQuote",
           "loadNumber",
-          "stops",
-          "price"
+          "stops"
         ],
         "properties": {
           "rateQuote": {
@@ -7670,15 +7665,12 @@
           "reeferSettings": {
             "$ref": "#/components/schemas/ReeferSettings"
           },
-          "price": {
-            "$ref": "#/components/schemas/Price"
-          },
           "stops": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CarrierWebhookStop"
+              "$ref": "#/components/schemas/CarrierTenderWebhookStop"
             },
-            "description": "Tender stops. Reference numbers are not included before carrier acceptance."
+            "description": "Tender stops. Facility location must include street, city, state, zipcode, and countryCode. Reference numbers are not included before carrier acceptance."
           },
           "items": {
             "type": "array",
@@ -7955,6 +7947,92 @@
               "guaranteed5pm"
             ],
             "description": "Guaranteed delivery commitment. Omit this object for standard/non-guaranteed service."
+          }
+        }
+      },
+      "CarrierTenderWebhookLocation": {
+        "type": "object",
+        "required": [
+          "street",
+          "city",
+          "state",
+          "zipcode",
+          "countryCode"
+        ],
+        "properties": {
+          "street": {
+            "type": "string",
+            "description": "Street address."
+          },
+          "city": {
+            "type": "string",
+            "description": "City."
+          },
+          "state": {
+            "type": "string",
+            "description": "State or province."
+          },
+          "zipcode": {
+            "type": "string",
+            "description": "Postal or ZIP code."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "ISO-3166-1 Alpha-2 country code."
+          }
+        }
+      },
+      "CarrierTenderWebhookFacility": {
+        "type": "object",
+        "required": [
+          "location"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Facility name, if available."
+          },
+          "location": {
+            "$ref": "#/components/schemas/CarrierTenderWebhookLocation"
+          }
+        }
+      },
+      "CarrierTenderWebhookStop": {
+        "type": "object",
+        "required": [
+          "type",
+          "facility"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Pickup",
+              "Dropoff"
+            ],
+            "description": "Stop type."
+          },
+          "liveDropType": {
+            "type": "string",
+            "enum": [
+              "live",
+              "drop"
+            ],
+            "description": "Whether the stop is a live load/unload or a drop trailer stop. Defaults to `live` when omitted.",
+            "default": "live"
+          },
+          "facility": {
+            "$ref": "#/components/schemas/CarrierTenderWebhookFacility"
+          },
+          "dates": {
+            "$ref": "#/components/schemas/DatePair"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateQuoteItem"
+            },
+            "description": "Items being shipped at this stop."
           }
         }
       }
