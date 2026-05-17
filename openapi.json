@@ -2179,7 +2179,7 @@
         }
       }
     },
-    "/api/ext/v1/documents/submit": {
+    "/api/ext/v1/documents": {
       "post": {
         "tags": [
           "carrier-documents"
