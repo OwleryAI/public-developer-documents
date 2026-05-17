@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Owlery Developer Portal API",
-    "description": "The API URL is `https://api.owlery.ai/api/ext/v1`. Access is handled via an API key passed as Bearer Token. Contact `support@owlery.ai` for an API Key. Endpoints are grouped by audience: [Shipper](/open/api#tag/shipper-overview), [Carrier](/open/api#tag/carrier-overview), and [Facility](/open/api#tag/facility-overview).",
+    "description": "The API URL is `https://api.owlery.ai/api/ext/v1`. Access is handled via an API key passed as Bearer Token. Contact `support@owlery.ai` for an API Key. Endpoints are grouped by audience: [Shipper](/open/api#api/tag/shipper-overview), [Carrier](/open/api#api/tag/carrier-overview), and [Facility](/open/api#api/tag/facility-overview).",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,17 +19,17 @@
     {
       "name": "shipper-overview",
       "x-displayName": "Overview",
-      "description": "Shipper-facing APIs for planning, load search, document search/download, items, rate quotes, tendering, and shipper webhooks. Direct link: `/open/api#tag/shipper-overview`."
+      "description": "Shipper-facing APIs for planning, load search, document search/download, items, rate quotes, tendering, and shipper webhooks. Direct link: `/open/api#api/tag/shipper-overview`."
     },
     {
       "name": "carrier-overview",
       "x-displayName": "Overview",
-      "description": "Carrier-facing APIs for invoices, load creation, tracking updates, document submission, rate quote responses, tender responses, and carrier webhooks. Direct link: `/open/api#tag/carrier-overview`."
+      "description": "Carrier-facing APIs for invoices, load creation, tracking updates, document submission, rate quote responses, tender responses, and carrier webhooks. Direct link: `/open/api#api/tag/carrier-overview`."
     },
     {
       "name": "facility-overview",
       "x-displayName": "Overview",
-      "description": "Facility-facing APIs for confirming orders. Direct link: `/open/api#tag/facility-overview`."
+      "description": "Facility-facing APIs for confirming orders. Direct link: `/open/api#api/tag/facility-overview`."
     },
     {
       "name": "shipper-plan",
