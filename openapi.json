@@ -8279,10 +8279,9 @@
           "termsAndConditions",
           "fuelTable",
           "billPaySupport",
-          "shippingLabel",
-          "unknown"
+          "shippingLabel"
         ],
-        "description": "Type of document being submitted."
+        "description": "Type of document being submitted. Carriers must provide a known document type."
       },
       "CarrierDocumentSubmitRequest": {
         "type": "object",
