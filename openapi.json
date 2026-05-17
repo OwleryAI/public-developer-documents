@@ -2613,10 +2613,8 @@
                 "$ref": "#/components/schemas/CarrierWebhookCancelRequest"
               },
               "example": {
-                "cancel": {
-                  "loadNumber": "LOAD-12345",
-                  "reason": "Shipper cancelled the shipment"
-                }
+                "loadNumber": "LOAD-12345",
+                "reason": "Shipper cancelled the shipment"
               }
             }
           }
@@ -2644,7 +2642,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: cancel.loadNumber"
+                  "message": "Missing required field: loadNumber"
                 }
               }
             }
@@ -7582,24 +7580,16 @@
       "CarrierWebhookCancelRequest": {
         "type": "object",
         "required": [
-          "cancel"
+          "loadNumber"
         ],
         "properties": {
-          "cancel": {
-            "type": "object",
-            "required": [
-              "loadNumber"
-            ],
-            "properties": {
-              "loadNumber": {
-                "type": "string",
-                "description": "Owlery load number being cancelled."
-              },
-              "reason": {
-                "type": "string",
-                "description": "Cancellation reason, if available."
-              }
-            }
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number being cancelled."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Cancellation reason, if available."
           }
         }
       },
