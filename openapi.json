@@ -2345,7 +2345,7 @@
                 "$ref": "#/components/schemas/CarrierWebhookRateQuoteRequest"
               },
               "example": {
-                "shortId": "RQ-0042",
+                "id": "RQ-0042",
                 "equipmentType": "Reefer",
                 "reeferSettings": {
                   "minTemperature": 34,
@@ -2418,7 +2418,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: shortId"
+                  "message": "Missing required field: id"
                 }
               }
             }
@@ -2480,7 +2480,7 @@
                 "tender": {
                   "tenderId": "tender_abc123",
                   "rateQuote": {
-                    "shortId": "RQ-0042",
+                    "id": "RQ-0042",
                     "carrierQuoteId": "carrier-quote-789"
                   },
                   "mode": "FTL",
@@ -3825,7 +3825,7 @@
           "carrier-rate-quotes"
         ],
         "summary": "Submit Rate Quote Responses",
-        "description": "Submit carrier rate quote responses asynchronously to Owlery after receiving a Rate Quote Requested webhook. Use the `shortId` from the webhook request. Submit as many modes, service options, and prices as possible in one call; Owlery creates one quote response per item.",
+        "description": "Submit carrier rate quote responses asynchronously to Owlery after receiving a Rate Quote Requested webhook. Use the `id` from the webhook request and return it as `id` in this submission. Submit as many modes, service options, and prices as possible in one call; Owlery creates one quote response per item.",
         "operationId": "submitCarrierRateQuoteResponses",
         "requestBody": {
           "required": true,
@@ -3835,7 +3835,7 @@
                 "$ref": "#/components/schemas/CarrierRateQuoteResponseBody"
               },
               "example": {
-                "shortId": "RQ-0042",
+                "id": "RQ-0042",
                 "responses": [
                   {
                     "carrierQuoteId": "carrier-quote-ftl-789",
@@ -3932,7 +3932,7 @@
                   "$ref": "#/components/schemas/CarrierRateQuoteResponsesAccepted"
                 },
                 "example": {
-                  "shortId": "RQ-0042",
+                  "id": "RQ-0042",
                   "accepted": 2
                 }
               }
@@ -7406,13 +7406,13 @@
       "CarrierWebhookRateQuoteRequest": {
         "type": "object",
         "required": [
-          "shortId",
+          "id",
           "stops"
         ],
         "properties": {
-          "shortId": {
+          "id": {
             "type": "string",
-            "description": "Owlery rate quote short ID. This is the quote identifier for carrier webhook requests and responses. Owlery does not send the internal rate quote ID in this webhook."
+            "description": "Carrier-facing Owlery rate quote ID. Return this value as `id` when submitting quote responses to Owlery."
           },
           "equipmentType": {
             "type": "string",
@@ -7447,13 +7447,13 @@
       "CarrierRateQuoteResponseBody": {
         "type": "object",
         "required": [
-          "shortId",
+          "id",
           "responses"
         ],
         "properties": {
-          "shortId": {
+          "id": {
             "type": "string",
-            "description": "Rate quote short ID from the Rate Quote Requested webhook."
+            "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook. This value must be returned when submitting quote responses."
           },
           "responses": {
             "type": "array",
@@ -7571,16 +7571,16 @@
           "rateQuote": {
             "type": "object",
             "required": [
-              "shortId"
+              "id"
             ],
             "properties": {
-              "shortId": {
+              "id": {
                 "type": "string",
-                "description": "Owlery rate quote short ID."
+                "description": "Carrier-facing Owlery rate quote ID."
               },
               "carrierQuoteId": {
                 "type": "string",
-                "description": "Carrier quote/source identifier returned in the rate quote webhook response, if available."
+                "description": "Carrier quote ID returned when submitting rate quote responses."
               }
             }
           },
@@ -7803,13 +7803,13 @@
       "CarrierRateQuoteResponsesAccepted": {
         "type": "object",
         "required": [
-          "shortId",
+          "id",
           "accepted"
         ],
         "properties": {
-          "shortId": {
+          "id": {
             "type": "string",
-            "description": "Rate quote short ID submitted by the carrier."
+            "description": "Carrier-facing Owlery rate quote ID submitted by the carrier."
           },
           "accepted": {
             "type": "number",
