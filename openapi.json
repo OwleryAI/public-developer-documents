@@ -2180,7 +2180,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Accept Tender",
-        "description": "Accept a tender that Owlery sent to the carrier. Identify the tender using the `rateQuote.id` and `rateQuote.carrierQuoteId` from the carrier tender webhook.",
+        "description": "Accept a tender that Owlery sent to the carrier. Identify the tender using the Owlery `loadNumber` from the carrier tender webhook.",
         "operationId": "acceptCarrierTender",
         "requestBody": {
           "required": true,
@@ -2190,11 +2190,7 @@
                 "$ref": "#/components/schemas/CarrierTenderAcceptRequest"
               },
               "example": {
-                "rateQuote": {
-                  "id": "RQ-0042",
-                  "carrierQuoteId": "carrier-quote-789"
-                },
-                "carrierTenderId": "CARR-789",
+                "loadNumber": "LOAD-12345",
                 "proNumber": "PRO-456789",
                 "trackingUrl": "https://carrier.example.com/track/PRO-456789"
               }
@@ -2210,12 +2206,8 @@
                   "$ref": "#/components/schemas/CarrierTenderResponse"
                 },
                 "example": {
-                  "rateQuote": {
-                    "id": "RQ-0042",
-                    "carrierQuoteId": "carrier-quote-789"
-                  },
-                  "status": "accepted",
-                  "loadNumber": "LOAD-12345"
+                  "loadNumber": "LOAD-12345",
+                  "status": "accepted"
                 }
               }
             }
@@ -2229,7 +2221,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: rateQuote.id"
+                  "message": "Missing required field: loadNumber"
                 }
               }
             }
@@ -2243,7 +2235,7 @@
                 },
                 "example": {
                   "error": "Not Found",
-                  "message": "Tender not found for rateQuote.id=RQ-0042 and carrierQuoteId=carrier-quote-789"
+                  "message": "Tender not found for loadNumber=LOAD-12345"
                 }
               }
             }
@@ -2257,7 +2249,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Reject Tender",
-        "description": "Reject a tender that Owlery sent to the carrier. Identify the tender using the `rateQuote.id` and `rateQuote.carrierQuoteId` from the carrier tender webhook.",
+        "description": "Reject a tender that Owlery sent to the carrier. Identify the tender using the Owlery `loadNumber` from the carrier tender webhook.",
         "operationId": "rejectCarrierTender",
         "requestBody": {
           "required": true,
@@ -2267,10 +2259,7 @@
                 "$ref": "#/components/schemas/CarrierTenderRejectRequest"
               },
               "example": {
-                "rateQuote": {
-                  "id": "RQ-0042",
-                  "carrierQuoteId": "carrier-quote-789"
-                }
+                "loadNumber": "LOAD-12345"
               }
             }
           }
@@ -2284,10 +2273,7 @@
                   "$ref": "#/components/schemas/CarrierTenderResponse"
                 },
                 "example": {
-                  "rateQuote": {
-                    "id": "RQ-0042",
-                    "carrierQuoteId": "carrier-quote-789"
-                  },
+                  "loadNumber": "LOAD-12345",
                   "status": "rejected"
                 }
               }
@@ -2302,7 +2288,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: rateQuote.id"
+                  "message": "Missing required field: loadNumber"
                 }
               }
             }
@@ -2316,7 +2302,7 @@
                 },
                 "example": {
                   "error": "Not Found",
-                  "message": "Tender not found for rateQuote.id=RQ-0042 and carrierQuoteId=carrier-quote-789"
+                  "message": "Tender not found for loadNumber=LOAD-12345"
                 }
               }
             }
@@ -7258,29 +7244,12 @@
       "CarrierTenderAcceptRequest": {
         "type": "object",
         "required": [
-          "rateQuote"
+          "loadNumber"
         ],
         "properties": {
-          "rateQuote": {
-            "type": "object",
-            "required": [
-              "id",
-              "carrierQuoteId"
-            ],
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
-              },
-              "carrierQuoteId": {
-                "type": "string",
-                "description": "Carrier quote ID returned when submitting rate quote responses."
-              }
-            }
-          },
-          "carrierTenderId": {
+          "loadNumber": {
             "type": "string",
-            "description": "Carrier-generated tender or shipment identifier, if available."
+            "description": "Owlery load number from the carrier tender webhook."
           },
           "proNumber": {
             "type": "string",
@@ -7295,51 +7264,25 @@
       "CarrierTenderRejectRequest": {
         "type": "object",
         "required": [
-          "rateQuote"
+          "loadNumber"
         ],
         "properties": {
-          "rateQuote": {
-            "type": "object",
-            "required": [
-              "id",
-              "carrierQuoteId"
-            ],
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
-              },
-              "carrierQuoteId": {
-                "type": "string",
-                "description": "Carrier quote ID returned when submitting rate quote responses."
-              }
-            }
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number from the carrier tender webhook."
           }
         }
       },
       "CarrierTenderResponse": {
         "type": "object",
         "required": [
-          "rateQuote",
+          "loadNumber",
           "status"
         ],
         "properties": {
-          "rateQuote": {
-            "type": "object",
-            "required": [
-              "id",
-              "carrierQuoteId"
-            ],
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
-              },
-              "carrierQuoteId": {
-                "type": "string",
-                "description": "Carrier quote ID returned when submitting rate quote responses."
-              }
-            }
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number associated with this tender."
           },
           "status": {
             "type": "string",
@@ -7348,10 +7291,6 @@
               "rejected"
             ],
             "description": "Updated tender response status."
-          },
-          "loadNumber": {
-            "type": "string",
-            "description": "Owlery load number associated with this tender."
           }
         }
       },
