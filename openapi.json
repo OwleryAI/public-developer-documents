@@ -67,6 +67,11 @@
       "description": "Push load tracking status updates to Owlery."
     },
     {
+      "name": "carrier-rate-quotes",
+      "x-displayName": "Rate Quotes",
+      "description": "Submit carrier quote responses asynchronously to Owlery."
+    },
+    {
       "name": "carrier-tender-responses",
       "x-displayName": "Tender Responses",
       "description": "Load or tender accept and reject flows. Endpoints to be added."
@@ -2325,7 +2330,7 @@
           "carrier-webhooks"
         ],
         "summary": "Rate Quote Requested",
-        "description": "Webhook sent by Owlery to a carrier when Owlery requests rates. The request body itself is the rate quote request. The carrier should return quote responses in the HTTP response body. Owlery sends the rate quote `shortId`, not the internal rate quote ID, and does not include shipper organization or shipper profile IDs. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context; Owlery does not include account, organization, or shipper profile IDs in the body.",
+        "description": "Webhook sent by Owlery to a carrier when Owlery requests rates. The request body itself is the rate quote request. Owlery sends the rate quote `shortId`, not the internal rate quote ID, and does not include shipper organization or shipper profile IDs. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context; Owlery does not include account, organization, or shipper profile IDs in the body. Respond to this webhook with an acknowledgement, then submit quote responses asynchronously to `POST /api/ext/v1/rate-quote/responses`.",
         "operationId": "carrierWebhookRateQuoteRequested",
         "security": [
           {
@@ -2391,7 +2396,8 @@
                     "dates": {
                       "startAt": "2026-06-03T08:00:00Z",
                       "endAt": "2026-06-03T12:00:00Z"
-                    }
+                    },
+                    "liveDropType": "drop"
                   }
                 ]
               }
@@ -2400,35 +2406,14 @@
         },
         "responses": {
           "200": {
-            "description": "Carrier quote response",
+            "description": "Webhook acknowledged. Submit quote responses asynchronously to Owlery.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CarrierRateQuoteResponseBody"
+                  "$ref": "#/components/schemas/CarrierWebhookAck"
                 },
                 "example": {
-                  "shortId": "RQ-0042",
-                  "responses": [
-                    {
-                      "sourceId": "carrier-quote-789",
-                      "status": "open",
-                      "price": {
-                        "cents": 150000,
-                        "currencyCode": "USD"
-                      },
-                      "carrier": {
-                        "name": "Example Carrier",
-                        "scac": "EXMP",
-                        "mcNumber": "123456"
-                      },
-                      "transitDays": {
-                        "min": 3,
-                        "max": 4
-                      },
-                      "expiresAt": "2026-06-01T18:00:00Z"
-                    }
-                  ],
-                  "errors": []
+                  "message": "Rate quote request received"
                 }
               }
             }
@@ -2562,7 +2547,8 @@
                       "dates": {
                         "startAt": "2026-06-03T08:00:00Z",
                         "endAt": "2026-06-03T12:00:00Z"
-                      }
+                      },
+                      "liveDropType": "drop"
                     }
                   ]
                 }
@@ -3837,6 +3823,154 @@
                 },
                 "example": {
                   "error": "Rate quote response not found: 507f1f77bcf86cd799439012"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ext/v1/rate-quote/responses": {
+      "post": {
+        "tags": [
+          "carrier-rate-quotes"
+        ],
+        "summary": "Submit Rate Quote Responses",
+        "description": "Submit carrier rate quote responses asynchronously to Owlery after receiving a Rate Quote Requested webhook. Use the `shortId` from the webhook request. Submit as many modes, service options, and prices as possible in one call; Owlery creates one quote response per item.",
+        "operationId": "submitCarrierRateQuoteResponses",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarrierRateQuoteResponseBody"
+              },
+              "example": {
+                "shortId": "RQ-0042",
+                "responses": [
+                  {
+                    "sourceId": "carrier-quote-ftl-789",
+                    "mode": "FTL",
+                    "price": {
+                      "cents": 150000,
+                      "currencyCode": "USD"
+                    },
+                    "carrier": {
+                      "name": "Example Carrier",
+                      "scac": "EXMP",
+                      "mcNumber": "123456"
+                    },
+                    "transitDays": {
+                      "min": 3,
+                      "max": 4
+                    },
+                    "expiresAt": "2026-06-01T18:00:00Z",
+                    "stops": [
+                      {
+                        "index": 0,
+                        "type": "Pickup",
+                        "appointmentDates": {
+                          "startAt": "2026-06-01T08:00:00Z",
+                          "endAt": "2026-06-01T10:00:00Z"
+                        }
+                      },
+                      {
+                        "index": 1,
+                        "type": "Dropoff",
+                        "estimatedDates": {
+                          "startAt": "2026-06-03T08:00:00Z",
+                          "endAt": "2026-06-03T12:00:00Z"
+                        }
+                      }
+                    ],
+                    "lineItems": [
+                      {
+                        "category": "lineHaul",
+                        "code": "LH",
+                        "total": 125000,
+                        "description": "Line haul"
+                      },
+                      {
+                        "category": "fuelSurcharge",
+                        "code": "FSC",
+                        "total": 25000,
+                        "description": "Fuel surcharge"
+                      }
+                    ]
+                  },
+                  {
+                    "sourceId": "carrier-quote-ltl-790",
+                    "mode": "LTL",
+                    "price": {
+                      "cents": 98000,
+                      "currencyCode": "USD"
+                    },
+                    "transitDays": {
+                      "min": 4,
+                      "max": 5
+                    }
+                  }
+                ],
+                "errors": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Rate quote responses accepted for processing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarrierRateQuoteResponsesAccepted"
+                },
+                "example": {
+                  "shortId": "RQ-0042",
+                  "accepted": 2,
+                  "rejected": 0,
+                  "errors": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Bad Request",
+                  "message": "Missing required field: responses[0].mode"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Unauthorized",
+                  "message": "Invalid or missing bearer token"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Rate quote not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Not Found",
+                  "message": "Rate quote not found: RQ-0042"
                 }
               }
             }
@@ -7309,46 +7443,54 @@
       "CarrierRateQuoteResponseBody": {
         "type": "object",
         "required": [
-          "shortId"
+          "shortId",
+          "responses"
         ],
         "properties": {
           "shortId": {
             "type": "string",
-            "description": "Echo of the rate quote short ID from the webhook request."
+            "description": "Rate quote short ID from the Rate Quote Requested webhook. Owlery does not require or expose the internal rate quote ID."
           },
           "responses": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CarrierRateQuoteResponse"
             },
-            "description": "Carrier quote responses. Return an empty array when no rates are available."
+            "description": "Carrier quote responses. Submit as many modes, service options, and prices as possible; use an empty array only when no rates are available and include errors explaining why."
           },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CarrierRateQuoteError"
             },
-            "description": "Carrier quote errors. Use this when the request was processed but no quote could be returned."
+            "description": "Carrier quote errors. Use this when the request was processed but one or more rates could not be returned."
           }
         }
       },
       "CarrierRateQuoteResponse": {
         "type": "object",
         "required": [
-          "status",
+          "mode",
           "price"
         ],
         "properties": {
           "sourceId": {
             "type": "string",
-            "description": "Carrier quote identifier. Owlery stores this for future tender correlation."
+            "description": "Carrier quote identifier. Owlery stores this for future tender correlation when available."
           },
-          "status": {
+          "mode": {
             "type": "string",
             "enum": [
-              "open"
+              "FTL",
+              "LTL",
+              "PTL",
+              "VLTL",
+              "Consolidation",
+              "IMDL",
+              "STL",
+              "Unknown"
             ],
-            "description": "Quote status returned by the carrier."
+            "description": "Transportation mode for this price. Submit separate response objects for different modes, service levels, or prices."
           },
           "price": {
             "$ref": "#/components/schemas/Price"
@@ -7366,9 +7508,32 @@
           "stops": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/RateQuoteResponseStop"
+              "$ref": "#/components/schemas/CarrierRateQuoteResponseStop"
             },
-            "description": "Stop-level carrier response details, if available."
+            "description": "Stop-level estimated or appointment dates, if available."
+          },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceLineItem"
+            },
+            "description": "Charge breakdown in cents. Include line haul, fuel, accessorials, discounts, and other charges when available."
+          },
+          "notAllInRate": {
+            "type": "boolean",
+            "description": "Set to true when the price is not all-in."
+          },
+          "warningRateMessage": {
+            "type": "string",
+            "description": "Carrier-facing warning or caveat for the submitted rate."
+          },
+          "carrierGuarantee": {
+            "type": "boolean",
+            "description": "Whether this quote is carrier-guaranteed."
+          },
+          "payTerms": {
+            "type": "string",
+            "description": "Payment terms for the quote, if applicable."
           },
           "rawResponse": {
             "type": "object",
@@ -7557,7 +7722,8 @@
       "CarrierWebhookLocation": {
         "type": "object",
         "required": [
-          "zipcode"
+          "zipcode",
+          "countryCode"
         ],
         "properties": {
           "street": {
@@ -7574,11 +7740,11 @@
           },
           "zipcode": {
             "type": "string",
-            "description": "Postal or ZIP code."
+            "description": "Required postal or ZIP code."
           },
           "countryCode": {
             "type": "string",
-            "description": "ISO-3166-1 Alpha-2 country code, if available."
+            "description": "Required ISO-3166-1 Alpha-2 country code."
           },
           "coordinates": {
             "$ref": "#/components/schemas/Coordinates"
@@ -7615,6 +7781,15 @@
             ],
             "description": "Stop type."
           },
+          "liveDropType": {
+            "type": "string",
+            "enum": [
+              "live",
+              "drop"
+            ],
+            "description": "Whether the stop is a live load/unload or a drop trailer stop. Defaults to `live` when omitted.",
+            "default": "live"
+          },
           "facility": {
             "$ref": "#/components/schemas/CarrierWebhookFacility"
           },
@@ -7627,6 +7802,61 @@
               "$ref": "#/components/schemas/RateQuoteItem"
             },
             "description": "Items being shipped at this stop."
+          }
+        }
+      },
+      "CarrierRateQuoteResponseStop": {
+        "type": "object",
+        "required": [
+          "index",
+          "type"
+        ],
+        "properties": {
+          "index": {
+            "type": "number",
+            "description": "Zero-based index of the stop from the rate quote request."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Pickup",
+              "Dropoff"
+            ],
+            "description": "Stop type from the rate quote request."
+          },
+          "estimatedDates": {
+            "$ref": "#/components/schemas/DatePair"
+          },
+          "appointmentDates": {
+            "$ref": "#/components/schemas/DatePair"
+          }
+        }
+      },
+      "CarrierRateQuoteResponsesAccepted": {
+        "type": "object",
+        "required": [
+          "shortId",
+          "accepted"
+        ],
+        "properties": {
+          "shortId": {
+            "type": "string",
+            "description": "Rate quote short ID submitted by the carrier."
+          },
+          "accepted": {
+            "type": "number",
+            "description": "Number of rate quote response items accepted by Owlery."
+          },
+          "rejected": {
+            "type": "number",
+            "description": "Number of rate quote response items rejected by Owlery."
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CarrierRateQuoteError"
+            },
+            "description": "Validation or processing errors for rejected response items."
           }
         }
       }
@@ -7651,6 +7881,7 @@
         "carrier-invoices",
         "carrier-loads",
         "carrier-tracking",
+        "carrier-rate-quotes",
         "carrier-tender-responses",
         "carrier-webhooks"
       ]
