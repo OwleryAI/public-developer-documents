@@ -7725,7 +7725,8 @@
         "required": [
           "rateQuote",
           "loadNumber",
-          "stops"
+          "stops",
+          "referenceNumbers"
         ],
         "properties": {
           "rateQuote": {
@@ -7777,7 +7778,7 @@
             "items": {
               "$ref": "#/components/schemas/CarrierTenderWebhookStop"
             },
-            "description": "Tender stops. Facility location must include street, city, state, zipcode, and countryCode."
+            "description": "Tender stops. Each stop includes its own `referenceNumbers` array; send an empty array when there are no stop-level reference numbers. Facility location must include street, city, state, zipcode, and countryCode."
           },
           "items": {
             "type": "array",
@@ -7791,7 +7792,7 @@
             "items": {
               "$ref": "#/components/schemas/ReferenceNumber"
             },
-            "description": "Reference numbers associated with this tender/load. Carriers may store these for visibility, but should use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
+            "description": "Reference numbers associated with this tender/load. Send an empty array when there are no top-level reference numbers. Carriers should use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
           }
         }
       },
@@ -7800,7 +7801,8 @@
         "required": [
           "rateQuote",
           "loadNumber",
-          "stops"
+          "stops",
+          "referenceNumbers"
         ],
         "properties": {
           "rateQuote": {
@@ -7852,7 +7854,7 @@
             "items": {
               "$ref": "#/components/schemas/CarrierTenderWebhookStop"
             },
-            "description": "Tender stops. Facility location must include street, city, state, zipcode, and countryCode."
+            "description": "Tender stops. Each stop includes its own `referenceNumbers` array; send an empty array when there are no stop-level reference numbers. Facility location must include street, city, state, zipcode, and countryCode."
           },
           "items": {
             "type": "array",
@@ -7866,7 +7868,7 @@
             "items": {
               "$ref": "#/components/schemas/ReferenceNumber"
             },
-            "description": "Reference numbers associated with this tender/load. Carriers may store these for visibility, but should use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
+            "description": "Reference numbers associated with this tender/load. Send an empty array when there are no top-level reference numbers. Carriers should use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
           }
         }
       },
@@ -8160,7 +8162,8 @@
         "type": "object",
         "required": [
           "type",
-          "facility"
+          "facility",
+          "referenceNumbers"
         ],
         "properties": {
           "type": {
@@ -8198,7 +8201,7 @@
             "items": {
               "$ref": "#/components/schemas/ReferenceNumber"
             },
-            "description": "Reference numbers associated with this stop, such as pickup or delivery appointment references."
+            "description": "Reference numbers associated with this stop, such as pickup or delivery appointment references. Send an empty array when there are no stop-level reference numbers."
           }
         }
       },
@@ -8206,7 +8209,8 @@
         "type": "object",
         "required": [
           "loadNumber",
-          "stops"
+          "stops",
+          "referenceNumbers"
         ],
         "properties": {
           "loadNumber": {
@@ -8241,7 +8245,7 @@
             "items": {
               "$ref": "#/components/schemas/CarrierTenderWebhookStop"
             },
-            "description": "Updated tender/load stops. Treat this as the current full stop list. Facility location must include street, city, state, zipcode, and countryCode."
+            "description": "Updated tender/load stops. Treat this as the current full stop list. Each stop includes its own `referenceNumbers` array; send an empty array when there are no stop-level reference numbers. Facility location must include street, city, state, zipcode, and countryCode."
           },
           "items": {
             "type": "array",
@@ -8255,7 +8259,7 @@
             "items": {
               "$ref": "#/components/schemas/ReferenceNumber"
             },
-            "description": "Updated reference numbers associated with this tender/load. Treat this as the current full reference number list. Carriers should still use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
+            "description": "Updated reference numbers associated with this tender/load. Treat this as the current full reference number list. Send an empty array when there are no top-level reference numbers. Carriers should still use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
           }
         }
       },
