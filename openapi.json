@@ -2345,7 +2345,6 @@
                 "$ref": "#/components/schemas/CarrierWebhookRateQuoteRequest"
               },
               "example": {
-                "version": "2026-05-01",
                 "shortId": "RQ-0042",
                 "equipmentType": "Reefer",
                 "reeferSettings": {
@@ -2476,7 +2475,6 @@
               },
               "example": {
                 "webhookId": "wh_tender_abc123",
-                "version": "2026-05-01",
                 "tender": {
                   "tenderId": "tender_abc123",
                   "rateQuote": {
@@ -2628,7 +2626,6 @@
               },
               "example": {
                 "webhookId": "wh_cancel_abc123",
-                "version": "2026-05-01",
                 "cancel": {
                   "tenderId": "tender_abc123",
                   "loadNumber": "LOAD-12345",
@@ -7387,15 +7384,10 @@
       "CarrierWebhookRateQuoteRequest": {
         "type": "object",
         "required": [
-          "version",
           "shortId",
           "stops"
         ],
         "properties": {
-          "version": {
-            "type": "string",
-            "description": "Webhook contract version."
-          },
           "shortId": {
             "type": "string",
             "description": "Owlery rate quote short ID. This is the quote identifier for carrier webhook requests and responses. Owlery does not send the internal rate quote ID in this webhook."
@@ -7555,17 +7547,12 @@
         "type": "object",
         "required": [
           "webhookId",
-          "version",
           "tender"
         ],
         "properties": {
           "webhookId": {
             "type": "string",
             "description": "Unique Owlery-generated webhook delivery identifier for idempotency and support."
-          },
-          "version": {
-            "type": "string",
-            "description": "Webhook contract version."
           },
           "tender": {
             "$ref": "#/components/schemas/CarrierTenderWebhookTender"
@@ -7650,17 +7637,12 @@
         "type": "object",
         "required": [
           "webhookId",
-          "version",
           "cancel"
         ],
         "properties": {
           "webhookId": {
             "type": "string",
             "description": "Unique Owlery-generated webhook delivery identifier for idempotency and support."
-          },
-          "version": {
-            "type": "string",
-            "description": "Webhook contract version."
           },
           "cancel": {
             "type": "object",
