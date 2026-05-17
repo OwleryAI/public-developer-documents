@@ -2616,7 +2616,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Cancelled",
-        "description": "Webhook sent by Owlery to cancel a tender or load previously sent to the carrier. The payload includes the `rateQuote.id`, `rateQuote.carrierQuoteId`, and Owlery `loadNumber` so the carrier can identify the shipment.",
+        "description": "Webhook sent by Owlery to cancel a tender or load previously sent to the carrier. The payload includes Owlery `loadNumber`; carriers should use that value to identify the shipment.",
         "operationId": "carrierWebhookTenderCancelled",
         "security": [
           {
@@ -2632,10 +2632,6 @@
               },
               "example": {
                 "cancel": {
-                  "rateQuote": {
-                    "id": "RQ-0042",
-                    "carrierQuoteId": "carrier-quote-789"
-                  },
                   "loadNumber": "LOAD-12345",
                   "reason": "Shipper cancelled the shipment"
                 }
@@ -2666,7 +2662,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: cancel.rateQuote.id"
+                  "message": "Missing required field: cancel.loadNumber"
                 }
               }
             }
@@ -7674,27 +7670,9 @@
           "cancel": {
             "type": "object",
             "required": [
-              "rateQuote",
               "loadNumber"
             ],
             "properties": {
-              "rateQuote": {
-                "type": "object",
-                "required": [
-                  "id",
-                  "carrierQuoteId"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
-                  },
-                  "carrierQuoteId": {
-                    "type": "string",
-                    "description": "Carrier quote ID returned when submitting rate quote responses."
-                  }
-                }
-              },
               "loadNumber": {
                 "type": "string",
                 "description": "Owlery load number being cancelled."
