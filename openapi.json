@@ -2507,6 +2507,12 @@
                           "unit": "LB"
                         }
                       }
+                    ],
+                    "referenceNumbers": [
+                      {
+                        "type": "Pickup",
+                        "value": "PU-123"
+                      }
                     ]
                   },
                   {
@@ -2525,7 +2531,23 @@
                       "startAt": "2026-06-03T08:00:00Z",
                       "endAt": "2026-06-03T12:00:00Z"
                     },
-                    "liveDropType": "drop"
+                    "liveDropType": "drop",
+                    "referenceNumbers": [
+                      {
+                        "type": "Dropoff",
+                        "value": "DEL-456"
+                      }
+                    ]
+                  }
+                ],
+                "referenceNumbers": [
+                  {
+                    "type": "PO",
+                    "value": "PO-100045"
+                  },
+                  {
+                    "type": "BOL",
+                    "value": "BOL-778899"
                   }
                 ]
               }
@@ -2651,6 +2673,12 @@
                           "unit": "LB"
                         }
                       }
+                    ],
+                    "referenceNumbers": [
+                      {
+                        "type": "Pickup",
+                        "value": "PU-123-REV1"
+                      }
                     ]
                   },
                   {
@@ -2669,7 +2697,23 @@
                       "startAt": "2026-06-03T10:00:00Z",
                       "endAt": "2026-06-03T14:00:00Z"
                     },
-                    "liveDropType": "drop"
+                    "liveDropType": "drop",
+                    "referenceNumbers": [
+                      {
+                        "type": "Dropoff",
+                        "value": "DEL-456"
+                      }
+                    ]
+                  }
+                ],
+                "referenceNumbers": [
+                  {
+                    "type": "PO",
+                    "value": "PO-100045-REV1"
+                  },
+                  {
+                    "type": "BOL",
+                    "value": "BOL-778899"
                   }
                 ]
               }
@@ -7641,7 +7685,7 @@
             "items": {
               "$ref": "#/components/schemas/CarrierTenderWebhookStop"
             },
-            "description": "Tender stops. Facility location must include street, city, state, zipcode, and countryCode. Reference numbers are not included before carrier acceptance."
+            "description": "Tender stops. Facility location must include street, city, state, zipcode, and countryCode."
           },
           "items": {
             "type": "array",
@@ -7649,6 +7693,13 @@
               "$ref": "#/components/schemas/RateQuoteItem"
             },
             "description": "Tender freight items, if not already provided on stops."
+          },
+          "referenceNumbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceNumber"
+            },
+            "description": "Reference numbers associated with this tender/load. Carriers may store these for visibility, but should use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
           }
         }
       },
@@ -7709,7 +7760,7 @@
             "items": {
               "$ref": "#/components/schemas/CarrierTenderWebhookStop"
             },
-            "description": "Tender stops. Facility location must include street, city, state, zipcode, and countryCode. Reference numbers are not included before carrier acceptance."
+            "description": "Tender stops. Facility location must include street, city, state, zipcode, and countryCode."
           },
           "items": {
             "type": "array",
@@ -7717,6 +7768,13 @@
               "$ref": "#/components/schemas/RateQuoteItem"
             },
             "description": "Tender freight items, if not already provided on stops."
+          },
+          "referenceNumbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceNumber"
+            },
+            "description": "Reference numbers associated with this tender/load. Carriers may store these for visibility, but should use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
           }
         }
       },
@@ -8042,6 +8100,13 @@
               "$ref": "#/components/schemas/RateQuoteItem"
             },
             "description": "Items being shipped at this stop."
+          },
+          "referenceNumbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceNumber"
+            },
+            "description": "Reference numbers associated with this stop, such as pickup or delivery appointment references."
           }
         }
       },
@@ -8092,6 +8157,13 @@
               "$ref": "#/components/schemas/RateQuoteItem"
             },
             "description": "Updated tender/load freight items, if not already provided on stops."
+          },
+          "referenceNumbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceNumber"
+            },
+            "description": "Updated reference numbers associated with this tender/load. Treat this as the current full reference number list. Carriers should still use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
           }
         }
       }
