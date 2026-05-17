@@ -2613,8 +2613,7 @@
                 "$ref": "#/components/schemas/CarrierWebhookCancelRequest"
               },
               "example": {
-                "loadNumber": "LOAD-12345",
-                "reason": "Shipper cancelled the shipment"
+                "loadNumber": "LOAD-12345"
               }
             }
           }
@@ -7586,10 +7585,6 @@
           "loadNumber": {
             "type": "string",
             "description": "Owlery load number being cancelled."
-          },
-          "reason": {
-            "type": "string",
-            "description": "Cancellation reason, if available."
           }
         }
       },
