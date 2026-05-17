@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Owlery Developer Portal API",
-    "description": "The API URL is `https://api.owlery.ai/api/ext/v1`. Access is handled via an API key passed as Bearer Token. Contact `support@owlery.ai` for an API Key.",
+    "description": "The API URL is `https://api.owlery.ai/api/ext/v1`. Access is handled via an API key passed as Bearer Token. Contact `support@owlery.ai` for an API Key. Endpoints are grouped by audience: shipper-facing APIs, carrier-facing APIs, and facility-facing APIs.",
     "version": "1.0.0"
   },
   "servers": [
@@ -17,47 +17,63 @@
   ],
   "tags": [
     {
-      "name": "Plan",
-      "description": "Create transportation plans for one or more orders."
+      "name": "Shipper - Plan",
+      "description": "Shipper-facing API for creating transportation plans for one or more orders."
     },
     {
-      "name": "Webhooks",
-      "description": "Owlery sends webhooks to notify you when orders, tenders, invoices, or order-level load stop dates are updated."
+      "name": "Shipper - Loads",
+      "description": "Shipper-facing API for searching loads."
     },
     {
-      "name": "Invoice",
-      "description": "Submit invoices directly to Owlery."
+      "name": "Shipper - Documents",
+      "description": "Shipper-facing API for searching and downloading documents attached to loads and orders."
     },
     {
-      "name": "Order",
-      "description": "Confirm one or more orders, updating their status and items."
+      "name": "Shipper - Items",
+      "description": "Shipper-facing API for creating, updating, and deleting inventory items."
     },
     {
-      "name": "Loads",
-      "description": "Create loads, push tracking status, and search loads."
+      "name": "Shipper - Rate Quote",
+      "description": "Shipper-facing API for requesting freight rate quotes from existing orders or standalone quote data."
     },
     {
-      "name": "Documents",
-      "description": "Search and download documents attached to loads and orders."
+      "name": "Shipper - Tender",
+      "description": "Shipper-facing API for tendering a specific rate quote response at its quoted price."
     },
     {
-      "name": "Items",
-      "description": "Create, update, or delete inventory items."
+      "name": "Shipper - Webhooks",
+      "description": "Shipper-facing webhooks sent by Owlery when orders, tenders, invoices, or order-level load stop dates are updated."
     },
     {
-      "name": "Rate Quote",
-      "description": "Request freight rate quotes from existing orders or standalone."
+      "name": "Carrier - Invoices",
+      "description": "Carrier-facing API for submitting invoices directly to Owlery."
     },
     {
-      "name": "Tender",
-      "description": "Tender (accept) a specific rate quote response at its quoted price."
+      "name": "Carrier - Loads",
+      "description": "Carrier-facing API for creating loads in Owlery."
+    },
+    {
+      "name": "Carrier - Tracking",
+      "description": "Carrier-facing API for pushing load tracking status updates to Owlery."
+    },
+    {
+      "name": "Carrier - Tender Responses",
+      "description": "Carrier-facing API group for load or tender accept and reject flows. Endpoints to be added."
+    },
+    {
+      "name": "Carrier - Webhooks",
+      "description": "Carrier-facing webhooks for rate quote, tender, and load or tender updates. Endpoints to be added."
+    },
+    {
+      "name": "Facility - Orders",
+      "description": "Facility-facing API for confirming one or more orders, updating their status and items."
     }
   ],
   "paths": {
     "/api/ext/v1/plan": {
       "post": {
         "tags": [
-          "Plan"
+          "Shipper - Plan"
         ],
         "summary": "Create a Plan",
         "description": "This endpoint creates a transportation plan for one or more orders.",
@@ -160,7 +176,7 @@
       "post": {
         "x-webhook": true,
         "tags": [
-          "Webhooks"
+          "Shipper - Webhooks"
         ],
         "summary": "Orders Updated",
         "description": "Webhook payload sent when orders are updated. Webhooks are sent when orders are marked as `closed` and no webhook has been sent previously (unless manually re-triggered). Orders reach `closed` status through: (1) Owlery API Order Confirmation via `/api/ext/v1/order/confirm`, (2) EDI Transactions (944/945), or (3) Integration Sync (e.g. WMS).",
@@ -236,7 +252,7 @@
       "post": {
         "x-webhook": true,
         "tags": [
-          "Webhooks"
+          "Shipper - Webhooks"
         ],
         "summary": "Tenders Updated",
         "description": "Webhook payload sent when tenders are created, accepted, or BOLs are generated. Tender webhooks are sent when a tender reaches one of the following statuses: BOL Created, Carrier Selected, or Tendered. The `loadNumber` field is optional at this stage: some carriers do not return a load number until the tender is accepted. Before acceptance, Owlery only sends `loadNumber` when a real load number is already available, or when Universal Shipment ID enforcement is enabled for a supported Manual/EDI-style tender and the carrier/source tender identifier is intentionally used as the Owlery load number.",
@@ -1142,7 +1158,7 @@
       "post": {
         "x-webhook": true,
         "tags": [
-          "Webhooks"
+          "Shipper - Webhooks"
         ],
         "summary": "Order Load Stop Dates Updated",
         "description": "Webhook payload sent when a tendered order's related load stop estimated, appointment, or actual dates are first populated or later changed. This includes the initial tender when those load dates first become available. The payload is order-based: each stop `index` is zero-based within the order itself, not within the underlying load, so the index is `0` for pickup and `1` for dropoff even when the load is consolidated across more stops. Owlery only sends this webhook for orders it tendered, because Owlery must have the order-to-load stop mapping from the tender/BOL flow.",
@@ -1463,7 +1479,7 @@
       "post": {
         "x-webhook": true,
         "tags": [
-          "Webhooks"
+          "Shipper - Webhooks"
         ],
         "summary": "Invoices Updated",
         "description": "Webhook payload sent when invoices are created or updated in Owlery. Sent when invoices are created or modified, when invoice status changes (e.g., from unpaid to paid), or when invoices are associated with loads.",
@@ -1590,7 +1606,7 @@
     "/api/ext/v1/invoices": {
       "post": {
         "tags": [
-          "Invoice"
+          "Carrier - Invoices"
         ],
         "summary": "Submit Invoices",
         "description": "This endpoint allows brokers to submit invoices directly to Owlery. The source system is determined from the broker profile associated with the API key.",
@@ -1741,7 +1757,7 @@
     "/api/ext/v1/order/confirm": {
       "post": {
         "tags": [
-          "Order"
+          "Facility - Orders"
         ],
         "summary": "Confirm Orders",
         "description": "This endpoint confirms one or more orders, updating their status and items.",
@@ -1834,7 +1850,7 @@
     "/api/ext/v1/loads": {
       "post": {
         "tags": [
-          "Loads"
+          "Carrier - Loads"
         ],
         "summary": "Create Loads",
         "description": "This endpoint allows brokers to create one or more loads in Owlery using the standardized external payload.",
@@ -2033,7 +2049,7 @@
     "/api/ext/v1/loads/tracking": {
       "post": {
         "tags": [
-          "Loads"
+          "Carrier - Tracking"
         ],
         "summary": "Tracking Updated",
         "description": "Push tracking status of a load to Owlery. The `at` field represents when the tracking event occurred or when the status changed (event metadata). For `AppointmentScheduled` status, the `appointment` field contains the actual appointment time range.",
@@ -2149,7 +2165,7 @@
     "/api/ext/v1/loads/search": {
       "post": {
         "tags": [
-          "Loads"
+          "Shipper - Loads"
         ],
         "summary": "Search Loads",
         "description": "Search for loads using reference numbers.",
@@ -2331,7 +2347,7 @@
     "/api/ext/v1/documents/search": {
       "get": {
         "tags": [
-          "Documents"
+          "Shipper - Documents"
         ],
         "summary": "Search Documents",
         "description": "Search documents attached to loads and orders in the authenticated organization. If `searchText` is shorter than 2 characters, the response is an empty result set.",
@@ -2417,7 +2433,7 @@
     "/api/ext/v1/documents/{id}/download": {
       "get": {
         "tags": [
-          "Documents"
+          "Shipper - Documents"
         ],
         "summary": "Download Document",
         "description": "Download a single document by ID. The response is a file stream with download headers.",
@@ -2484,7 +2500,7 @@
     "/api/ext/v1/items": {
       "post": {
         "tags": [
-          "Items"
+          "Shipper - Items"
         ],
         "summary": "Create or Update Items",
         "description": "This endpoint allows shippers to create or update one or more inventory items in Owlery. When the SKU already exists, the item with the same SKU will be updated.",
@@ -2575,7 +2591,7 @@
     "/api/ext/v1/items/sku/{sku}": {
       "put": {
         "tags": [
-          "Items"
+          "Shipper - Items"
         ],
         "summary": "Update Item by SKU",
         "description": "This endpoint allows shippers to update an existing inventory item by its SKU.",
@@ -2664,7 +2680,7 @@
       },
       "delete": {
         "tags": [
-          "Items"
+          "Shipper - Items"
         ],
         "summary": "Delete Item by SKU",
         "description": "This endpoint allows shippers to delete an inventory item by its SKU.",
@@ -2724,7 +2740,7 @@
     "/api/ext/v1/rate-quote": {
       "post": {
         "tags": [
-          "Rate Quote"
+          "Shipper - Rate Quote"
         ],
         "summary": "Create Rate Quote from Existing Order",
         "description": "Request a freight rate quote using an existing order. Either `orderNumber` or `orderReferenceNumber` is required.",
@@ -2781,7 +2797,7 @@
       },
       "get": {
         "tags": [
-          "Rate Quote"
+          "Shipper - Rate Quote"
         ],
         "summary": "Get Rate Quote",
         "description": "Retrieve a rate quote and all of its carrier responses by short ID.",
@@ -2958,7 +2974,7 @@
     "/api/ext/v1/rate-quote/create": {
       "post": {
         "tags": [
-          "Rate Quote"
+          "Shipper - Rate Quote"
         ],
         "summary": "Create Standalone Rate Quote",
         "description": "Request freight rate quotes without an existing order. At least one `pickup` and one `dropoff` stop are required. Returns the rate quote ID and any responses received synchronously from integrations.",
@@ -3123,7 +3139,7 @@
     "/api/ext/v1/tender": {
       "post": {
         "tags": [
-          "Tender"
+          "Shipper - Tender"
         ],
         "summary": "Create Tender",
         "description": "Tender (accept) a specific rate quote response at its quoted price. This initiates the booking with the carrier. Returns the updated tender status and load number if one was created.",
@@ -3197,7 +3213,7 @@
       },
       "get": {
         "tags": [
-          "Tender"
+          "Shipper - Tender"
         ],
         "summary": "Get Tender Status",
         "description": "Retrieve the current tender status for a rate quote response.",
@@ -6585,5 +6601,35 @@
         }
       }
     }
-  }
+  },
+  "x-tagGroups": [
+    {
+      "name": "Shipper",
+      "tags": [
+        "Shipper - Plan",
+        "Shipper - Loads",
+        "Shipper - Documents",
+        "Shipper - Items",
+        "Shipper - Rate Quote",
+        "Shipper - Tender",
+        "Shipper - Webhooks"
+      ]
+    },
+    {
+      "name": "Carrier",
+      "tags": [
+        "Carrier - Invoices",
+        "Carrier - Loads",
+        "Carrier - Tracking",
+        "Carrier - Tender Responses",
+        "Carrier - Webhooks"
+      ]
+    },
+    {
+      "name": "Facility",
+      "tags": [
+        "Facility - Orders"
+      ]
+    }
+  ]
 }
