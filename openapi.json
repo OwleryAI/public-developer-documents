@@ -2084,24 +2084,20 @@
               },
               "example": [
                 {
-                  "loadNumber": "1228832",
+                  "loadNumber": "LOAD-12345",
                   "status": "InTransit",
                   "at": "2025-01-29T05:15:02.254Z",
                   "stopIndex": 0,
                   "location": {
-                    "coordinates": {
-                      "lat": 34.052235,
-                      "lng": -118.243683
-                    },
                     "street": "123 Main St",
                     "city": "Los Angeles",
                     "state": "CA",
                     "zipcode": "90001",
-                    "countryCode": "CA"
+                    "countryCode": "US"
                   }
                 },
                 {
-                  "loadNumber": "1228833",
+                  "loadNumber": "LOAD-12345",
                   "status": "AppointmentScheduled",
                   "at": "2025-01-15T15:00:00.000Z",
                   "stopIndex": 1,
@@ -2110,10 +2106,6 @@
                     "endAt": "2025-01-30T10:00:00.000Z"
                   },
                   "location": {
-                    "coordinates": {
-                      "lat": 40.712776,
-                      "lng": -74.005974
-                    },
                     "street": "456 Second Ave",
                     "city": "New York",
                     "state": "NY",
@@ -2122,20 +2114,16 @@
                   }
                 },
                 {
-                  "loadNumber": "1334833",
+                  "loadNumber": "LOAD-67890",
                   "status": "DroppedOff",
                   "at": "2025-02-01T05:15:02.254Z",
                   "stopIndex": 1,
                   "location": {
-                    "coordinates": {
-                      "lat": 34.052235,
-                      "lng": -118.243683
-                    },
                     "street": "123 Main St",
                     "city": "Los Angeles",
                     "state": "CA",
                     "zipcode": "90001",
-                    "countryCode": "CA"
+                    "countryCode": "US"
                   }
                 }
               ]
@@ -2186,7 +2174,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Accept Tender",
-        "description": "Accept a tender that Owlery sent to the carrier. Use the `tenderId` from the carrier tender webhook.",
+        "description": "Accept a tender that Owlery sent to the carrier. Identify the tender using the `rateQuote.id` and `rateQuote.carrierQuoteId` from the carrier tender webhook.",
         "operationId": "acceptCarrierTender",
         "requestBody": {
           "required": true,
@@ -2196,9 +2184,11 @@
                 "$ref": "#/components/schemas/CarrierTenderAcceptRequest"
               },
               "example": {
-                "tenderId": "tender_abc123",
+                "rateQuote": {
+                  "id": "RQ-0042",
+                  "carrierQuoteId": "carrier-quote-789"
+                },
                 "carrierTenderId": "CARR-789",
-                "loadNumber": "LOAD-12345",
                 "proNumber": "PRO-456789",
                 "trackingUrl": "https://carrier.example.com/track/PRO-456789",
                 "notes": "Accepted by carrier dispatch"
@@ -2215,7 +2205,10 @@
                   "$ref": "#/components/schemas/CarrierTenderResponse"
                 },
                 "example": {
-                  "tenderId": "tender_abc123",
+                  "rateQuote": {
+                    "id": "RQ-0042",
+                    "carrierQuoteId": "carrier-quote-789"
+                  },
                   "status": "accepted",
                   "loadNumber": "LOAD-12345"
                 }
@@ -2231,7 +2224,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: tenderId"
+                  "message": "Missing required field: rateQuote.id"
                 }
               }
             }
@@ -2245,7 +2238,7 @@
                 },
                 "example": {
                   "error": "Not Found",
-                  "message": "Tender not found: tender_abc123"
+                  "message": "Tender not found for rateQuote.id=RQ-0042 and carrierQuoteId=carrier-quote-789"
                 }
               }
             }
@@ -2259,7 +2252,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Reject Tender",
-        "description": "Reject a tender that Owlery sent to the carrier. Use the `tenderId` from the carrier tender webhook.",
+        "description": "Reject a tender that Owlery sent to the carrier. Identify the tender using the `rateQuote.id` and `rateQuote.carrierQuoteId` from the carrier tender webhook.",
         "operationId": "rejectCarrierTender",
         "requestBody": {
           "required": true,
@@ -2269,7 +2262,10 @@
                 "$ref": "#/components/schemas/CarrierTenderRejectRequest"
               },
               "example": {
-                "tenderId": "tender_abc123",
+                "rateQuote": {
+                  "id": "RQ-0042",
+                  "carrierQuoteId": "carrier-quote-789"
+                },
                 "reason": "No capacity for requested pickup window",
                 "reasonCode": "NO_CAPACITY",
                 "notes": "Can cover next day if shipper is flexible"
@@ -2286,7 +2282,10 @@
                   "$ref": "#/components/schemas/CarrierTenderResponse"
                 },
                 "example": {
-                  "tenderId": "tender_abc123",
+                  "rateQuote": {
+                    "id": "RQ-0042",
+                    "carrierQuoteId": "carrier-quote-789"
+                  },
                   "status": "rejected"
                 }
               }
@@ -2301,7 +2300,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: tenderId"
+                  "message": "Missing required field: rateQuote.id"
                 }
               }
             }
@@ -2315,7 +2314,7 @@
                 },
                 "example": {
                   "error": "Not Found",
-                  "message": "Tender not found: tender_abc123"
+                  "message": "Tender not found for rateQuote.id=RQ-0042 and carrierQuoteId=carrier-quote-789"
                 }
               }
             }
@@ -2461,7 +2460,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Requested",
-        "description": "Webhook sent by Owlery to tender a shipment to a carrier. The carrier should later call the accept or reject endpoint with the provided `tenderId`, which identifies this tender request. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context; Owlery does not include account, organization, or shipper profile IDs in the body.",
+        "description": "Webhook sent by Owlery to tender a shipment to a carrier. The carrier should later call the accept or reject endpoint with the provided `rateQuote.id` and `rateQuote.carrierQuoteId`. Owlery sends `loadNumber`; carriers should use that Owlery load number when later referencing tracking, invoices, and documents for this load. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context.",
         "operationId": "carrierWebhookTenderRequested",
         "security": [
           {
@@ -2476,72 +2475,69 @@
                 "$ref": "#/components/schemas/CarrierWebhookTenderRequest"
               },
               "example": {
-                "webhookId": "wh_tender_abc123",
-                "tender": {
-                  "tenderId": "tender_abc123",
-                  "rateQuote": {
-                    "id": "RQ-0042",
-                    "carrierQuoteId": "carrier-quote-789"
-                  },
-                  "mode": "FTL",
-                  "equipmentType": "Reefer",
-                  "reeferSettings": {
-                    "minTemperature": 34,
-                    "maxTemperature": 38,
-                    "unit": "F",
-                    "sentryMode": "Continuous"
-                  },
-                  "price": {
-                    "cents": 150000,
-                    "currencyCode": "USD"
-                  },
-                  "stops": [
-                    {
-                      "type": "Pickup",
-                      "facility": {
-                        "name": "Origin Warehouse",
-                        "location": {
-                          "city": "Chicago",
-                          "state": "IL",
-                          "zipcode": "60601",
-                          "countryCode": "US"
-                        }
-                      },
-                      "dates": {
-                        "startAt": "2026-06-01T08:00:00Z",
-                        "endAt": "2026-06-01T10:00:00Z"
-                      },
-                      "items": [
-                        {
-                          "description": "Frozen prepared meals",
-                          "quantity": {
-                            "count": 10,
-                            "unit": "Pallet"
-                          },
-                          "weight": {
-                            "value": 1200,
-                            "unit": "LB"
-                          }
-                        }
-                      ]
+                "rateQuote": {
+                  "id": "RQ-0042",
+                  "carrierQuoteId": "carrier-quote-789"
+                },
+                "loadNumber": "LOAD-12345",
+                "mode": "FTL",
+                "equipmentType": "Reefer",
+                "reeferSettings": {
+                  "minTemperature": 34,
+                  "maxTemperature": 38,
+                  "unit": "F",
+                  "sentryMode": "Continuous"
+                },
+                "price": {
+                  "cents": 150000,
+                  "currencyCode": "USD"
+                },
+                "stops": [
+                  {
+                    "type": "Pickup",
+                    "facility": {
+                      "name": "Origin Warehouse",
+                      "location": {
+                        "city": "Chicago",
+                        "state": "IL",
+                        "zipcode": "60601",
+                        "countryCode": "US"
+                      }
                     },
-                    {
-                      "type": "Dropoff",
-                      "facility": {
-                        "name": "Destination DC",
-                        "location": {
-                          "zipcode": "10001",
-                          "countryCode": "US"
+                    "dates": {
+                      "startAt": "2026-06-01T08:00:00Z",
+                      "endAt": "2026-06-01T10:00:00Z"
+                    },
+                    "items": [
+                      {
+                        "description": "Frozen prepared meals",
+                        "quantity": {
+                          "count": 10,
+                          "unit": "Pallet"
+                        },
+                        "weight": {
+                          "value": 1200,
+                          "unit": "LB"
                         }
-                      },
-                      "dates": {
-                        "startAt": "2026-06-03T08:00:00Z",
-                        "endAt": "2026-06-03T12:00:00Z"
-                      },
-                      "liveDropType": "drop"
-                    }
-                  ]
-                }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Dropoff",
+                    "facility": {
+                      "name": "Destination DC",
+                      "location": {
+                        "zipcode": "10001",
+                        "countryCode": "US"
+                      }
+                    },
+                    "dates": {
+                      "startAt": "2026-06-03T08:00:00Z",
+                      "endAt": "2026-06-03T12:00:00Z"
+                    },
+                    "liveDropType": "drop"
+                  }
+                ]
               }
             }
           }
@@ -2569,7 +2565,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: webhookId"
+                  "message": "Missing required field: rateQuote.id"
                 }
               }
             }
@@ -2612,7 +2608,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Cancelled",
-        "description": "Webhook sent by Owlery when a tender or carrier load should be cancelled. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context; Owlery does not include account, organization, or shipper profile IDs in the body.",
+        "description": "Webhook sent by Owlery to cancel a tender or load previously sent to the carrier. The payload includes the `rateQuote.id`, `rateQuote.carrierQuoteId`, and Owlery `loadNumber` so the carrier can identify the shipment.",
         "operationId": "carrierWebhookTenderCancelled",
         "security": [
           {
@@ -2627,9 +2623,11 @@
                 "$ref": "#/components/schemas/CarrierWebhookCancelRequest"
               },
               "example": {
-                "webhookId": "wh_cancel_abc123",
                 "cancel": {
-                  "tenderId": "tender_abc123",
+                  "rateQuote": {
+                    "id": "RQ-0042",
+                    "carrierQuoteId": "carrier-quote-789"
+                  },
                   "loadNumber": "LOAD-12345",
                   "reason": "Shipper cancelled the shipment"
                 }
@@ -2660,7 +2658,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: webhookId"
+                  "message": "Missing required field: cancel.rateQuote.id"
                 }
               }
             }
@@ -2788,11 +2786,7 @@
                               "state": "IL",
                               "countryCode": "US",
                               "zipcode": "60436",
-                              "timeZone": "America/Chicago",
-                              "coordinates": {
-                                "lat": 41.513944,
-                                "lng": -88.143961
-                              }
+                              "timeZone": "America/Chicago"
                             }
                           }
                         },
@@ -2844,11 +2838,7 @@
                               "state": "NJ",
                               "countryCode": "US",
                               "zipcode": "08344",
-                              "timeZone": "America/New_York",
-                              "coordinates": {
-                                "lat": 39.574001,
-                                "lng": -75.010948
-                              }
+                              "timeZone": "America/New_York"
                             }
                           }
                         }
@@ -4680,9 +4670,6 @@
           "countryCode": {
             "type": "string",
             "description": "ISO-3166-1 Alpha-2 country code."
-          },
-          "coordinates": {
-            "$ref": "#/components/schemas/Coordinates"
           }
         }
       },
@@ -4740,26 +4727,6 @@
           "countryCode": {
             "type": "string",
             "description": "ISO-3166-1 Alpha-2 country code."
-          },
-          "coordinates": {
-            "$ref": "#/components/schemas/Coordinates"
-          }
-        }
-      },
-      "Coordinates": {
-        "type": "object",
-        "required": [
-          "lat",
-          "lng"
-        ],
-        "properties": {
-          "lat": {
-            "type": "number",
-            "description": "Latitude."
-          },
-          "lng": {
-            "type": "number",
-            "description": "Longitude."
           }
         }
       },
@@ -5015,7 +4982,7 @@
           },
           "loadNumber": {
             "type": "string",
-            "description": "Unique identifier of the load in a carrier/broker TMS specific to this customer. This value cannot repeat for the same customer. It must be the same as the identifier in your TMS that matches how Owlery captures the load."
+            "description": "Owlery load number from the carrier tender webhook. Carriers should use this Owlery load number when submitting invoices."
           },
           "invoicedAt": {
             "type": "string",
@@ -5513,7 +5480,7 @@
         "properties": {
           "loadNumber": {
             "type": "string",
-            "description": "Unique identifier of the load in a carrier/broker TMS specific to this customer. This value cannot repeat for the same customer. It must be the same as the identifier in your TMS that matches how Owlery captures the load."
+            "description": "Owlery load number from the carrier tender webhook. Carriers should use this Owlery load number when submitting tracking updates."
           },
           "status": {
             "type": "string",
@@ -5805,8 +5772,7 @@
           "state",
           "countryCode",
           "zipcode",
-          "timeZone",
-          "coordinates"
+          "timeZone"
         ],
         "properties": {
           "street": {
@@ -5832,9 +5798,6 @@
           "timeZone": {
             "type": "string",
             "description": "IANA time zone identifier."
-          },
-          "coordinates": {
-            "$ref": "#/components/schemas/Coordinates"
           }
         }
       },
@@ -7313,20 +7276,29 @@
       "CarrierTenderAcceptRequest": {
         "type": "object",
         "required": [
-          "tenderId"
+          "rateQuote"
         ],
         "properties": {
-          "tenderId": {
-            "type": "string",
-            "description": "Identifier for this tender request. Echo this value when accepting or rejecting the tender."
+          "rateQuote": {
+            "type": "object",
+            "required": [
+              "id",
+              "carrierQuoteId"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
+              },
+              "carrierQuoteId": {
+                "type": "string",
+                "description": "Carrier quote ID returned when submitting rate quote responses."
+              }
+            }
           },
           "carrierTenderId": {
             "type": "string",
             "description": "Carrier-generated tender or shipment identifier, if available."
-          },
-          "loadNumber": {
-            "type": "string",
-            "description": "Carrier load number or shipment number assigned on acceptance, if available."
           },
           "proNumber": {
             "type": "string",
@@ -7345,13 +7317,26 @@
       "CarrierTenderRejectRequest": {
         "type": "object",
         "required": [
-          "tenderId",
+          "rateQuote",
           "reason"
         ],
         "properties": {
-          "tenderId": {
-            "type": "string",
-            "description": "Identifier for this tender request. Echo this value when accepting or rejecting the tender."
+          "rateQuote": {
+            "type": "object",
+            "required": [
+              "id",
+              "carrierQuoteId"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
+              },
+              "carrierQuoteId": {
+                "type": "string",
+                "description": "Carrier quote ID returned when submitting rate quote responses."
+              }
+            }
           },
           "reason": {
             "type": "string",
@@ -7370,13 +7355,26 @@
       "CarrierTenderResponse": {
         "type": "object",
         "required": [
-          "tenderId",
+          "rateQuote",
           "status"
         ],
         "properties": {
-          "tenderId": {
-            "type": "string",
-            "description": "Carrier-facing tender identifier."
+          "rateQuote": {
+            "type": "object",
+            "required": [
+              "id",
+              "carrierQuoteId"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
+              },
+              "carrierQuoteId": {
+                "type": "string",
+                "description": "Carrier quote ID returned when submitting rate quote responses."
+              }
+            }
           },
           "status": {
             "type": "string",
@@ -7388,7 +7386,7 @@
           },
           "loadNumber": {
             "type": "string",
-            "description": "Load number associated with the accepted tender, if available."
+            "description": "Owlery load number associated with this tender."
           }
         }
       },
@@ -7544,47 +7542,107 @@
       "CarrierWebhookTenderRequest": {
         "type": "object",
         "required": [
-          "webhookId",
-          "tender"
-        ],
-        "properties": {
-          "webhookId": {
-            "type": "string",
-            "description": "Unique Owlery-generated webhook delivery identifier for idempotency and support."
-          },
-          "tender": {
-            "$ref": "#/components/schemas/CarrierTenderWebhookTender"
-          }
-        }
-      },
-      "CarrierTenderWebhookTender": {
-        "type": "object",
-        "required": [
-          "tenderId",
           "rateQuote",
+          "loadNumber",
           "stops",
           "price"
         ],
         "properties": {
-          "tenderId": {
-            "type": "string",
-            "description": "Identifier for this tender request. Echo this value when accepting or rejecting the tender."
-          },
           "rateQuote": {
             "type": "object",
             "required": [
-              "id"
+              "id",
+              "carrierQuoteId"
             ],
             "properties": {
               "id": {
                 "type": "string",
-                "description": "Carrier-facing Owlery rate quote ID."
+                "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
               },
               "carrierQuoteId": {
                 "type": "string",
                 "description": "Carrier quote ID returned when submitting rate quote responses."
               }
             }
+          },
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number. Use this value when later referencing tracking, invoices, and documents for this load."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "FTL",
+              "LTL",
+              "PTL",
+              "VLTL",
+              "Consolidation",
+              "IMDL",
+              "STL",
+              "Unknown"
+            ]
+          },
+          "equipmentType": {
+            "type": "string",
+            "enum": [
+              "Dryvan",
+              "Reefer",
+              "Flatbed",
+              "Drayage",
+              "Tanker"
+            ]
+          },
+          "reeferSettings": {
+            "$ref": "#/components/schemas/ReeferSettings"
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CarrierWebhookStop"
+            },
+            "description": "Tender stops. Reference numbers are not included before carrier acceptance."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateQuoteItem"
+            },
+            "description": "Tender freight items, if not already provided on stops."
+          }
+        }
+      },
+      "CarrierTenderWebhookTender": {
+        "type": "object",
+        "required": [
+          "rateQuote",
+          "loadNumber",
+          "stops",
+          "price"
+        ],
+        "properties": {
+          "rateQuote": {
+            "type": "object",
+            "required": [
+              "id",
+              "carrierQuoteId"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
+              },
+              "carrierQuoteId": {
+                "type": "string",
+                "description": "Carrier quote ID returned when submitting rate quote responses."
+              }
+            }
+          },
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number. Use this value when later referencing tracking, invoices, and documents for this load."
           },
           "mode": {
             "type": "string",
@@ -7634,27 +7692,36 @@
       "CarrierWebhookCancelRequest": {
         "type": "object",
         "required": [
-          "webhookId",
           "cancel"
         ],
         "properties": {
-          "webhookId": {
-            "type": "string",
-            "description": "Unique Owlery-generated webhook delivery identifier for idempotency and support."
-          },
           "cancel": {
             "type": "object",
             "required": [
-              "tenderId"
+              "rateQuote",
+              "loadNumber"
             ],
             "properties": {
-              "tenderId": {
-                "type": "string",
-                "description": "Carrier-facing tender identifier being cancelled."
+              "rateQuote": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "carrierQuoteId"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Carrier-facing Owlery rate quote ID from the Rate Quote Requested webhook."
+                  },
+                  "carrierQuoteId": {
+                    "type": "string",
+                    "description": "Carrier quote ID returned when submitting rate quote responses."
+                  }
+                }
               },
               "loadNumber": {
                 "type": "string",
-                "description": "Load number, if a load was created before cancellation."
+                "description": "Owlery load number being cancelled."
               },
               "reason": {
                 "type": "string",
