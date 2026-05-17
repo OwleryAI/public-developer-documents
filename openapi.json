@@ -2330,7 +2330,7 @@
           "carrier-webhooks"
         ],
         "summary": "Rate Quote Requested",
-        "description": "Webhook sent by Owlery to a carrier when Owlery requests rates. The request body itself is the rate quote request. Owlery sends the rate quote `shortId`, not the internal rate quote ID, and does not include shipper organization or shipper profile IDs. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context; Owlery does not include account, organization, or shipper profile IDs in the body. Return `200 OK` to acknowledge receipt only. Submit all quote responses asynchronously to `POST /api/ext/v1/rate-quote/responses`; Owlery does not process quote results from the webhook response body.",
+        "description": "Webhook sent by Owlery to a carrier when Owlery requests rates. The request body itself is the rate quote request. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context; Owlery does not include account, organization, or shipper profile IDs in the body. Return `200 OK` to acknowledge receipt only. Submit all quote responses asynchronously to `POST /api/ext/v1/rate-quote/responses`; Owlery does not process quote results from the webhook response body.",
         "operationId": "carrierWebhookRateQuoteRequested",
         "security": [
           {
