@@ -67,6 +67,11 @@
       "description": "Push load tracking status updates to Owlery."
     },
     {
+      "name": "carrier-documents",
+      "description": "Submit load documents to Owlery.",
+      "x-displayName": "Documents"
+    },
+    {
       "name": "carrier-rate-quotes",
       "x-displayName": "Rate Quotes",
       "description": "Submit carrier quote responses asynchronously to Owlery."
@@ -2167,6 +2172,93 @@
                   "missing": [
                     "1334833"
                   ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ext/v1/documents/submit": {
+      "post": {
+        "tags": [
+          "carrier-documents"
+        ],
+        "summary": "Submit Document",
+        "description": "Submit a document for a load that Owlery previously sent to the carrier. Identify the load using Owlery `loadNumber`. The file content is sent as a base64-encoded string; maximum decoded file size is 20 MB.",
+        "operationId": "submitCarrierDocument",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarrierDocumentSubmitRequest"
+              },
+              "example": {
+                "loadNumber": "LOAD-12345",
+                "type": "pod",
+                "fileName": "POD_LOAD-12345.pdf",
+                "mimeType": "application/pdf",
+                "content": "JVBERi0xLjQKJcTl8uXr..."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Document submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarrierDocumentSubmitResponse"
+                },
+                "example": {
+                  "loadNumber": "LOAD-12345",
+                  "type": "pod",
+                  "fileName": "POD_LOAD-12345.pdf",
+                  "status": "uploaded"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Bad Request",
+                  "message": "Missing required field: content"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Load not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Not Found",
+                  "message": "Load not found for loadNumber=LOAD-12345"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File content is too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Payload Too Large",
+                  "message": "Decoded file content exceeds the 20 MB maximum"
                 }
               }
             }
@@ -8164,6 +8256,88 @@
               "$ref": "#/components/schemas/ReferenceNumber"
             },
             "description": "Updated reference numbers associated with this tender/load. Treat this as the current full reference number list. Carriers should still use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
+          }
+        }
+      },
+      "CarrierDocumentType": {
+        "type": "string",
+        "enum": [
+          "bol",
+          "pod",
+          "invoice",
+          "lumper",
+          "weight",
+          "inspection",
+          "overlength",
+          "purchaseorder",
+          "ratecon",
+          "packingList",
+          "termsAndConditions",
+          "fuelTable",
+          "billPaySupport",
+          "shippingLabel",
+          "unknown"
+        ],
+        "description": "Type of document being submitted."
+      },
+      "CarrierDocumentSubmitRequest": {
+        "type": "object",
+        "required": [
+          "loadNumber",
+          "type",
+          "fileName",
+          "content"
+        ],
+        "properties": {
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number from the carrier tender or tender edit webhook. Carriers should use this Owlery load number when submitting documents."
+          },
+          "type": {
+            "$ref": "#/components/schemas/CarrierDocumentType"
+          },
+          "fileName": {
+            "type": "string",
+            "description": "Original file name, including extension."
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "MIME type of the file, if known. Owlery may infer the MIME type from the file content or file name when omitted.",
+            "example": "application/pdf"
+          },
+          "content": {
+            "type": "string",
+            "format": "byte",
+            "description": "Base64-encoded file content. The decoded file must be 20 MB or smaller."
+          }
+        }
+      },
+      "CarrierDocumentSubmitResponse": {
+        "type": "object",
+        "required": [
+          "loadNumber",
+          "type",
+          "fileName",
+          "status"
+        ],
+        "properties": {
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number associated with the uploaded document."
+          },
+          "type": {
+            "$ref": "#/components/schemas/CarrierDocumentType"
+          },
+          "fileName": {
+            "type": "string",
+            "description": "File name accepted by Owlery."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "uploaded"
+            ],
+            "description": "Document submission status."
           }
         }
       }
