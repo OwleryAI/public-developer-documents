@@ -2461,7 +2461,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Requested",
-        "description": "Webhook sent by Owlery to tender a shipment to a carrier. The carrier should later call the accept or reject endpoint with the provided `tenderId`. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context; Owlery does not include account, organization, or shipper profile IDs in the body.",
+        "description": "Webhook sent by Owlery to tender a shipment to a carrier. The carrier should later call the accept or reject endpoint with the provided `tenderId`, which identifies this tender request. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context; Owlery does not include account, organization, or shipper profile IDs in the body.",
         "operationId": "carrierWebhookTenderRequested",
         "security": [
           {
@@ -3874,7 +3874,8 @@
                         "appointmentDates": {
                           "startAt": "2026-06-01T08:00:00Z",
                           "endAt": "2026-06-01T10:00:00Z"
-                        }
+                        },
+                        "liveDropType": "live"
                       },
                       {
                         "index": 1,
@@ -3882,7 +3883,8 @@
                         "estimatedDates": {
                           "startAt": "2026-06-03T08:00:00Z",
                           "endAt": "2026-06-03T12:00:00Z"
-                        }
+                        },
+                        "liveDropType": "drop"
                       }
                     ]
                   },
@@ -7316,7 +7318,7 @@
         "properties": {
           "tenderId": {
             "type": "string",
-            "description": "Carrier-facing tender identifier from the tender webhook."
+            "description": "Identifier for this tender request. Echo this value when accepting or rejecting the tender."
           },
           "carrierTenderId": {
             "type": "string",
@@ -7349,7 +7351,7 @@
         "properties": {
           "tenderId": {
             "type": "string",
-            "description": "Carrier-facing tender identifier from the tender webhook."
+            "description": "Identifier for this tender request. Echo this value when accepting or rejecting the tender."
           },
           "reason": {
             "type": "string",
@@ -7566,7 +7568,7 @@
         "properties": {
           "tenderId": {
             "type": "string",
-            "description": "Carrier-facing tender identifier. Use this value when accepting or rejecting the tender."
+            "description": "Identifier for this tender request. Echo this value when accepting or rejecting the tender."
           },
           "rateQuote": {
             "type": "object",
@@ -7713,9 +7715,6 @@
           "countryCode": {
             "type": "string",
             "description": "Required ISO-3166-1 Alpha-2 country code."
-          },
-          "coordinates": {
-            "$ref": "#/components/schemas/Coordinates"
           }
         }
       },
@@ -7777,7 +7776,8 @@
         "type": "object",
         "required": [
           "index",
-          "type"
+          "type",
+          "liveDropType"
         ],
         "properties": {
           "index": {
@@ -7791,6 +7791,15 @@
               "Dropoff"
             ],
             "description": "Stop type from the rate quote request."
+          },
+          "liveDropType": {
+            "type": "string",
+            "enum": [
+              "live",
+              "drop"
+            ],
+            "description": "Whether the stop is a live load/unload or a drop trailer stop.",
+            "default": "live"
           },
           "estimatedDates": {
             "$ref": "#/components/schemas/DatePair"
