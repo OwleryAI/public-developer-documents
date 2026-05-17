@@ -431,7 +431,7 @@
                         }
                       ],
                       "price": {
-                        "total": 125000,
+                        "cents": 125000,
                         "currencyCode": "USD"
                       },
                       "lineItems": [
@@ -720,7 +720,7 @@
                         }
                       ],
                       "price": {
-                        "total": 125000,
+                        "cents": 125000,
                         "currencyCode": "USD"
                       },
                       "lineItems": [
@@ -1010,7 +1010,7 @@
                         }
                       ],
                       "price": {
-                        "total": 125000,
+                        "cents": 125000,
                         "currencyCode": "USD"
                       },
                       "lineItems": [
@@ -1955,7 +1955,10 @@
                             "isTurnable": false,
                             "class": "70",
                             "nmfcCode": "12345",
-                            "cargoValueInCents": 900000
+                            "cargoValue": {
+                              "cents": 900000,
+                              "currencyCode": "USD"
+                            }
                           }
                         ],
                         "referenceNumbers": [
@@ -2002,7 +2005,10 @@
                             "isTurnable": false,
                             "class": "70",
                             "nmfcCode": "12345",
-                            "cargoValueInCents": 900000
+                            "cargoValue": {
+                              "cents": 900000,
+                              "currencyCode": "USD"
+                            }
                           }
                         ],
                         "referenceNumbers": [
@@ -2379,8 +2385,10 @@
                           "value": 1200,
                           "unit": "LB"
                         },
-                        "cargoValueInCents": 2500000,
-                        "cargoValueCurrencyCode": "USD"
+                        "cargoValue": {
+                          "cents": 2500000,
+                          "currencyCode": "USD"
+                        }
                       }
                     ]
                   },
@@ -4383,7 +4391,7 @@
             "description": "Order-level mapping to pickup/dropoff route stops and zero-based stop-type sequence numbers."
           },
           "price": {
-            "$ref": "#/components/schemas/TenderWebhookPrice"
+            "$ref": "#/components/schemas/Price"
           },
           "lineItems": {
             "type": "array",
@@ -4412,23 +4420,6 @@
           "updatedBy": {
             "type": "string",
             "description": "Email address of the user who created the tender."
-          }
-        }
-      },
-      "TenderWebhookPrice": {
-        "type": "object",
-        "required": [
-          "total",
-          "currencyCode"
-        ],
-        "properties": {
-          "total": {
-            "type": "number",
-            "description": "Total price in cents."
-          },
-          "currencyCode": {
-            "type": "string",
-            "description": "ISO currency code."
           }
         }
       },
@@ -6142,9 +6133,13 @@
           "dimensions": {
             "$ref": "#/components/schemas/Dimensions"
           },
-          "cargoValueInCents": {
-            "type": "number",
-            "description": "Cargo value in cents."
+          "cargoValue": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Price"
+              }
+            ],
+            "description": "Declared cargo value."
           },
           "isStackable": {
             "type": "boolean",
@@ -6818,13 +6813,13 @@
             "type": "boolean",
             "description": "Whether the item can be turned."
           },
-          "cargoValueInCents": {
-            "type": "number",
-            "description": "Declared cargo value in cents."
-          },
-          "cargoValueCurrencyCode": {
-            "type": "string",
-            "description": "ISO 4217 currency code for `cargoValueInCents`."
+          "cargoValue": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Price"
+              }
+            ],
+            "description": "Declared cargo value."
           }
         }
       },
