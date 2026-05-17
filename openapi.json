@@ -2379,7 +2379,9 @@
                         "weight": {
                           "value": 1200,
                           "unit": "LB"
-                        }
+                        },
+                        "cargoValueInCents": 2500000,
+                        "cargoValueCurrencyCode": "USD"
                       }
                     ]
                   },
@@ -3836,17 +3838,30 @@
                 "shortId": "RQ-0042",
                 "responses": [
                   {
-                    "sourceId": "carrier-quote-ftl-789",
+                    "carrierQuoteId": "carrier-quote-ftl-789",
                     "mode": "FTL",
                     "price": {
                       "cents": 150000,
                       "currencyCode": "USD"
                     },
-                    "carrier": {
-                      "name": "Example Carrier",
-                      "scac": "EXMP",
-                      "mcNumber": "123456"
-                    },
+                    "lineItems": [
+                      {
+                        "category": "lineHaul",
+                        "code": "LH",
+                        "total": 130000
+                      },
+                      {
+                        "category": "fuelSurcharge",
+                        "code": "FSC",
+                        "total": 25000
+                      },
+                      {
+                        "category": "discount",
+                        "code": "DISC",
+                        "total": -5000
+                      }
+                    ],
+                    "allInRate": true,
                     "transitDays": {
                       "min": 3,
                       "max": 4
@@ -3869,36 +3884,41 @@
                           "endAt": "2026-06-03T12:00:00Z"
                         }
                       }
-                    ],
-                    "lineItems": [
-                      {
-                        "category": "lineHaul",
-                        "code": "LH",
-                        "total": 125000,
-                        "description": "Line haul"
-                      },
-                      {
-                        "category": "fuelSurcharge",
-                        "code": "FSC",
-                        "total": 25000,
-                        "description": "Fuel surcharge"
-                      }
                     ]
                   },
                   {
-                    "sourceId": "carrier-quote-ltl-790",
+                    "carrierQuoteId": "carrier-quote-ltl-790",
                     "mode": "LTL",
                     "price": {
                       "cents": 98000,
                       "currencyCode": "USD"
+                    },
+                    "lineItems": [
+                      {
+                        "category": "lineHaul",
+                        "code": "LH",
+                        "total": 84000
+                      },
+                      {
+                        "category": "fuelSurcharge",
+                        "code": "FSC",
+                        "total": 14000
+                      }
+                    ],
+                    "carrier": {
+                      "scac": "EXMP",
+                      "name": "Example Carrier"
+                    },
+                    "interline": false,
+                    "deliveryGuarantee": {
+                      "level": "guaranteed5pm"
                     },
                     "transitDays": {
                       "min": 4,
                       "max": 5
                     }
                   }
-                ],
-                "errors": []
+                ]
               }
             }
           }
@@ -3913,9 +3933,7 @@
                 },
                 "example": {
                   "shortId": "RQ-0042",
-                  "accepted": 2,
-                  "rejected": 0,
-                  "errors": []
+                  "accepted": 2
                 }
               }
             }
@@ -3929,7 +3947,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: responses[0].mode"
+                  "message": "Missing required field: responses[0].carrierQuoteId"
                 }
               }
             }
@@ -6840,6 +6858,10 @@
           "cargoValueInCents": {
             "type": "number",
             "description": "Declared cargo value in cents."
+          },
+          "cargoValueCurrencyCode": {
+            "type": "string",
+            "description": "ISO 4217 currency code for `cargoValueInCents`."
           }
         }
       },
@@ -7431,34 +7453,28 @@
         "properties": {
           "shortId": {
             "type": "string",
-            "description": "Rate quote short ID from the Rate Quote Requested webhook. Owlery does not require or expose the internal rate quote ID."
+            "description": "Rate quote short ID from the Rate Quote Requested webhook."
           },
           "responses": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CarrierRateQuoteResponse"
             },
-            "description": "Carrier quote responses. Submit as many modes, service options, and prices as possible; use an empty array only when no rates are available and include errors explaining why."
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CarrierRateQuoteError"
-            },
-            "description": "Carrier quote errors. Use this when the request was processed but one or more rates could not be returned."
+            "description": "Carrier quote responses. Submit as many modes, service options, and prices as possible."
           }
         }
       },
       "CarrierRateQuoteResponse": {
         "type": "object",
         "required": [
+          "carrierQuoteId",
           "mode",
           "price"
         ],
         "properties": {
-          "sourceId": {
+          "carrierQuoteId": {
             "type": "string",
-            "description": "Carrier quote identifier. Owlery stores this for future tender correlation when available."
+            "description": "Carrier-generated unique ID for this quote. Owlery sends this value back during tender."
           },
           "mode": {
             "type": "string",
@@ -7467,18 +7483,45 @@
               "LTL",
               "PTL",
               "VLTL",
-              "Consolidation",
-              "IMDL",
-              "STL",
-              "Unknown"
+              "IMDL"
             ],
             "description": "Transportation mode for this price. Submit separate response objects for different modes, service levels, or prices."
           },
           "price": {
-            "$ref": "#/components/schemas/Price"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Price"
+              }
+            ],
+            "description": "Total all-in price for this quote unless `allInRate` is explicitly false."
+          },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CarrierRateQuoteLineItem"
+            },
+            "description": "Charge breakdown in cents. Discounts should be sent as negative line items."
           },
           "carrier": {
-            "$ref": "#/components/schemas/CarrierProfile"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CarrierQuoteCarrier"
+              }
+            ],
+            "description": "Carrier details. Required when `mode` is `LTL`; `scac` is required when carrier is provided."
+          },
+          "interline": {
+            "type": "boolean",
+            "description": "For LTL responses, whether the service uses an interline carrier.",
+            "default": false
+          },
+          "allInRate": {
+            "type": "boolean",
+            "description": "Whether `price` is an all-in total. Defaults to true when omitted.",
+            "default": true
+          },
+          "deliveryGuarantee": {
+            "$ref": "#/components/schemas/CarrierRateQuoteDeliveryGuarantee"
           },
           "transitDays": {
             "$ref": "#/components/schemas/TransitDays"
@@ -7493,53 +7536,6 @@
               "$ref": "#/components/schemas/CarrierRateQuoteResponseStop"
             },
             "description": "Stop-level estimated or appointment dates, if available."
-          },
-          "lineItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/InvoiceLineItem"
-            },
-            "description": "Charge breakdown in cents. Include line haul, fuel, accessorials, discounts, and other charges when available."
-          },
-          "notAllInRate": {
-            "type": "boolean",
-            "description": "Set to true when the price is not all-in."
-          },
-          "warningRateMessage": {
-            "type": "string",
-            "description": "Carrier-facing warning or caveat for the submitted rate."
-          },
-          "carrierGuarantee": {
-            "type": "boolean",
-            "description": "Whether this quote is carrier-guaranteed."
-          },
-          "payTerms": {
-            "type": "string",
-            "description": "Payment terms for the quote, if applicable."
-          },
-          "rawResponse": {
-            "type": "object",
-            "description": "Optional raw carrier response for troubleshooting."
-          }
-        }
-      },
-      "CarrierRateQuoteError": {
-        "type": "object",
-        "required": [
-          "message"
-        ],
-        "properties": {
-          "code": {
-            "type": "string",
-            "description": "Carrier error code, if available."
-          },
-          "message": {
-            "type": "string",
-            "description": "Human-readable error message."
-          },
-          "retryable": {
-            "type": "boolean",
-            "description": "Whether Owlery should retry the quote request."
           }
         }
       },
@@ -7818,17 +7814,71 @@
           "accepted": {
             "type": "number",
             "description": "Number of rate quote response items accepted by Owlery."
+          }
+        }
+      },
+      "CarrierQuoteCarrier": {
+        "type": "object",
+        "required": [
+          "scac"
+        ],
+        "properties": {
+          "scac": {
+            "type": "string",
+            "description": "SCAC code of the carrier."
           },
-          "rejected": {
+          "name": {
+            "type": "string",
+            "description": "Name of the carrier, if available."
+          }
+        }
+      },
+      "CarrierRateQuoteLineItem": {
+        "type": "object",
+        "required": [
+          "category",
+          "total"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "lineHaul",
+              "fuelSurcharge",
+              "detention",
+              "lumper",
+              "discount",
+              "reweigh",
+              "californiaComplianceSurcharge",
+              "guarantee",
+              "other"
+            ],
+            "description": "Line item category."
+          },
+          "total": {
             "type": "number",
-            "description": "Number of rate quote response items rejected by Owlery."
+            "description": "Line item amount in cents. Discounts should be sent as negative numbers."
           },
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CarrierRateQuoteError"
-            },
-            "description": "Validation or processing errors for rejected response items."
+          "code": {
+            "type": "string",
+            "description": "Carrier-specific charge code, if available."
+          }
+        }
+      },
+      "CarrierRateQuoteDeliveryGuarantee": {
+        "type": "object",
+        "required": [
+          "level"
+        ],
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "guaranteed10am",
+              "guaranteed12pm",
+              "guaranteed5pm"
+            ],
+            "description": "Guaranteed delivery commitment. Omit this object for standard/non-guaranteed service."
           }
         }
       }
