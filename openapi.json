@@ -2175,6 +2175,568 @@
         }
       }
     },
+    "/api/ext/v1/tenders/accept": {
+      "post": {
+        "tags": [
+          "carrier-tender-responses"
+        ],
+        "summary": "Accept Tender",
+        "description": "Accept a tender that Owlery sent to the carrier. Use the `tenderId` from the carrier tender webhook.",
+        "operationId": "acceptCarrierTender",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarrierTenderAcceptRequest"
+              },
+              "example": {
+                "tenderId": "tender_abc123",
+                "carrierTenderId": "CARR-789",
+                "loadNumber": "LOAD-12345",
+                "proNumber": "PRO-456789",
+                "trackingUrl": "https://carrier.example.com/track/PRO-456789",
+                "notes": "Accepted by carrier dispatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tender accepted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarrierTenderResponse"
+                },
+                "example": {
+                  "tenderId": "tender_abc123",
+                  "status": "accepted",
+                  "loadNumber": "LOAD-12345"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Bad Request",
+                  "message": "Missing required field: tenderId"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tender not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Not Found",
+                  "message": "Tender not found: tender_abc123"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ext/v1/tenders/reject": {
+      "post": {
+        "tags": [
+          "carrier-tender-responses"
+        ],
+        "summary": "Reject Tender",
+        "description": "Reject a tender that Owlery sent to the carrier. Use the `tenderId` from the carrier tender webhook.",
+        "operationId": "rejectCarrierTender",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarrierTenderRejectRequest"
+              },
+              "example": {
+                "tenderId": "tender_abc123",
+                "reason": "No capacity for requested pickup window",
+                "reasonCode": "NO_CAPACITY",
+                "notes": "Can cover next day if shipper is flexible"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tender rejected successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarrierTenderResponse"
+                },
+                "example": {
+                  "tenderId": "tender_abc123",
+                  "status": "rejected"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Bad Request",
+                  "message": "Missing required field: tenderId"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tender not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Not Found",
+                  "message": "Tender not found: tender_abc123"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carrier-webhooks/rate-quote": {
+      "post": {
+        "x-webhook": true,
+        "tags": [
+          "carrier-webhooks"
+        ],
+        "summary": "Rate Quote Requested",
+        "description": "Webhook sent by Owlery to a carrier when Owlery requests rates. The carrier should return quote responses in the HTTP response body. Owlery sends the rate quote `shortId`, not the internal rate quote ID, and does not include shipper organization or shipper profile IDs.",
+        "operationId": "carrierWebhookRateQuoteRequested",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarrierWebhookRateQuoteRequest"
+              },
+              "example": {
+                "eventType": "getRates",
+                "version": "2026-05-01",
+                "requestId": "rqreq_abc123",
+                "account": {
+                  "id": "configured-carrier-account-id",
+                  "name": "Example Carrier Account"
+                },
+                "rateQuote": {
+                  "shortId": "RQ-0042",
+                  "mode": "FTL",
+                  "equipmentType": "Reefer",
+                  "reeferSettings": {
+                    "minTemperature": 34,
+                    "maxTemperature": 38,
+                    "unit": "F",
+                    "sentryMode": "Continuous"
+                  },
+                  "stops": [
+                    {
+                      "type": "Pickup",
+                      "facility": {
+                        "name": "Origin Warehouse",
+                        "location": {
+                          "street": "123 Main St",
+                          "city": "Chicago",
+                          "state": "IL",
+                          "zipcode": "60601",
+                          "countryCode": "US"
+                        }
+                      },
+                      "dates": {
+                        "startAt": "2026-06-01T08:00:00Z",
+                        "endAt": "2026-06-01T10:00:00Z"
+                      },
+                      "items": [
+                        {
+                          "description": "Frozen prepared meals",
+                          "quantity": {
+                            "count": 10,
+                            "unit": "Pallet"
+                          },
+                          "weight": {
+                            "value": 1200,
+                            "unit": "LB"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Dropoff",
+                      "facility": {
+                        "name": "Destination DC",
+                        "location": {
+                          "street": "456 First Ave",
+                          "city": "New York",
+                          "state": "NY",
+                          "zipcode": "10001",
+                          "countryCode": "US"
+                        }
+                      },
+                      "dates": {
+                        "startAt": "2026-06-03T08:00:00Z",
+                        "endAt": "2026-06-03T12:00:00Z"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Carrier quote response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarrierRateQuoteResponseBody"
+                },
+                "example": {
+                  "requestId": "rqreq_abc123",
+                  "responses": [
+                    {
+                      "sourceId": "carrier-quote-789",
+                      "status": "open",
+                      "mode": "FTL",
+                      "price": {
+                        "cents": 150000,
+                        "currencyCode": "USD"
+                      },
+                      "carrier": {
+                        "name": "Example Carrier",
+                        "scac": "EXMP",
+                        "mcNumber": "123456"
+                      },
+                      "transitDays": {
+                        "min": 3,
+                        "max": 4
+                      },
+                      "expiresAt": "2026-06-01T18:00:00Z"
+                    }
+                  ],
+                  "errors": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Receiver rejected the webhook as invalid. Owlery logs the failed delivery and may retry according to the configured delivery policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Bad Request",
+                  "message": "Missing required field: requestId"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Receiver rejected the webhook because authentication headers were missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Unauthorized",
+                  "message": "Invalid webhook signature or API key"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Receiver failed while processing the webhook. Owlery logs the failed delivery and may retry according to the configured delivery policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Internal Server Error",
+                  "message": "Unable to process webhook"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carrier-webhooks/tender": {
+      "post": {
+        "x-webhook": true,
+        "tags": [
+          "carrier-webhooks"
+        ],
+        "summary": "Tender Requested",
+        "description": "Webhook sent by Owlery to tender a shipment to a carrier. The carrier should later call the accept or reject endpoint with the provided `tenderId`.",
+        "operationId": "carrierWebhookTenderRequested",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarrierWebhookTenderRequest"
+              },
+              "example": {
+                "eventType": "tender",
+                "version": "2026-05-01",
+                "requestId": "tender_req_abc123",
+                "account": {
+                  "id": "configured-carrier-account-id",
+                  "name": "Example Carrier Account"
+                },
+                "tender": {
+                  "tenderId": "tender_abc123",
+                  "rateQuote": {
+                    "shortId": "RQ-0042",
+                    "carrierQuoteId": "carrier-quote-789"
+                  },
+                  "mode": "FTL",
+                  "equipmentType": "Reefer",
+                  "reeferSettings": {
+                    "minTemperature": 34,
+                    "maxTemperature": 38,
+                    "unit": "F",
+                    "sentryMode": "Continuous"
+                  },
+                  "price": {
+                    "cents": 150000,
+                    "currencyCode": "USD"
+                  },
+                  "stops": [
+                    {
+                      "type": "Pickup",
+                      "facility": {
+                        "name": "Origin Warehouse",
+                        "location": {
+                          "street": "123 Main St",
+                          "city": "Chicago",
+                          "state": "IL",
+                          "zipcode": "60601",
+                          "countryCode": "US"
+                        }
+                      },
+                      "dates": {
+                        "startAt": "2026-06-01T08:00:00Z",
+                        "endAt": "2026-06-01T10:00:00Z"
+                      },
+                      "items": [
+                        {
+                          "description": "Frozen prepared meals",
+                          "quantity": {
+                            "count": 10,
+                            "unit": "Pallet"
+                          },
+                          "weight": {
+                            "value": 1200,
+                            "unit": "LB"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Dropoff",
+                      "facility": {
+                        "name": "Destination DC",
+                        "location": {
+                          "street": "456 First Ave",
+                          "city": "New York",
+                          "state": "NY",
+                          "zipcode": "10001",
+                          "countryCode": "US"
+                        }
+                      },
+                      "dates": {
+                        "startAt": "2026-06-03T08:00:00Z",
+                        "endAt": "2026-06-03T12:00:00Z"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarrierWebhookAck"
+                },
+                "example": {
+                  "message": "Tender received"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Receiver rejected the webhook as invalid. Owlery logs the failed delivery and may retry according to the configured delivery policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Bad Request",
+                  "message": "Missing required field: requestId"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Receiver rejected the webhook because authentication headers were missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Unauthorized",
+                  "message": "Invalid webhook signature or API key"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Receiver failed while processing the webhook. Owlery logs the failed delivery and may retry according to the configured delivery policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Internal Server Error",
+                  "message": "Unable to process webhook"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carrier-webhooks/cancel": {
+      "post": {
+        "x-webhook": true,
+        "tags": [
+          "carrier-webhooks"
+        ],
+        "summary": "Tender Cancelled",
+        "description": "Webhook sent by Owlery when a tender or carrier load should be cancelled.",
+        "operationId": "carrierWebhookTenderCancelled",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarrierWebhookCancelRequest"
+              },
+              "example": {
+                "eventType": "cancel",
+                "version": "2026-05-01",
+                "requestId": "cancel_req_abc123",
+                "account": {
+                  "id": "configured-carrier-account-id",
+                  "name": "Example Carrier Account"
+                },
+                "cancel": {
+                  "tenderId": "tender_abc123",
+                  "loadNumber": "LOAD-12345",
+                  "reason": "Shipper cancelled the shipment"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarrierWebhookAck"
+                },
+                "example": {
+                  "message": "Cancellation received"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Receiver rejected the webhook as invalid. Owlery logs the failed delivery and may retry according to the configured delivery policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Bad Request",
+                  "message": "Missing required field: requestId"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Receiver rejected the webhook because authentication headers were missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Unauthorized",
+                  "message": "Invalid webhook signature or API key"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Receiver failed while processing the webhook. Owlery logs the failed delivery and may retry according to the configured delivery policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Internal Server Error",
+                  "message": "Unable to process webhook"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ext/v1/loads/search": {
       "post": {
         "tags": [
@@ -6610,6 +7172,468 @@
           "loadNumber": {
             "type": "string",
             "description": "Load number associated with this tender, if a load has been created."
+          }
+        }
+      },
+      "CarrierTenderAcceptRequest": {
+        "type": "object",
+        "required": [
+          "tenderId"
+        ],
+        "properties": {
+          "tenderId": {
+            "type": "string",
+            "description": "Carrier-facing tender identifier from the tender webhook."
+          },
+          "carrierTenderId": {
+            "type": "string",
+            "description": "Carrier-generated tender or shipment identifier, if available."
+          },
+          "loadNumber": {
+            "type": "string",
+            "description": "Carrier load number or shipment number assigned on acceptance, if available."
+          },
+          "proNumber": {
+            "type": "string",
+            "description": "Carrier PRO number, if available."
+          },
+          "trackingUrl": {
+            "type": "string",
+            "description": "Carrier tracking URL, if available."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional carrier notes about the acceptance."
+          }
+        }
+      },
+      "CarrierTenderRejectRequest": {
+        "type": "object",
+        "required": [
+          "tenderId",
+          "reason"
+        ],
+        "properties": {
+          "tenderId": {
+            "type": "string",
+            "description": "Carrier-facing tender identifier from the tender webhook."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Carrier rejection reason."
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "Carrier rejection reason code, if available."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional carrier notes about the rejection."
+          }
+        }
+      },
+      "CarrierTenderResponse": {
+        "type": "object",
+        "required": [
+          "tenderId",
+          "status"
+        ],
+        "properties": {
+          "tenderId": {
+            "type": "string",
+            "description": "Carrier-facing tender identifier."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "accepted",
+              "rejected"
+            ],
+            "description": "Updated tender response status."
+          },
+          "loadNumber": {
+            "type": "string",
+            "description": "Load number associated with the accepted tender, if available."
+          }
+        }
+      },
+      "CarrierWebhookAccount": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Configured external account identifier for routing on the carrier side. This is not an Owlery internal organization or shipper profile ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Optional account display name."
+          }
+        }
+      },
+      "CarrierWebhookRateQuoteRequest": {
+        "type": "object",
+        "required": [
+          "eventType",
+          "version",
+          "requestId",
+          "rateQuote"
+        ],
+        "properties": {
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "getRates"
+            ],
+            "description": "Carrier webhook event type."
+          },
+          "version": {
+            "type": "string",
+            "description": "Webhook contract version."
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Unique request identifier for idempotency and support."
+          },
+          "account": {
+            "$ref": "#/components/schemas/CarrierWebhookAccount"
+          },
+          "rateQuote": {
+            "$ref": "#/components/schemas/CarrierRateQuoteRequest"
+          }
+        }
+      },
+      "CarrierRateQuoteRequest": {
+        "type": "object",
+        "required": [
+          "shortId",
+          "stops"
+        ],
+        "properties": {
+          "shortId": {
+            "type": "string",
+            "description": "Owlery rate quote short ID. Owlery does not send the internal rate quote ID in this webhook."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "FTL",
+              "LTL",
+              "PTL",
+              "VLTL",
+              "Consolidation",
+              "IMDL",
+              "STL",
+              "Unknown"
+            ],
+            "description": "Requested transportation mode, if known."
+          },
+          "equipmentType": {
+            "type": "string",
+            "enum": [
+              "Dryvan",
+              "Reefer",
+              "Flatbed",
+              "Drayage",
+              "Tanker"
+            ],
+            "description": "Requested equipment type."
+          },
+          "reeferSettings": {
+            "$ref": "#/components/schemas/ReeferSettings"
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateQuoteStop"
+            },
+            "description": "Pickup and dropoff stops for the quote request."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateQuoteItem"
+            },
+            "description": "Quote-level freight items, if not already provided on stops."
+          }
+        }
+      },
+      "CarrierRateQuoteResponseBody": {
+        "type": "object",
+        "required": [
+          "requestId"
+        ],
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Echo of the requestId from the webhook request."
+          },
+          "responses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CarrierRateQuoteResponse"
+            },
+            "description": "Carrier quote responses. Return an empty array when no rates are available."
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CarrierRateQuoteError"
+            },
+            "description": "Carrier quote errors. Use this when the request was processed but no quote could be returned."
+          }
+        }
+      },
+      "CarrierRateQuoteResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "mode",
+          "price"
+        ],
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "description": "Carrier quote identifier. Owlery stores this for future tender correlation."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open"
+            ],
+            "description": "Quote status returned by the carrier."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "FTL",
+              "LTL",
+              "PTL",
+              "VLTL",
+              "Consolidation",
+              "IMDL",
+              "STL",
+              "Unknown"
+            ]
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "carrier": {
+            "$ref": "#/components/schemas/CarrierProfile"
+          },
+          "transitDays": {
+            "$ref": "#/components/schemas/TransitDays"
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "ISO8601 timestamp after which this quote is no longer valid."
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateQuoteResponseStop"
+            },
+            "description": "Stop-level carrier response details, if available."
+          },
+          "rawResponse": {
+            "type": "object",
+            "description": "Optional raw carrier response for troubleshooting."
+          }
+        }
+      },
+      "CarrierRateQuoteError": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Carrier error code, if available."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message."
+          },
+          "retryable": {
+            "type": "boolean",
+            "description": "Whether Owlery should retry the quote request."
+          }
+        }
+      },
+      "CarrierWebhookTenderRequest": {
+        "type": "object",
+        "required": [
+          "eventType",
+          "version",
+          "requestId",
+          "tender"
+        ],
+        "properties": {
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "tender"
+            ]
+          },
+          "version": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Unique request identifier for idempotency and support."
+          },
+          "account": {
+            "$ref": "#/components/schemas/CarrierWebhookAccount"
+          },
+          "tender": {
+            "$ref": "#/components/schemas/CarrierTenderWebhookTender"
+          }
+        }
+      },
+      "CarrierTenderWebhookTender": {
+        "type": "object",
+        "required": [
+          "tenderId",
+          "rateQuote",
+          "stops",
+          "price"
+        ],
+        "properties": {
+          "tenderId": {
+            "type": "string",
+            "description": "Carrier-facing tender identifier. Use this value when accepting or rejecting the tender."
+          },
+          "rateQuote": {
+            "type": "object",
+            "required": [
+              "shortId"
+            ],
+            "properties": {
+              "shortId": {
+                "type": "string",
+                "description": "Owlery rate quote short ID."
+              },
+              "carrierQuoteId": {
+                "type": "string",
+                "description": "Carrier quote/source identifier returned in the rate quote webhook response, if available."
+              }
+            }
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "FTL",
+              "LTL",
+              "PTL",
+              "VLTL",
+              "Consolidation",
+              "IMDL",
+              "STL",
+              "Unknown"
+            ]
+          },
+          "equipmentType": {
+            "type": "string",
+            "enum": [
+              "Dryvan",
+              "Reefer",
+              "Flatbed",
+              "Drayage",
+              "Tanker"
+            ]
+          },
+          "reeferSettings": {
+            "$ref": "#/components/schemas/ReeferSettings"
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateQuoteStop"
+            },
+            "description": "Tender stops. Reference numbers are not included before carrier acceptance."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateQuoteItem"
+            },
+            "description": "Tender freight items, if not already provided on stops."
+          }
+        }
+      },
+      "CarrierWebhookCancelRequest": {
+        "type": "object",
+        "required": [
+          "eventType",
+          "version",
+          "requestId",
+          "cancel"
+        ],
+        "properties": {
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "cancel"
+            ]
+          },
+          "version": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Unique request identifier for idempotency and support."
+          },
+          "account": {
+            "$ref": "#/components/schemas/CarrierWebhookAccount"
+          },
+          "cancel": {
+            "type": "object",
+            "required": [
+              "tenderId"
+            ],
+            "properties": {
+              "tenderId": {
+                "type": "string",
+                "description": "Carrier-facing tender identifier being cancelled."
+              },
+              "loadNumber": {
+                "type": "string",
+                "description": "Load number, if a load was created before cancellation."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Cancellation reason, if available."
+              }
+            }
+          }
+        }
+      },
+      "CarrierWebhookAck": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
