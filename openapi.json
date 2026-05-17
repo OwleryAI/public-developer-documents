@@ -74,12 +74,12 @@
     {
       "name": "carrier-tender-responses",
       "x-displayName": "Tender Responses",
-      "description": "Load or tender accept and reject flows. Endpoints to be added."
+      "description": "Carrier responses to original tenders and tender edits."
     },
     {
       "name": "carrier-webhooks",
       "x-displayName": "Webhooks",
-      "description": "Rate quote, tender, and cancel webhooks sent by Owlery to carrier systems. Authentication is provided through carrier-configured request headers, not body fields."
+      "description": "Rate quote, tender, tender edit, and cancel webhooks sent by Owlery to carrier systems. Authentication is provided through carrier-configured request headers, not body fields."
     },
     {
       "name": "facility-orders",
@@ -2180,7 +2180,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Accept Tender",
-        "description": "Accept a tender that Owlery sent to the carrier. Identify the tender using the Owlery `loadNumber` from the carrier tender webhook.",
+        "description": "Accept a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` from the carrier tender or tender edit webhook.",
         "operationId": "acceptCarrierTender",
         "requestBody": {
           "required": true,
@@ -2199,7 +2199,7 @@
         },
         "responses": {
           "200": {
-            "description": "Tender accepted successfully",
+            "description": "Tender or tender edit accepted successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -2249,7 +2249,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Reject Tender",
-        "description": "Reject a tender that Owlery sent to the carrier. Identify the tender using the Owlery `loadNumber` from the carrier tender webhook.",
+        "description": "Reject a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` from the carrier tender or tender edit webhook.",
         "operationId": "rejectCarrierTender",
         "requestBody": {
           "required": true,
@@ -2266,7 +2266,7 @@
         },
         "responses": {
           "200": {
-            "description": "Tender rejected successfully",
+            "description": "Tender or tender edit rejected successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -2450,7 +2450,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Requested",
-        "description": "Webhook sent by Owlery to tender a shipment to a carrier. The carrier should later call the accept or reject endpoint with the provided `rateQuote.id` and `rateQuote.carrierQuoteId`. Owlery sends `loadNumber`; carriers should use that Owlery load number when later referencing tracking, invoices, and documents for this load. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context.",
+        "description": "Webhook sent by Owlery to tender a shipment to a carrier. Owlery sends `loadNumber`; carriers should use that Owlery load number when accepting or rejecting the tender and when later referencing tracking, invoices, and documents for this load. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context.",
         "operationId": "carrierWebhookTenderRequested",
         "security": [
           {
@@ -2556,6 +2556,150 @@
                 "example": {
                   "error": "Bad Request",
                   "message": "Missing required field: rateQuote.id"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Receiver rejected the webhook because authentication headers were missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Unauthorized",
+                  "message": "Invalid webhook signature or API key"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Receiver failed while processing the webhook. Owlery logs the failed delivery and may retry according to the configured delivery policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Internal Server Error",
+                  "message": "Unable to process webhook"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carrier-webhooks/tender-edit": {
+      "post": {
+        "x-webhook": true,
+        "tags": [
+          "carrier-webhooks"
+        ],
+        "summary": "Tender Edited",
+        "description": "Webhook sent by Owlery when a tendered load changes. This same payload is used for load edits after the carrier already knows the load. The payload is a full replacement view of the current tender/load details; carriers should update their shipment using `loadNumber` as the identifier. If the carrier must accept or reject the edit, call the existing accept or reject endpoint with that same `loadNumber`.",
+        "operationId": "carrierWebhookTenderEdited",
+        "security": [
+          {
+            "CarrierWebhookAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarrierWebhookTenderEditRequest"
+              },
+              "example": {
+                "loadNumber": "LOAD-12345",
+                "mode": "FTL",
+                "equipmentType": "Reefer",
+                "reeferSettings": {
+                  "minTemperature": 34,
+                  "maxTemperature": 38,
+                  "unit": "F",
+                  "sentryMode": "Continuous"
+                },
+                "stops": [
+                  {
+                    "type": "Pickup",
+                    "facility": {
+                      "name": "Origin Warehouse",
+                      "location": {
+                        "street": "123 W Fulton Market",
+                        "city": "Chicago",
+                        "state": "IL",
+                        "zipcode": "60601",
+                        "countryCode": "US"
+                      }
+                    },
+                    "dates": {
+                      "startAt": "2026-06-01T09:00:00Z",
+                      "endAt": "2026-06-01T11:00:00Z"
+                    },
+                    "items": [
+                      {
+                        "description": "Frozen prepared meals",
+                        "quantity": {
+                          "count": 10,
+                          "unit": "Pallet"
+                        },
+                        "weight": {
+                          "value": 1200,
+                          "unit": "LB"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Dropoff",
+                    "facility": {
+                      "name": "Destination DC",
+                      "location": {
+                        "street": "456 9th Ave",
+                        "city": "New York",
+                        "state": "NY",
+                        "zipcode": "10001",
+                        "countryCode": "US"
+                      }
+                    },
+                    "dates": {
+                      "startAt": "2026-06-03T10:00:00Z",
+                      "endAt": "2026-06-03T14:00:00Z"
+                    },
+                    "liveDropType": "drop"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarrierWebhookAck"
+                },
+                "example": {
+                  "message": "Tender edit received"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Receiver rejected the webhook as invalid. Owlery logs the failed delivery and may retry according to the configured delivery policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Bad Request",
+                  "message": "Missing required field: loadNumber"
                 }
               }
             }
@@ -7246,7 +7390,7 @@
         "properties": {
           "loadNumber": {
             "type": "string",
-            "description": "Owlery load number from the carrier tender webhook."
+            "description": "Owlery load number from the carrier tender or tender edit webhook."
           },
           "proNumber": {
             "type": "string",
@@ -7266,7 +7410,7 @@
         "properties": {
           "loadNumber": {
             "type": "string",
-            "description": "Owlery load number from the carrier tender webhook."
+            "description": "Owlery load number from the carrier tender or tender edit webhook."
           }
         }
       },
@@ -7279,7 +7423,7 @@
         "properties": {
           "loadNumber": {
             "type": "string",
-            "description": "Owlery load number associated with this tender."
+            "description": "Owlery load number associated with this tender or tender edit."
           },
           "status": {
             "type": "string",
@@ -7898,6 +8042,56 @@
               "$ref": "#/components/schemas/RateQuoteItem"
             },
             "description": "Items being shipped at this stop."
+          }
+        }
+      },
+      "CarrierWebhookTenderEditRequest": {
+        "type": "object",
+        "required": [
+          "loadNumber",
+          "stops"
+        ],
+        "properties": {
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number for the tender/load being edited. Use this value when accepting or rejecting the edit and when later referencing tracking, invoices, and documents."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "FTL",
+              "LTL",
+              "PTL",
+              "VLTL",
+              "IMDL"
+            ]
+          },
+          "equipmentType": {
+            "type": "string",
+            "enum": [
+              "Dryvan",
+              "Reefer",
+              "Flatbed",
+              "Drayage",
+              "Tanker"
+            ]
+          },
+          "reeferSettings": {
+            "$ref": "#/components/schemas/ReeferSettings"
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CarrierTenderWebhookStop"
+            },
+            "description": "Updated tender/load stops. Treat this as the current full stop list. Facility location must include street, city, state, zipcode, and countryCode."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateQuoteItem"
+            },
+            "description": "Updated tender/load freight items, if not already provided on stops."
           }
         }
       }
