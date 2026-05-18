@@ -2290,7 +2290,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Accept Tender",
-        "description": "Accept a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` and `revision` from the carrier tender or tender edit webhook. `revision` is zero-based: version `0` is the initial tender, and version `1` or greater is a tender/load edit.",
+        "description": "Accept a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` and `revision` from the carrier tender or tender edit webhook. `revision` is zero-based: version `0` is the initial tender, and version `1` or greater is a tender/load edit. Accepting the initial tender means sending `revision: 0`; accepting an edit means sending the edit revision from the Tender Edited webhook.",
         "operationId": "acceptCarrierTender",
         "requestBody": {
           "required": true,
@@ -2301,7 +2301,7 @@
               },
               "example": {
                 "loadNumber": "LOAD-12345",
-                "revision": 1,
+                "revision": 0,
                 "proNumber": "PRO-456789",
                 "trackingUrl": "https://carrier.example.com/track/PRO-456789"
               }
@@ -2318,7 +2318,7 @@
                 },
                 "example": {
                   "loadNumber": "LOAD-12345",
-                  "revision": 1,
+                  "revision": 0,
                   "status": "accepted"
                 }
               }
@@ -2375,7 +2375,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Reject Tender",
-        "description": "Reject a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` and `revision` from the carrier tender or tender edit webhook. `revision` is zero-based: version `0` is the initial tender, and version `1` or greater is a tender/load edit.",
+        "description": "Reject a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` and `revision` from the carrier tender or tender edit webhook. `revision` is zero-based: version `0` is the initial tender, and version `1` or greater is a tender/load edit. Rejecting the initial tender means sending `revision: 0`; rejecting an edit means sending the edit revision from the Tender Edited webhook.",
         "operationId": "rejectCarrierTender",
         "requestBody": {
           "required": true,
@@ -2386,7 +2386,7 @@
               },
               "example": {
                 "loadNumber": "LOAD-12345",
-                "revision": 1
+                "revision": 0
               }
             }
           }
@@ -2401,7 +2401,7 @@
                 },
                 "example": {
                   "loadNumber": "LOAD-12345",
-                  "revision": 1,
+                  "revision": 0,
                   "status": "rejected"
                 }
               }
