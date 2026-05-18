@@ -2290,7 +2290,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Accept Tender",
-        "description": "Accept a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` from the carrier tender or tender edit webhook.",
+        "description": "Accept a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` and `revision` from the carrier tender or tender edit webhook. `revision` is zero-based: version `0` is the initial tender, and version `1` or greater is a tender/load edit.",
         "operationId": "acceptCarrierTender",
         "requestBody": {
           "required": true,
@@ -2301,6 +2301,7 @@
               },
               "example": {
                 "loadNumber": "LOAD-12345",
+                "revision": 1,
                 "proNumber": "PRO-456789",
                 "trackingUrl": "https://carrier.example.com/track/PRO-456789"
               }
@@ -2317,6 +2318,7 @@
                 },
                 "example": {
                   "loadNumber": "LOAD-12345",
+                  "revision": 1,
                   "status": "accepted"
                 }
               }
@@ -2331,7 +2333,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: loadNumber"
+                  "message": "Missing required field: revision"
                 }
               }
             }
@@ -2349,6 +2351,20 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Revision conflict. The tender revision is no longer the current pending tender version for this load.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Conflict",
+                  "message": "Tender revision 1 is no longer current for loadNumber=LOAD-12345"
+                }
+              }
+            }
           }
         }
       }
@@ -2359,7 +2375,7 @@
           "carrier-tender-responses"
         ],
         "summary": "Reject Tender",
-        "description": "Reject a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` from the carrier tender or tender edit webhook.",
+        "description": "Reject a tender or tender edit that Owlery sent to the carrier. Identify the shipment using the Owlery `loadNumber` and `revision` from the carrier tender or tender edit webhook. `revision` is zero-based: version `0` is the initial tender, and version `1` or greater is a tender/load edit.",
         "operationId": "rejectCarrierTender",
         "requestBody": {
           "required": true,
@@ -2369,7 +2385,8 @@
                 "$ref": "#/components/schemas/CarrierTenderRejectRequest"
               },
               "example": {
-                "loadNumber": "LOAD-12345"
+                "loadNumber": "LOAD-12345",
+                "revision": 1
               }
             }
           }
@@ -2384,6 +2401,7 @@
                 },
                 "example": {
                   "loadNumber": "LOAD-12345",
+                  "revision": 1,
                   "status": "rejected"
                 }
               }
@@ -2398,7 +2416,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: loadNumber"
+                  "message": "Missing required field: revision"
                 }
               }
             }
@@ -2413,6 +2431,20 @@
                 "example": {
                   "error": "Not Found",
                   "message": "Tender not found for loadNumber=LOAD-12345"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Revision conflict. The tender revision is no longer the current pending tender version for this load.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Conflict",
+                  "message": "Tender revision 1 is no longer current for loadNumber=LOAD-12345"
                 }
               }
             }
@@ -2560,7 +2592,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Requested",
-        "description": "Webhook sent by Owlery to tender a shipment to a carrier. Owlery sends `loadNumber`; carriers should use that Owlery load number when accepting or rejecting the tender and when later referencing tracking, invoices, and documents for this load. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context.",
+        "description": "Webhook sent by Owlery to tender a shipment to a carrier. Owlery sends `loadNumber` and `revision`; carriers should use that Owlery load number when accepting or rejecting the tender and when later referencing tracking, invoices, and documents for this load. `revision` is zero-based: version `0` is the initial tender, and version `1` or greater is a tender/load edit. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context.",
         "operationId": "carrierWebhookTenderRequested",
         "security": [
           {
@@ -2580,6 +2612,7 @@
                   "carrierQuoteId": "carrier-quote-789"
                 },
                 "loadNumber": "LOAD-12345",
+                "revision": 0,
                 "mode": "FTL",
                 "equipmentType": "Reefer",
                 "reeferSettings": {
@@ -2730,7 +2763,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Edited",
-        "description": "Webhook sent by Owlery when a tendered load changes. This same payload is used for load edits after the carrier already knows the load. The payload is a full replacement view of the current tender/load details; carriers should update their shipment using `loadNumber` as the identifier. If the carrier must accept or reject the edit, call the existing accept or reject endpoint with that same `loadNumber`.",
+        "description": "Webhook sent by Owlery when a tendered load changes. This same payload is used for load edits after the carrier already knows the load. The payload is a full replacement view of the current tender/load details; carriers should update their shipment using `loadNumber` as the identifier. `revision` is zero-based: version `0` is the initial tender, and version `1` or greater is a tender/load edit. If the carrier must accept or reject the edit, call the existing accept or reject endpoint with that same `loadNumber` and `revision`.",
         "operationId": "carrierWebhookTenderEdited",
         "security": [
           {
@@ -2746,6 +2779,7 @@
               },
               "example": {
                 "loadNumber": "LOAD-12345",
+                "revision": 1,
                 "mode": "FTL",
                 "equipmentType": "Reefer",
                 "reeferSettings": {
@@ -7539,12 +7573,18 @@
       "CarrierTenderAcceptRequest": {
         "type": "object",
         "required": [
-          "loadNumber"
+          "loadNumber",
+          "revision"
         ],
         "properties": {
           "loadNumber": {
             "type": "string",
             "description": "Owlery load number from the carrier tender or tender edit webhook."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based tender revision from the carrier tender or tender edit webhook. Version `0` is the initial tender. Version `1` or greater is a tender/load edit. Carriers must echo this value when accepting the corresponding tender version."
           },
           "proNumber": {
             "type": "string",
@@ -7559,12 +7599,18 @@
       "CarrierTenderRejectRequest": {
         "type": "object",
         "required": [
-          "loadNumber"
+          "loadNumber",
+          "revision"
         ],
         "properties": {
           "loadNumber": {
             "type": "string",
             "description": "Owlery load number from the carrier tender or tender edit webhook."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based tender revision from the carrier tender or tender edit webhook. Version `0` is the initial tender. Version `1` or greater is a tender/load edit. Carriers must echo this value when rejecting the corresponding tender version."
           }
         }
       },
@@ -7572,12 +7618,18 @@
         "type": "object",
         "required": [
           "loadNumber",
+          "revision",
           "status"
         ],
         "properties": {
           "loadNumber": {
             "type": "string",
             "description": "Owlery load number associated with this tender or tender edit."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based tender revision accepted or rejected."
           },
           "status": {
             "type": "string",
@@ -7743,6 +7795,7 @@
         "required": [
           "rateQuote",
           "loadNumber",
+          "revision",
           "stops",
           "referenceNumbers"
         ],
@@ -7767,6 +7820,11 @@
           "loadNumber": {
             "type": "string",
             "description": "Owlery load number. Use this value when later referencing tracking, invoices, and documents for this load."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based tender revision for this load. Version `0` is the initial tender. Version `1` or greater is a tender/load edit. Carriers must include this same value when accepting or rejecting this tender version."
           },
           "mode": {
             "type": "string",
@@ -7819,6 +7877,7 @@
         "required": [
           "rateQuote",
           "loadNumber",
+          "revision",
           "stops",
           "referenceNumbers"
         ],
@@ -7843,6 +7902,11 @@
           "loadNumber": {
             "type": "string",
             "description": "Owlery load number. Use this value when later referencing tracking, invoices, and documents for this load."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based tender revision for this load. Version `0` is the initial tender. Version `1` or greater is a tender/load edit. Carriers must include this same value when accepting or rejecting this tender version."
           },
           "mode": {
             "type": "string",
@@ -8227,6 +8291,7 @@
         "type": "object",
         "required": [
           "loadNumber",
+          "revision",
           "stops",
           "referenceNumbers"
         ],
@@ -8234,6 +8299,11 @@
           "loadNumber": {
             "type": "string",
             "description": "Owlery load number for the tender/load being edited. Use this value when accepting or rejecting the edit and when later referencing tracking, invoices, and documents."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Zero-based tender revision for this edit. Version `0` is the initial tender. Version `1` or greater is a tender/load edit. Carriers must include this same value when accepting or rejecting this edit."
           },
           "mode": {
             "type": "string",
