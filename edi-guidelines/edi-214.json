@@ -3,6 +3,7 @@
   "guidelineTitle": "EDI 214 Transportation Carrier Shipment Status Message",
   "guidelineVersion": "1.0",
   "transactionCode": "214",
+  "x12Version": "004010",
   "implementationNotes": [
     {
       "topic": "LX Assigned Number and Stop Matching",
@@ -131,7 +132,13 @@
           "minLength": 5,
           "maxLength": 5,
           "dataType": "ID",
-          "fieldDescription": "Code specifying the version number of the interchange control segments"
+          "fieldDescription": "Code specifying the version number of the interchange control segments",
+          "allowedValues": [
+            {
+              "value": "00401",
+              "label": "X12 4010 interchange control version"
+            }
+          ]
         },
         {
           "fieldId": "ISA13",
@@ -248,7 +255,13 @@
           "minLength": 1,
           "maxLength": 12,
           "dataType": "AN",
-          "fieldDescription": "Code indicating the version, release, and industry identifier of the EDI Standard"
+          "fieldDescription": "Code indicating the version, release, and industry identifier of the EDI Standard",
+          "allowedValues": [
+            {
+              "value": "004010",
+              "label": "X12 4010 version/release identifier"
+            }
+          ]
         }
       ]
     },

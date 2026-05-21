@@ -3,6 +3,7 @@
   "guidelineTitle": "EDI 204 Motor Carrier Load Tender",
   "guidelineVersion": "1.0",
   "transactionCode": "204",
+  "x12Version": "004010",
   "definitions": [
     {
       "segmentId": "ISA",
@@ -117,7 +118,13 @@
           "minLength": 5,
           "maxLength": 5,
           "dataType": "ID",
-          "fieldDescription": "Code specifying the version number of the interchange control segments"
+          "fieldDescription": "Code specifying the version number of the interchange control segments",
+          "allowedValues": [
+            {
+              "value": "00401",
+              "label": "X12 4010 interchange control version"
+            }
+          ]
         },
         {
           "fieldId": "ISA13",
@@ -234,7 +241,13 @@
           "minLength": 1,
           "maxLength": 12,
           "dataType": "AN",
-          "fieldDescription": "Code indicating the version, release, and industry identifier of the EDI Standard"
+          "fieldDescription": "Code indicating the version, release, and industry identifier of the EDI Standard",
+          "allowedValues": [
+            {
+              "value": "004010",
+              "label": "X12 4010 version/release identifier"
+            }
+          ]
         }
       ]
     },
