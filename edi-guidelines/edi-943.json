@@ -4,6 +4,12 @@
   "guidelineVersion": "1.0",
   "transactionCode": "943",
   "x12Version": "004010",
+  "implementationNotes": [
+    {
+      "topic": "W27 Carrier Detail",
+      "description": "The W27 Carrier Detail - Warehouse segment is optional. Send W27 only when carrier or equipment details are available for the warehouse shipment."
+    }
+  ],
   "definitions": [
     {
       "segmentId": "ISA",
