@@ -4,6 +4,12 @@
   "guidelineVersion": "1.0",
   "transactionCode": "940",
   "x12Version": "004010",
+  "implementationNotes": [
+    {
+      "topic": "W01 SKU Placement",
+      "description": "The VN product/service ID qualifier is sent in W0115, and the SKU is sent in W0116. W0104 through W0114 are reserved positional slots and are generated as empty values."
+    }
+  ],
   "definitions": [
     {
       "segmentId": "ISA",
