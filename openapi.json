@@ -2099,7 +2099,7 @@
           "carrier-tracking"
         ],
         "summary": "Tracking Updated",
-        "description": "Push tracking status of a load to Owlery. The `at` field represents when the tracking event occurred or when the status changed (event metadata). For `AppointmentScheduled` status, the `appointment` field contains the appointment time range. Send appointment times as ISO8601 date-times with a timezone offset or `Z`; Owlery stores the absolute instant and associates it with the stop's timezone for display. Do not send the same timestamp for `appointment.startAt` and `appointment.endAt`; if `endAt` is provided, it must be after `startAt`. The `appointment` field is only accepted for `AppointmentScheduled` events. Send geographic coordinates as `location.coordinates.lat` and `location.coordinates.lng`; flat `location.latitude` or `location.longitude` fields are not accepted. Non-stop-specific statuses such as `InTransit`, `InTransitDelayed`, `DriverAssigned`, and `DispatchedToPickup` require `location.coordinates`. Stop-specific statuses require `stopIndex` and can use the stop location when coordinates are not available.",
+        "description": "Push tracking status of a load to Owlery. The `at` field represents when the tracking event occurred or when the status changed (event metadata). For `AppointmentScheduled` status, the `appointment` field contains the appointment time range. Send appointment times as ISO8601 date-times with a timezone offset or `Z`; Owlery stores the absolute instant and associates it with the matched stop's timezone for display. That timezone conversion uses the stop location and the appointment date, so daylight saving time is handled according to the rules in effect at that location at that time. Do not send the same timestamp for `appointment.startAt` and `appointment.endAt`; if `endAt` is provided, it must be after `startAt`. The `appointment` field is only accepted for `AppointmentScheduled` events. Send geographic coordinates as `location.coordinates.lat` and `location.coordinates.lng`; flat `location.latitude` or `location.longitude` fields are not accepted. Non-stop-specific statuses such as `InTransit`, `InTransitDelayed`, `DriverAssigned`, and `DispatchedToPickup` require `location.coordinates`. Stop-specific statuses require `stopIndex` and can use the stop location when coordinates are not available.",
         "operationId": "trackingUpdated",
         "requestBody": {
           "required": true,
@@ -5892,7 +5892,7 @@
           "startAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Start date and time of the appointment window in ISO8601 format. Include a timezone offset or `Z` so the intended appointment instant is unambiguous. Owlery stores the instant and associates it with the stop timezone resolved from the matched stop location. Avoid offset-less local timestamps."
+            "description": "Start date and time of the appointment window in ISO8601 format. Include a timezone offset or `Z` so the intended appointment instant is unambiguous. Owlery stores the instant and associates it with the stop timezone resolved from the matched stop location and appointment date, including daylight saving time rules in effect for that location at that time. Avoid offset-less local timestamps."
           },
           "endAt": {
             "type": "string",
@@ -5900,7 +5900,7 @@
             "description": "Optional end date and time of the appointment window in ISO8601 format. Include a timezone offset or `Z`. Avoid offset-less local timestamps. When provided, this must be after `startAt`; it cannot be the same timestamp as `startAt`."
           }
         },
-        "description": "Appointment window for an `AppointmentScheduled` tracking event. `startAt` is required. `endAt` is optional, but when present it must be later than `startAt`. Owlery converts these ISO8601 values to stored date-time instants and records the stop timezone separately for display."
+        "description": "Appointment window for an `AppointmentScheduled` tracking event. `startAt` is required. `endAt` is optional, but when present it must be later than `startAt`. Owlery converts these ISO8601 values to stored date-time instants and records the stop timezone separately for display. Timezone display uses the matched stop location and the appointment date, including daylight saving time rules that apply at that location at that time."
       },
       "TrackingSuccessResponse": {
         "type": "object",
