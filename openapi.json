@@ -5863,7 +5863,7 @@
           },
           "stopIndex": {
             "type": "number",
-            "description": "The zero-based stop index of the associated status update. Required for stop-specific statuses: AppointmentScheduled, ArrivedAtPickup, LoadingBegin, PickedUp, ArrivedAtDropoff, UnloadingBegin, and DroppedOff. For non-stop-specific statuses, omit this unless you can confidently associate the event with a stop."
+            "description": "The zero-based stop index of the associated status update. Required for stop-specific statuses: AppointmentScheduled, ArrivedAtPickup, LoadingBegin, PickedUp, ArrivedAtDropoff, UnloadingBegin, and DroppedOff. For non-stop-specific statuses, omit this."
           },
           "appointment": {
             "$ref": "#/components/schemas/AppointmentWindow"
