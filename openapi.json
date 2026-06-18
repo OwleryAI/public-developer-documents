@@ -2099,7 +2099,7 @@
           "carrier-tracking"
         ],
         "summary": "Tracking Updated",
-        "description": "Push tracking status of a load to Owlery. The `at` field represents when the tracking event occurred or when the status changed (event metadata). For `AppointmentScheduled` status, the `appointment` field contains the actual appointment time range.",
+        "description": "Push tracking status of a load to Owlery. The `at` field represents when the tracking event occurred or when the status changed (event metadata). For `AppointmentScheduled` status, the `appointment` field contains the actual appointment time range. Send geographic coordinates as `location.coordinates.lat` and `location.coordinates.lng`; flat `location.latitude` or `location.longitude` fields are not accepted. Non-stop-specific statuses such as `InTransit`, `InTransitDelayed`, `DriverAssigned`, and `DispatchedToPickup` require `location.coordinates`. Stop-specific statuses require `stopIndex` and can use the stop location when coordinates are not available.",
         "operationId": "trackingUpdated",
         "requestBody": {
           "required": true,
@@ -2116,13 +2116,16 @@
                   "loadNumber": "LOAD-12345",
                   "status": "InTransit",
                   "at": "2025-01-29T05:15:02.254Z",
-                  "stopIndex": 0,
                   "location": {
                     "street": "123 Main St",
                     "city": "Los Angeles",
                     "state": "CA",
                     "zipcode": "90001",
-                    "countryCode": "US"
+                    "countryCode": "US",
+                    "coordinates": {
+                      "lat": 34.0522,
+                      "lng": -118.2437
+                    }
                   }
                 },
                 {
@@ -2139,7 +2142,11 @@
                     "city": "New York",
                     "state": "NY",
                     "zipcode": "10001",
-                    "countryCode": "US"
+                    "countryCode": "US",
+                    "coordinates": {
+                      "lat": 40.7128,
+                      "lng": -74.006
+                    }
                   }
                 },
                 {
@@ -2152,7 +2159,11 @@
                     "city": "Los Angeles",
                     "state": "CA",
                     "zipcode": "90001",
-                    "countryCode": "US"
+                    "countryCode": "US",
+                    "coordinates": {
+                      "lat": 34.0522,
+                      "lng": -118.2437
+                    }
                   }
                 }
               ]
@@ -5027,6 +5038,55 @@
           }
         }
       },
+      "TrackingLocation": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string",
+            "description": "Street address, when available."
+          },
+          "city": {
+            "type": "string",
+            "description": "City, when available."
+          },
+          "state": {
+            "type": "string",
+            "description": "2-letter state code, when available."
+          },
+          "zipcode": {
+            "type": "string",
+            "description": "5-digit ZIP/postal code, when available."
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "ISO-3166-1 Alpha-2 country code, when available."
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/LocationCoordinates"
+          }
+        },
+        "description": "Location where the tracking event occurred. For non-stop-specific statuses such as `InTransit`, `InTransitDelayed`, `DriverAssigned`, and `DispatchedToPickup`, include `coordinates.lat` and `coordinates.lng`. Coordinates must be nested under `coordinates`; flat `latitude` or `longitude` fields are not accepted. Stop-specific statuses can be matched by `stopIndex` when coordinates are unavailable."
+      },
+      "LocationCoordinates": {
+        "type": "object",
+        "required": [
+          "lat",
+          "lng"
+        ],
+        "properties": {
+          "lat": {
+            "type": "number",
+            "format": "double",
+            "description": "Latitude in decimal degrees. Use this nested `lat` field; flat `location.latitude` is not accepted."
+          },
+          "lng": {
+            "type": "number",
+            "format": "double",
+            "description": "Longitude in decimal degrees. Use this nested `lng` field; flat `location.longitude` is not accepted."
+          }
+        },
+        "description": "Geographic coordinates for the tracking event location. Required for non-stop-specific statuses such as `InTransit`, `InTransitDelayed`, `DriverAssigned`, and `DispatchedToPickup`."
+      },
       "DatePair": {
         "type": "object",
         "required": [
@@ -5803,13 +5863,13 @@
           },
           "stopIndex": {
             "type": "number",
-            "description": "The zero-based stop index of the associated status update. Required for stop-specific statuses: AppointmentScheduled, ArrivedAtPickup, LoadingBegin, PickedUp, ArrivedAtDropoff, UnloadingBegin, and DroppedOff."
+            "description": "The zero-based stop index of the associated status update. Required for stop-specific statuses: AppointmentScheduled, ArrivedAtPickup, LoadingBegin, PickedUp, ArrivedAtDropoff, UnloadingBegin, and DroppedOff. For non-stop-specific statuses, omit this unless you can confidently associate the event with a stop."
           },
           "appointment": {
             "$ref": "#/components/schemas/AppointmentWindow"
           },
           "location": {
-            "$ref": "#/components/schemas/Location"
+            "$ref": "#/components/schemas/TrackingLocation"
           }
         }
       },
