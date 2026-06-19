@@ -5065,7 +5065,7 @@
             "$ref": "#/components/schemas/LocationCoordinates"
           }
         },
-        "description": "Location where the tracking event occurred. For non-stop-specific statuses such as `InTransit`, `InTransitDelayed`, `DriverAssigned`, and `DispatchedToPickup`, include `coordinates.lat` and `coordinates.lng`. Coordinates must be nested under `coordinates`; flat `latitude` or `longitude` fields are not accepted. Stop-specific statuses can be matched by `stopIndex` when coordinates are unavailable."
+        "description": "Location where the tracking event occurred. For `InTransit`, include `coordinates.lat` and `coordinates.lng`. Coordinates must be nested under `coordinates`; flat `latitude` or `longitude` fields are not accepted. Stop-specific statuses can be matched by `stopIndex` when coordinates are unavailable."
       },
       "LocationCoordinates": {
         "type": "object",
@@ -5085,7 +5085,7 @@
             "description": "Longitude in decimal degrees. Use this nested `lng` field; flat `location.longitude` is not accepted."
           }
         },
-        "description": "Geographic coordinates for the tracking event location. Required for non-stop-specific statuses such as `InTransit`, `InTransitDelayed`, `DriverAssigned`, and `DispatchedToPickup`."
+        "description": "Geographic coordinates for the tracking event location. Required for `InTransit`."
       },
       "DatePair": {
         "type": "object",
@@ -5843,20 +5843,15 @@
             "type": "string",
             "enum": [
               "AppointmentScheduled",
-              "DriverAssigned",
-              "DispatchedToPickup",
               "ArrivedAtPickup",
               "LoadingBegin",
               "LoadingCompleted",
               "PickedUp",
               "InTransit",
-              "InTransitDelayed",
               "ArrivedAtDropoff",
               "UnloadingBegin",
               "UnloadingCompleted",
-              "DroppedOff",
-              "Exception",
-              "Unknown"
+              "DroppedOff"
             ],
             "description": "Status of the tracking event."
           },
