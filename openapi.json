@@ -5843,6 +5843,7 @@
             "type": "string",
             "enum": [
               "AppointmentScheduled",
+              "DispatchedToPickup",
               "ArrivedAtPickup",
               "LoadingBegin",
               "LoadingCompleted",
@@ -5853,7 +5854,7 @@
               "UnloadingCompleted",
               "DroppedOff"
             ],
-            "description": "Status of the tracking event. This is the supported carrier-facing status list for the external API. Owlery may add more statuses over time as their external behavior is defined, but unsupported internal statuses are intentionally not accepted here."
+            "description": "Status of the tracking event. This is the supported carrier-facing status list for the external API. Owlery may add more statuses over time as their external behavior is defined, but unsupported internal statuses are intentionally not accepted here. Owlery reviewed production external tracking API logs for the three months ending June 19, 2026; the omitted internal statuses were not observed on this endpoint during that period."
           },
           "at": {
             "type": "string",
