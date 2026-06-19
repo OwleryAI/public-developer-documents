@@ -5853,7 +5853,7 @@
               "UnloadingCompleted",
               "DroppedOff"
             ],
-            "description": "Status of the tracking event."
+            "description": "Status of the tracking event. This is the supported carrier-facing status list for the external API. Owlery may add more statuses over time as their external behavior is defined, but unsupported internal statuses are intentionally not accepted here."
           },
           "at": {
             "type": "string",
