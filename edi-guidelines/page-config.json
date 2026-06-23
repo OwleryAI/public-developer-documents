@@ -34,6 +34,7 @@
       "The portal walks you through each transaction in sequence — tender a load, accept or decline, send status updates, invoice — with pass/fail validation at every step."
     ],
     "ctaLabel": "Open EDI Test Portal",
+    "ctaHref": "/dashboard/edi-test",
     "signInNote": "Sign in with your work email to access the test portal."
   }
 }
