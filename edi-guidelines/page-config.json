@@ -1,0 +1,39 @@
+{
+  "heroSubtitle": "Technical specifications for connecting your TMS with Owlery via EDI X12. Follow this guide to set up your trading partner connection, configure test credentials, and go live.",
+  "implementationNote": {
+    "heading": "A note before you build",
+    "body": [
+      "EDI X12 is flexible by design — flexible enough that two fully compliant implementations can be incompatible. After integrating with dozens of major carriers and 3PLs, we've made deliberate choices where the standard's flexibility leaves gaps or creates ambiguity in a freight context.",
+      "Wherever Owlery's implementation deviates from the vanilla X12 spec, it is explicitly called out in that transaction's documentation. By building to these guidelines, you are accepting Owlery's implementation choices rather than interpreting the X12 standard independently."
+    ]
+  },
+  "setupSteps": [
+    {
+      "title": "Configure your ISA IDs",
+      "intro": "Every EDI trading relationship is keyed on ISA qualifier/ID pairs. Set yours up in the EDI Test Portal under **Connection Setup**.",
+      "bullets": [
+        "**Owlery's ISA ID** is shown on the Owlery EDI Connection tab once your account is active.",
+        "**Your ISA ID** is entered on the Partner EDI Connection tab.",
+        "For order-based transactions (e.g. 204, 940), you'll also select the **shipper** and **facility** that will send and receive loads."
+      ]
+    },
+    {
+      "title": "Connect via SFTP",
+      "intro": "Owlery hosts the SFTP server — you connect to us. From the **Connection Setup** tab in the test portal, generate your SFTP credentials (password or public key).",
+      "bullets": [
+        "Files **you send to Owlery** go in the `inbound/` directory.",
+        "Files **Owlery sends to you** appear in the `outbound/` directory."
+      ],
+      "note": "Credentials cannot be recovered after generation — only regenerated."
+    }
+  ],
+  "testPortal": {
+    "title": "Validate end-to-end",
+    "paragraphs": [
+      "The EDI Test Portal runs against real account data, so your test transactions flow through the same logic as production.",
+      "The portal walks you through each transaction in sequence — tender a load, accept or decline, send status updates, invoice — with pass/fail validation at every step."
+    ],
+    "ctaLabel": "Open EDI Test Portal",
+    "signInNote": "Sign in with your work email to access the test portal."
+  }
+}
