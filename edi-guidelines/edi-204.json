@@ -622,7 +622,7 @@
       "usage": "M",
       "maxRepeat": 1,
       "isLoopStart": true,
-      "purpose": "Loop containing equipment information. Owlery always sends N702 as 000000 because the 204 load tender is created before Owlery owns the carrier's physical trailer/equipment identifier; the stable placeholder keeps the segment structure consistent without implying an assigned unit.",
+      "purpose": "Loop containing equipment information. Owlery always sends N702 as 000000 because Owlery never controls or has knowledge about the equipment numbers during tender; the stable placeholder keeps the segment structure consistent without implying an assigned unit.",
       "fields": [],
       "nestedSegments": [
         {
