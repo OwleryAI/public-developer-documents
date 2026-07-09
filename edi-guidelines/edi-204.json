@@ -775,11 +775,19 @@
               "minLength": 2,
               "maxLength": 2,
               "dataType": "ID",
-              "fieldDescription": "Code specifying type of date",
+              "fieldDescription": "Code specifying type of stop date. Owlery outbound 204 tenders use 10 for pickup stop dates and 68 for delivery stop dates. RQ is a non-standard legacy value that was deprecated in July 2026.",
               "allowedValues": [
                 {
+                  "value": "10",
+                  "label": "Requested Ship Date/Pick-up Date. Used for pickup stops."
+                },
+                {
+                  "value": "68",
+                  "label": "Current Scheduled Delivery Date. Used for delivery stops."
+                },
+                {
                   "value": "RQ",
-                  "label": "The desired date for the stop, as requested by the shipper"
+                  "label": "Requested stop date. Non-standard legacy value; deprecated by Owlery in July 2026."
                 },
                 {
                   "value": "AT",
