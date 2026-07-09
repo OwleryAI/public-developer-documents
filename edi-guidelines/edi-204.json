@@ -622,7 +622,7 @@
       "usage": "M",
       "maxRepeat": 1,
       "isLoopStart": true,
-      "purpose": "Loop containing equipment information",
+      "purpose": "Loop containing equipment information. Owlery always sends N702 as 000000 because the 204 load tender is created before Owlery owns the carrier's physical trailer/equipment identifier; the stable placeholder keeps the segment structure consistent without implying an assigned unit.",
       "fields": [],
       "nestedSegments": [
         {
@@ -632,6 +632,15 @@
           "maxRepeat": 1,
           "purpose": "To identify equipment",
           "fields": [
+            {
+              "fieldId": "N702",
+              "fieldName": "Equipment Number",
+              "usage": "M",
+              "minLength": 1,
+              "maxLength": 10,
+              "dataType": "AN",
+              "fieldDescription": "Serial part of the equipment unit's identifying number. Owlery always sends 000000 for outbound 204 tenders; this is a placeholder, not an assigned trailer or equipment identifier."
+            },
             {
               "fieldId": "N711",
               "fieldName": "Equipment Description Code",
@@ -648,6 +657,14 @@
                 {
                   "value": "RT",
                   "label": "Controlled Temperature Trailer (Reefer)"
+                },
+                {
+                  "value": "FT",
+                  "label": "Flat Bed Trailer"
+                },
+                {
+                  "value": "SV",
+                  "label": "Straight Van"
                 }
               ]
             }
