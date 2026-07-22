@@ -29,7 +29,7 @@
     {
       "name": "facility-overview",
       "x-displayName": "Overview",
-      "description": "Facility-facing APIs for confirming orders. Direct link: `/open/api#api-1/tag/facility-overview`."
+      "description": "Facility-facing APIs for creating/updating facility child orders and confirming orders. Direct link: `/open/api#api-1/tag/facility-overview`."
     },
     {
       "name": "shipper-plan",
@@ -218,7 +218,7 @@
           "facility-orders"
         ],
         "summary": "Upsert Facility Orders",
-        "description": "Create or update one or more facility child orders. Send `inbound` orders for receiving work and `outbound` orders for shipping work. Each facility order must include `sourceId`, a facility identified by `id`, `sourceId`, or `lookupCode`, and at least one planned, actual, or appointment date.",
+        "description": "Create or update one or more facility child orders. Send `inbound` orders for receiving work and `outbound` orders for shipping work. Each facility order must include `sourceId` and exactly two stops: pickup at index `0` and dropoff at index `1`. The target stop is the dropoff for inbound orders and the pickup for outbound orders. The target stop must include a facility and at least one planned, actual, or appointment date.",
         "operationId": "upsertFacilityOrders",
         "requestBody": {
           "required": true,
@@ -245,13 +245,30 @@
                   "source": "BlueYonder",
                   "sourceId": "BY-INB-1001-source",
                   "status": "open",
-                  "facility": {
-                    "sourceId": "FAC-BY-001",
-                    "name": "RealCold Rialto"
-                  },
-                  "orderDates": {
-                    "startAt": "2026-08-01"
-                  },
+                  "stops": [
+                    {
+                      "index": 0,
+                      "type": "pickup"
+                    },
+                    {
+                      "index": 1,
+                      "type": "dropoff",
+                      "sourceId": "BY-INB-1001-dropoff",
+                      "facility": {
+                        "sourceId": "FAC-BY-001",
+                        "name": "RealCold Rialto",
+                        "location": {
+                          "street": "1744 N Laurel Ave",
+                          "city": "Rialto",
+                          "state": "CA",
+                          "zipcode": "92376"
+                        }
+                      },
+                      "orderDates": {
+                        "startAt": "2026-08-01"
+                      }
+                    }
+                  ],
                   "items": [
                     {
                       "expectedQuantity": 10,
@@ -4519,7 +4536,7 @@
           "source",
           "sourceId",
           "status",
-          "facility",
+          "stops",
           "items"
         ],
         "properties": {
@@ -4529,7 +4546,7 @@
               "inbound",
               "outbound"
             ],
-            "description": "Facility child order type. `inbound` creates a receiving order with one dropoff stop; `outbound` creates a shipping order with one pickup stop."
+            "description": "Facility child order type. `inbound` targets the dropoff stop for receiving work; `outbound` targets the pickup stop for shipping work."
           },
           "isTest": {
             "type": "boolean",
@@ -4537,7 +4554,7 @@
           },
           "orderNumber": {
             "type": "string",
-            "description": "The unique number of the facility order."
+            "description": "The unique number of the facility order. Keep this value stable with `type` for idempotent updates."
           },
           "source": {
             "type": "string",
@@ -4548,7 +4565,7 @@
           },
           "sourceId": {
             "type": "string",
-            "description": "The unique ID of the facility order in the source system."
+            "description": "The unique ID of the facility order in the source system. This is stored as source metadata; upserts match existing facility orders by `orderNumber` and `type`."
           },
           "status": {
             "type": "string",
@@ -4556,21 +4573,20 @@
               "open",
               "inProgress",
               "closed",
-              "cancelled"
+              "cancelled",
+              "confirmed",
+              "rejected",
+              "deleted",
+              "unknown"
             ],
             "description": "The status of the facility order."
           },
-          "facility": {
-            "$ref": "#/components/schemas/FacilityOrderFacility"
-          },
-          "orderDates": {
-            "$ref": "#/components/schemas/FacilityOrderDatePair"
-          },
-          "actualDates": {
-            "$ref": "#/components/schemas/FacilityOrderDatePair"
-          },
-          "appointmentDates": {
-            "$ref": "#/components/schemas/FacilityOrderDatePair"
+          "stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacilityOrderStop"
+            },
+            "description": "Exactly two stops: pickup at index `0` and dropoff at index `1`. For `inbound` orders, the dropoff stop must include facility and date information. For `outbound` orders, the pickup stop must include facility and date information."
           },
           "items": {
             "type": "array",
@@ -4591,7 +4607,51 @@
             "description": "Optional notes for the facility order."
           }
         },
-        "description": "At least one of `orderDates`, `actualDates`, or `appointmentDates` must include a valid `startAt` or `endAt` date."
+        "description": "The target stop must include a facility and at least one of `orderDates`, `actualDates`, or `appointmentDates` with a valid `startAt` or `endAt` date."
+      },
+      "FacilityOrderStop": {
+        "type": "object",
+        "required": [
+          "index",
+          "type"
+        ],
+        "properties": {
+          "index": {
+            "type": "number",
+            "description": "The zero-based index of the stop. Facility orders must use pickup index `0` and dropoff index `1`."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "dropoff"
+            ],
+            "description": "The type of stop."
+          },
+          "sourceId": {
+            "type": "string",
+            "description": "Optional unique identifier of the stop in the source system."
+          },
+          "facility": {
+            "$ref": "#/components/schemas/FacilityOrderFacility"
+          },
+          "orderDates": {
+            "$ref": "#/components/schemas/FacilityOrderDatePair"
+          },
+          "actualDates": {
+            "$ref": "#/components/schemas/FacilityOrderDatePair"
+          },
+          "appointmentDates": {
+            "$ref": "#/components/schemas/FacilityOrderDatePair"
+          },
+          "referenceNumbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceNumber"
+            },
+            "description": "Reference numbers specific to the stop."
+          }
+        }
       },
       "FacilityOrderDatePair": {
         "type": "object",
@@ -4608,9 +4668,6 @@
       },
       "FacilityOrderFacility": {
         "type": "object",
-        "required": [
-          "name"
-        ],
         "properties": {
           "id": {
             "type": "string",
@@ -4622,11 +4679,11 @@
           },
           "sourceId": {
             "type": "string",
-            "description": "Unique identifier of the facility in the source system. Provide this, `id`, or `lookupCode` to identify the facility."
+            "description": "Unique identifier of the facility in the source system. Provide this, `id`, or `lookupCode` to identify an existing facility; include full location details when introducing a new facility source ID."
           },
           "name": {
             "type": "string",
-            "description": "Facility name."
+            "description": "Facility name. Recommended for readability; not required when identifying an existing facility by `id`, `sourceId`, or `lookupCode`."
           },
           "location": {
             "$ref": "#/components/schemas/Location"
