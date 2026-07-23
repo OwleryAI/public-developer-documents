@@ -29,7 +29,7 @@
     {
       "name": "facility-overview",
       "x-displayName": "Overview",
-      "description": "Facility-facing APIs for confirming orders. Direct link: `/open/api#api-1/tag/facility-overview`."
+      "description": "Facility-facing APIs for creating/updating facility child orders and confirming orders. Direct link: `/open/api#api-1/tag/facility-overview`."
     },
     {
       "name": "shipper-plan",
@@ -104,7 +104,7 @@
     {
       "name": "facility-orders",
       "x-displayName": "Orders",
-      "description": "Confirm one or more orders, updating their status and items."
+      "description": "Create or update facility child orders for inbound receiving and outbound shipping work."
     }
   ],
   "paths": {
@@ -202,6 +202,149 @@
                   "createdOrders": [
                     {
                       "orderNumber": "TEST-INT20230201NJ"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ext/v1/facility-orders": {
+      "post": {
+        "tags": [
+          "facility-overview",
+          "facility-orders"
+        ],
+        "summary": "Upsert Facility Orders",
+        "description": "Create or update one or more facility child orders. Send `inbound` orders for receiving work and `outbound` orders for shipping work. Each facility order must include `sourceId` and exactly two stops: pickup at index `0` and dropoff at index `1`. The target stop is the dropoff for inbound orders and the pickup for outbound orders. The target stop must include a facility and at least one planned, actual, or appointment date.",
+        "operationId": "upsertFacilityOrders",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/FacilityOrderUpsert"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/FacilityOrderUpsert"
+                    }
+                  }
+                ]
+              },
+              "example": [
+                {
+                  "type": "inbound",
+                  "isTest": false,
+                  "orderNumber": "BY-INB-1001",
+                  "source": "BlueYonder",
+                  "sourceId": "BY-INB-1001-source",
+                  "status": "open",
+                  "stops": [
+                    {
+                      "index": 0,
+                      "type": "pickup"
+                    },
+                    {
+                      "index": 1,
+                      "type": "dropoff",
+                      "sourceId": "BY-INB-1001-dropoff",
+                      "facility": {
+                        "sourceId": "FAC-BY-001",
+                        "name": "RealCold Rialto",
+                        "location": {
+                          "street": "1744 N Laurel Ave",
+                          "city": "Rialto",
+                          "state": "CA",
+                          "zipcode": "92376"
+                        }
+                      },
+                      "orderDates": {
+                        "startAt": "2026-08-01"
+                      }
+                    }
+                  ],
+                  "items": [
+                    {
+                      "expectedQuantity": 10,
+                      "unitOfMeasure": "case",
+                      "inventory": {
+                        "sku": "A01-COFFEE",
+                        "name": "Night Owl Coffee"
+                      }
+                    }
+                  ],
+                  "referenceNumbers": [
+                    {
+                      "type": "PO",
+                      "value": "BY-INB-1001-po"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "All facility orders were upserted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacilityOrderUpsertResponse"
+                },
+                "example": {
+                  "createdOrders": [
+                    {
+                      "orderNumber": "BY-INB-1001",
+                      "type": "inbound"
+                    }
+                  ],
+                  "failures": []
+                }
+              }
+            }
+          },
+          "207": {
+            "description": "Partial success - some facility orders failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacilityOrderUpsertResponse"
+                },
+                "example": {
+                  "createdOrders": [
+                    {
+                      "orderNumber": "BY-INB-1001",
+                      "type": "inbound"
+                    }
+                  ],
+                  "failures": [
+                    {
+                      "failureErrorString": "Order BY-OUT-1002 has missing facility"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No facility orders were accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacilityOrderUpsertResponse"
+                },
+                "example": {
+                  "createdOrders": [],
+                  "failures": [
+                    {
+                      "failureErrorString": "No facility orders received"
                     }
                   ]
                 }
@@ -4382,6 +4525,216 @@
               "$ref": "#/components/schemas/ShipmentItem"
             },
             "description": "The items being shipped as part of the order."
+          }
+        }
+      },
+      "FacilityOrderUpsert": {
+        "type": "object",
+        "required": [
+          "type",
+          "orderNumber",
+          "source",
+          "sourceId",
+          "status",
+          "stops",
+          "items"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "inbound",
+              "outbound"
+            ],
+            "description": "Facility child order type. `inbound` targets the dropoff stop for receiving work; `outbound` targets the pickup stop for shipping work."
+          },
+          "isTest": {
+            "type": "boolean",
+            "description": "Whether or not the order is a test order."
+          },
+          "orderNumber": {
+            "type": "string",
+            "description": "The unique number of the facility order. Keep this value stable with `type` for idempotent updates."
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "BlueYonder"
+            ],
+            "description": "The source system for the facility order. Email support@owlery.ai to add new sources."
+          },
+          "sourceId": {
+            "type": "string",
+            "description": "The unique ID of the facility order in the source system. This is stored as source metadata; upserts match existing facility orders by `orderNumber` and `type`."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "inProgress",
+              "closed",
+              "cancelled",
+              "confirmed",
+              "rejected",
+              "deleted",
+              "unknown"
+            ],
+            "description": "The status of the facility order."
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacilityOrderStop"
+            },
+            "description": "Exactly two stops: pickup at index `0` and dropoff at index `1`. For `inbound` orders, the dropoff stop must include facility and date information. For `outbound` orders, the pickup stop must include facility and date information."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipmentItem"
+            },
+            "description": "The items being received or shipped as part of the facility order."
+          },
+          "referenceNumbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceNumber"
+            },
+            "description": "Reference numbers for the facility order."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes for the facility order."
+          }
+        },
+        "description": "The target stop must include a facility and at least one of `orderDates`, `actualDates`, or `appointmentDates` with a valid `startAt` or `endAt` date."
+      },
+      "FacilityOrderStop": {
+        "type": "object",
+        "required": [
+          "index",
+          "type"
+        ],
+        "properties": {
+          "index": {
+            "type": "number",
+            "description": "The zero-based index of the stop. Facility orders must use pickup index `0` and dropoff index `1`."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "dropoff"
+            ],
+            "description": "The type of stop."
+          },
+          "sourceId": {
+            "type": "string",
+            "description": "Optional unique identifier of the stop in the source system."
+          },
+          "facility": {
+            "$ref": "#/components/schemas/FacilityOrderFacility"
+          },
+          "orderDates": {
+            "$ref": "#/components/schemas/FacilityOrderDatePair"
+          },
+          "actualDates": {
+            "$ref": "#/components/schemas/FacilityOrderDatePair"
+          },
+          "appointmentDates": {
+            "$ref": "#/components/schemas/FacilityOrderDatePair"
+          },
+          "referenceNumbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceNumber"
+            },
+            "description": "Reference numbers specific to the stop."
+          }
+        }
+      },
+      "FacilityOrderDatePair": {
+        "type": "object",
+        "properties": {
+          "startAt": {
+            "type": "string",
+            "description": "Start date in ISO8601 format (without time)."
+          },
+          "endAt": {
+            "type": "string",
+            "description": "End date in ISO8601 format (without time)."
+          }
+        }
+      },
+      "FacilityOrderFacility": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Owlery facility ID. Provide this, `sourceId`, or `lookupCode` to identify the facility."
+          },
+          "lookupCode": {
+            "type": "string",
+            "description": "Internal lookup code for the facility. Provide this, `id`, or `sourceId` to identify the facility."
+          },
+          "sourceId": {
+            "type": "string",
+            "description": "Unique identifier of the facility in the source system. Provide this, `id`, or `lookupCode` to identify an existing facility; include full location details when introducing a new facility source ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Facility name. Recommended for readability; not required when identifying an existing facility by `id`, `sourceId`, or `lookupCode`."
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contact"
+            },
+            "description": "Contacts for the facility."
+          }
+        },
+        "description": "Facility identifier for the child order. At least one of `id`, `sourceId`, or `lookupCode` is required."
+      },
+      "FacilityOrderUpsertResponse": {
+        "type": "object",
+        "properties": {
+          "createdOrders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreatedFacilityOrder"
+            },
+            "description": "Facility orders upserted successfully."
+          },
+          "failures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Failure"
+            },
+            "description": "Failure messages for facility orders which were not upserted successfully."
+          }
+        }
+      },
+      "CreatedFacilityOrder": {
+        "type": "object",
+        "required": [
+          "orderNumber",
+          "type"
+        ],
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "Unique identifier of a facility order."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "inbound",
+              "outbound"
+            ],
+            "description": "Facility child order type."
           }
         }
       },
