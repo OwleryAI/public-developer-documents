@@ -16,6 +16,10 @@
     {
       "topic": "AT7 Date/Time Timezone Convention",
       "description": "The date (AT705) and time (AT706) in the AT7 segment must be expressed in the local timezone of the location specified in the MS1 segment. The system resolves the timezone from the MS1 city/state or coordinates."
+    },
+    {
+      "topic": "Required Status Codes",
+      "description": "Owlery supports all seven AT7 shipment status indicator codes defined in this guide (X3, CP, AF, X6, X1, D1, CD). For standard tracking, you only need to send the key status events: X3 Arrived at Pickup, AF Departed from Pickup, X1 Arrived at Delivery, and D1 Completed Unloading. The intermediate statuses CP (Completed Loading) and CD (Departed from Delivery) are optional and can be sent for more granular tracking visibility. Check with your customer to see if en-route statuses (X6) are required."
     }
   ],
   "definitions": [
