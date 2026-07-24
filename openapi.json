@@ -218,7 +218,7 @@
           "facility-orders"
         ],
         "summary": "Upsert Facility Orders",
-        "description": "Create or update one or more facility child orders. Send `inbound` orders for receiving work and `outbound` orders for shipping work. Each facility order must include `sourceId` and the target stop: dropoff at index `1` for inbound orders or pickup at index `0` for outbound orders. The target stop must include a facility and at least one planned, actual, or appointment date. The non-target stop is optional; when provided, pickup must use index `0` and dropoff must use index `1`.",
+        "description": "Create or update one or more facility child orders. The integration source is configured in the Bearer token and must not be included in the request body. Send `inbound` orders for receiving work and `outbound` orders for shipping work. Each facility order must include `sourceId` and the target stop: dropoff at index `1` for inbound orders or pickup at index `0` for outbound orders. The target stop must include a facility and at least one planned, actual, or appointment date. The non-target stop is optional; when provided, pickup must use index `0` and dropoff must use index `1`.",
         "operationId": "upsertFacilityOrders",
         "requestBody": {
           "required": true,
@@ -242,7 +242,6 @@
                   "type": "inbound",
                   "isTest": false,
                   "orderNumber": "BY-INB-1001",
-                  "source": "BlueYonder",
                   "sourceId": "BY-INB-1001-source",
                   "status": "open",
                   "stops": [
@@ -4529,7 +4528,6 @@
         "required": [
           "type",
           "orderNumber",
-          "source",
           "sourceId",
           "status",
           "stops",
@@ -4551,13 +4549,6 @@
           "orderNumber": {
             "type": "string",
             "description": "The unique number of the facility order. Keep this value stable with `type` for idempotent updates."
-          },
-          "source": {
-            "type": "string",
-            "enum": [
-              "BlueYonder"
-            ],
-            "description": "The source system for the facility order. Email support@owlery.ai to add new sources."
           },
           "sourceId": {
             "type": "string",
