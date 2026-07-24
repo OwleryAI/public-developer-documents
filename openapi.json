@@ -218,7 +218,7 @@
           "facility-orders"
         ],
         "summary": "Upsert Facility Orders",
-        "description": "Create or update one or more facility child orders. Send `inbound` orders for receiving work and `outbound` orders for shipping work. Each facility order must include `sourceId` and exactly two stops: pickup at index `0` and dropoff at index `1`. The target stop is the dropoff for inbound orders and the pickup for outbound orders. The target stop must include a facility and at least one planned, actual, or appointment date.",
+        "description": "Create or update one or more facility child orders. Send `inbound` orders for receiving work and `outbound` orders for shipping work. Each facility order must include `sourceId` and the target stop: dropoff at index `1` for inbound orders or pickup at index `0` for outbound orders. The target stop must include a facility and at least one planned, actual, or appointment date. The non-target stop is optional; when provided, pickup must use index `0` and dropoff must use index `1`.",
         "operationId": "upsertFacilityOrders",
         "requestBody": {
           "required": true,
@@ -246,10 +246,6 @@
                   "sourceId": "BY-INB-1001-source",
                   "status": "open",
                   "stops": [
-                    {
-                      "index": 0,
-                      "type": "pickup"
-                    },
                     {
                       "index": 1,
                       "type": "dropoff",
@@ -4586,7 +4582,7 @@
             "items": {
               "$ref": "#/components/schemas/FacilityOrderStop"
             },
-            "description": "Exactly two stops: pickup at index `0` and dropoff at index `1`. For `inbound` orders, the dropoff stop must include facility and date information. For `outbound` orders, the pickup stop must include facility and date information."
+            "description": "Facility-order stops. `inbound` orders must include the dropoff target stop at index `1`; `outbound` orders must include the pickup target stop at index `0`. The non-target stop is optional. When provided, pickup must use index `0` and dropoff must use index `1`."
           },
           "items": {
             "type": "array",
@@ -4618,7 +4614,7 @@
         "properties": {
           "index": {
             "type": "number",
-            "description": "The zero-based index of the stop. Facility orders must use pickup index `0` and dropoff index `1`."
+            "description": "The zero-based index of the stop. Facility orders use pickup index `0` and dropoff index `1`."
           },
           "type": {
             "type": "string",
