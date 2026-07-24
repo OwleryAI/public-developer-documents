@@ -218,7 +218,7 @@
           "facility-orders"
         ],
         "summary": "Upsert Facility Orders",
-        "description": "Create or update one or more facility child orders. The integration source is configured in the Bearer token and must not be included in the request body. Send `inbound` orders for receiving work and `outbound` orders for shipping work. Each facility order must include `sourceId` and the target stop: dropoff at index `1` for inbound orders or pickup at index `0` for outbound orders. The target stop must include a facility and at least one planned, actual, or appointment date. The non-target stop is optional; when provided, pickup must use index `0` and dropoff must use index `1`.",
+        "description": "Create or update one or more facility child orders. Use an Organization Integration Bearer token whose `organizationId` is the organization that owns the target facility profile and whose `source` identifies the sending system; neither value belongs in the request body. The token source namespaces facility source IDs and `owner.sourceId`. Each order belongs to the organization resolved or created from `owner.emailDomain`, and its shipper profile is resolved through that owner source mapping. Send `inbound` orders for receiving work and `outbound` orders for shipping work. Each facility order must include `sourceId` and the target stop: dropoff at index `1` for inbound orders or pickup at index `0` for outbound orders. The target stop must include a facility and at least one planned, actual, or appointment date. The non-target stop is optional; when provided, pickup must use index `0` and dropoff must use index `1`.",
         "operationId": "upsertFacilityOrders",
         "requestBody": {
           "required": true,
@@ -243,6 +243,11 @@
                   "isTest": false,
                   "orderNumber": "BY-INB-1001",
                   "sourceId": "BY-INB-1001-source",
+                  "owner": {
+                    "name": "Night Owl Coffee",
+                    "sourceId": "ACCOUNT-123",
+                    "emailDomain": "nightowlcoffee.example"
+                  },
                   "status": "open",
                   "stops": [
                     {
@@ -4529,6 +4534,7 @@
           "type",
           "orderNumber",
           "sourceId",
+          "owner",
           "status",
           "stops",
           "items"
@@ -4553,6 +4559,9 @@
           "sourceId": {
             "type": "string",
             "description": "The unique ID of the facility order in the source system. This is stored as source metadata; upserts match existing facility orders by `orderNumber` and `type`."
+          },
+          "owner": {
+            "$ref": "#/components/schemas/FacilityOrderOwner"
           },
           "status": {
             "type": "string",
@@ -4594,7 +4603,30 @@
             "description": "Optional notes for the facility order."
           }
         },
-        "description": "The target stop must include a facility and at least one of `orderDates`, `actualDates`, or `appointmentDates` with a valid `startAt` or `endAt` date."
+        "description": "The target stop must include a facility and at least one of `orderDates`, `actualDates`, or `appointmentDates` with a valid `startAt` or `endAt` date. The resulting order belongs to the organization resolved or created from `owner.emailDomain`."
+      },
+      "FacilityOrderOwner": {
+        "type": "object",
+        "required": [
+          "name",
+          "sourceId",
+          "emailDomain"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name for the organization that owns the resulting order and shipper profile."
+          },
+          "sourceId": {
+            "type": "string",
+            "description": "Stable owner identifier in the sending system. It is namespaced by the Bearer token's facility organization and integration source, and maps to the owner's shipper profile."
+          },
+          "emailDomain": {
+            "type": "string",
+            "description": "Company email domain used to resolve or create the owner organization, for example `example.com`."
+          }
+        },
+        "description": "The company that owns the resulting facility order. This is distinct from the target facility organization identified by the Bearer token."
       },
       "FacilityOrderStop": {
         "type": "object",
