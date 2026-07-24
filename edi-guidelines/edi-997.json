@@ -1,0 +1,846 @@
+{
+  "schemaVersion": "1.0",
+  "guidelineTitle": "EDI 997 Functional Acknowledgment",
+  "guidelineVersion": "1.0",
+  "transactionCode": "997",
+  "x12Version": "004010",
+  "definitions": [
+    {
+      "segmentId": "ISA",
+      "segmentName": "Interchange Control Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To start and identify an interchange of zero or more functional groups and interchange-related control segments",
+      "fields": [
+        {
+          "fieldId": "ISA01",
+          "fieldName": "Authorization Information Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the type of information in the Authorization Information"
+        },
+        {
+          "fieldId": "ISA02",
+          "fieldName": "Authorization Information",
+          "usage": "M",
+          "minLength": 10,
+          "maxLength": 10,
+          "dataType": "AN",
+          "fieldDescription": "Information used for additional identification or authorization of the interchange sender or the data in the interchange"
+        },
+        {
+          "fieldId": "ISA03",
+          "fieldName": "Security Information Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the type of information in the Security Information"
+        },
+        {
+          "fieldId": "ISA04",
+          "fieldName": "Security Information",
+          "usage": "M",
+          "minLength": 10,
+          "maxLength": 10,
+          "dataType": "AN",
+          "fieldDescription": "This is used for identifying the security information about the interchange sender or the data in the interchange"
+        },
+        {
+          "fieldId": "ISA05",
+          "fieldName": "Interchange ID Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the system/method of code structure used to designate the sender or receiver ID element being qualified"
+        },
+        {
+          "fieldId": "ISA06",
+          "fieldName": "Interchange Sender ID",
+          "usage": "M",
+          "minLength": 15,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Identification code published by the sender for other parties to use as the receiver ID to route data to them"
+        },
+        {
+          "fieldId": "ISA07",
+          "fieldName": "Interchange ID Qualifier",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the system/method of code structure used to designate the sender or receiver ID element being qualified"
+        },
+        {
+          "fieldId": "ISA08",
+          "fieldName": "Interchange Receiver ID",
+          "usage": "M",
+          "minLength": 15,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Identification code published by the receiver of the data"
+        },
+        {
+          "fieldId": "ISA09",
+          "fieldName": "Interchange Date",
+          "usage": "M",
+          "minLength": 6,
+          "maxLength": 6,
+          "dataType": "DT",
+          "fieldDescription": "Date of the interchange (YYMMDD)"
+        },
+        {
+          "fieldId": "ISA10",
+          "fieldName": "Interchange Time",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 4,
+          "dataType": "TM",
+          "fieldDescription": "Time of the interchange"
+        },
+        {
+          "fieldId": "ISA11",
+          "fieldName": "Interchange Control Standards Identifier",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code to identify the agency responsible for the control standard used by the message"
+        },
+        {
+          "fieldId": "ISA12",
+          "fieldName": "Interchange Control Version Number Code",
+          "usage": "M",
+          "minLength": 5,
+          "maxLength": 5,
+          "dataType": "ID",
+          "fieldDescription": "Code specifying the version number of the interchange control segments",
+          "allowedValues": [
+            {
+              "value": "00401",
+              "label": "X12 4010 interchange control version"
+            }
+          ]
+        },
+        {
+          "fieldId": "ISA13",
+          "fieldName": "Interchange Control Number",
+          "usage": "M",
+          "minLength": 9,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "A control number assigned by the interchange sender"
+        },
+        {
+          "fieldId": "ISA14",
+          "fieldName": "Acknowledgment Requested Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating sender's request for an interchange acknowledgment"
+        },
+        {
+          "fieldId": "ISA15",
+          "fieldName": "Interchange Usage Indicator Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating whether data enclosed by this interchange envelope is test, production or information"
+        },
+        {
+          "fieldId": "ISA16",
+          "fieldName": "Component Data Element Separator",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "-",
+          "fieldDescription": "The component data element separator is a delimiter and not a data element"
+        }
+      ]
+    },
+    {
+      "segmentId": "GS",
+      "segmentName": "Functional Group Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the beginning of a functional group and to provide control information",
+      "fields": [
+        {
+          "fieldId": "GS01",
+          "fieldName": "Functional Identifier Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a group of application related transaction sets",
+          "allowedValues": [
+            {
+              "value": "FA",
+              "label": "Functional Acknowledgment"
+            }
+          ]
+        },
+        {
+          "fieldId": "GS02",
+          "fieldName": "Application Sender's Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Code identifying party sending transmission"
+        },
+        {
+          "fieldId": "GS03",
+          "fieldName": "Application Receiver's Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 15,
+          "dataType": "AN",
+          "fieldDescription": "Code identifying party receiving transmission"
+        },
+        {
+          "fieldId": "GS04",
+          "fieldName": "Date",
+          "usage": "M",
+          "minLength": 8,
+          "maxLength": 8,
+          "dataType": "DT",
+          "fieldDescription": "Date expressed as CCYYMMDD"
+        },
+        {
+          "fieldId": "GS05",
+          "fieldName": "Time",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 8,
+          "dataType": "TM",
+          "fieldDescription": "Time expressed in 24-hour clock time"
+        },
+        {
+          "fieldId": "GS06",
+          "fieldName": "Group Control Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "Assigned number originated and maintained by the sender"
+        },
+        {
+          "fieldId": "GS07",
+          "fieldName": "Responsible Agency Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying the issuer of the standard",
+          "allowedValues": [
+            {
+              "value": "X",
+              "label": "Accredited Standards Committee X12"
+            }
+          ]
+        },
+        {
+          "fieldId": "GS08",
+          "fieldName": "Version / Release / Industry Identifier Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 12,
+          "dataType": "AN",
+          "fieldDescription": "Code indicating the version, release, and industry identifier of the EDI Standard",
+          "allowedValues": [
+            {
+              "value": "004010",
+              "label": "X12 4010 version/release identifier"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "segmentId": "ST",
+      "segmentName": "Transaction Set Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the start of a transaction set and to assign a control number",
+      "fields": [
+        {
+          "fieldId": "ST01",
+          "fieldName": "Transaction Set Identifier Code",
+          "usage": "M",
+          "minLength": 3,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a Transaction Set",
+          "allowedValues": [
+            {
+              "value": "997",
+              "label": "Functional Acknowledgment"
+            }
+          ]
+        },
+        {
+          "fieldId": "ST02",
+          "fieldName": "Transaction Set Control Number",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 9,
+          "dataType": "AN",
+          "fieldDescription": "Identifying control number that must be unique within the transaction set functional group"
+        }
+      ]
+    },
+    {
+      "segmentId": "AK1",
+      "segmentName": "Functional Group Response Header",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To start acknowledgment of a functional group and to identify the functional group being acknowledged",
+      "fields": [
+        {
+          "fieldId": "AK101",
+          "fieldName": "Functional Identifier Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a group of application related transaction sets. Must match the GS01 value from the original functional group being acknowledged"
+        },
+        {
+          "fieldId": "AK102",
+          "fieldName": "Group Control Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "Assigned number originated and maintained by the sender. Must match the GS06 value from the original functional group being acknowledged"
+        }
+      ]
+    },
+    {
+      "segmentId": "AK2",
+      "segmentName": "Transaction Set Response Header",
+      "usage": "O",
+      "maxRepeat": 999999,
+      "purpose": "To start acknowledgment of a single transaction set within the functional group. Required when reporting errors; recommended when accepting",
+      "loopId": "AK2",
+      "fields": [
+        {
+          "fieldId": "AK201",
+          "fieldName": "Transaction Set Identifier Code",
+          "usage": "M",
+          "minLength": 3,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying a Transaction Set. Must match the ST01 value from the original transaction set being acknowledged"
+        },
+        {
+          "fieldId": "AK202",
+          "fieldName": "Transaction Set Control Number",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 9,
+          "dataType": "AN",
+          "fieldDescription": "Identifying control number that must be unique within the transaction set functional group. Must match the ST02 value from the original transaction set being acknowledged"
+        }
+      ]
+    },
+    {
+      "segmentId": "AK3",
+      "segmentName": "Data Segment Note",
+      "usage": "O",
+      "maxRepeat": 999999,
+      "purpose": "To report errors in a data segment and identify the location of the data segment in the original transaction set",
+      "loopId": "AK2/AK3",
+      "fields": [
+        {
+          "fieldId": "AK301",
+          "fieldName": "Segment ID Code",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code defining the segment ID of the data segment in error"
+        },
+        {
+          "fieldId": "AK302",
+          "fieldName": "Segment Position in Transaction Set",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 10,
+          "dataType": "N0",
+          "fieldDescription": "The numerical count position of this data segment from the start of the transaction set; the transaction set header is count position 1"
+        },
+        {
+          "fieldId": "AK303",
+          "fieldName": "Loop Identifier Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 4,
+          "dataType": "AN",
+          "fieldDescription": "The loop ID number of the loop being referenced"
+        },
+        {
+          "fieldId": "AK304",
+          "fieldName": "Segment Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the error found after syntax edits of a segment",
+          "allowedValues": [
+            {
+              "value": "1",
+              "label": "Unrecognized segment ID"
+            },
+            {
+              "value": "2",
+              "label": "Unexpected segment"
+            },
+            {
+              "value": "3",
+              "label": "Mandatory segment missing"
+            },
+            {
+              "value": "4",
+              "label": "Loop occurs over maximum times"
+            },
+            {
+              "value": "5",
+              "label": "Segment exceeds maximum use"
+            },
+            {
+              "value": "6",
+              "label": "Segment not in defined transaction set"
+            },
+            {
+              "value": "7",
+              "label": "Segment not in proper sequence"
+            },
+            {
+              "value": "8",
+              "label": "Segment has data element errors"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "segmentId": "AK4",
+      "segmentName": "Data Element Note",
+      "usage": "O",
+      "maxRepeat": 99,
+      "purpose": "To report errors in a data element or composite data structure and identify the location of the data element",
+      "loopId": "AK2/AK3/AK4",
+      "fields": [
+        {
+          "fieldId": "AK401",
+          "fieldName": "Position in Segment",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 4,
+          "dataType": "C030",
+          "fieldDescription": "Composite element identifying the numerical position of the simple or component data element in error within the segment. The first component is the element position (1-based); the optional second component is the component position within a composite"
+        },
+        {
+          "fieldId": "AK402",
+          "fieldName": "Data Element Reference Number",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 4,
+          "dataType": "N0",
+          "fieldDescription": "Reference number for the X12 data element dictionary number of the element in error"
+        },
+        {
+          "fieldId": "AK403",
+          "fieldName": "Data Element Syntax Error Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating the error found after syntax edits of a data element",
+          "allowedValues": [
+            {
+              "value": "1",
+              "label": "Mandatory data element missing"
+            },
+            {
+              "value": "2",
+              "label": "Conditional required data element missing"
+            },
+            {
+              "value": "3",
+              "label": "Too many data elements"
+            },
+            {
+              "value": "4",
+              "label": "Data element too short"
+            },
+            {
+              "value": "5",
+              "label": "Data element too long"
+            },
+            {
+              "value": "6",
+              "label": "Invalid character in data element"
+            },
+            {
+              "value": "7",
+              "label": "Invalid code value"
+            },
+            {
+              "value": "8",
+              "label": "Invalid date"
+            },
+            {
+              "value": "9",
+              "label": "Invalid time"
+            },
+            {
+              "value": "10",
+              "label": "Exclusion condition violated"
+            }
+          ]
+        },
+        {
+          "fieldId": "AK404",
+          "fieldName": "Copy of Bad Data Element",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 99,
+          "dataType": "AN",
+          "fieldDescription": "Copy of the data element in error"
+        }
+      ]
+    },
+    {
+      "segmentId": "AK5",
+      "segmentName": "Transaction Set Response Trailer",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To acknowledge acceptance or rejection and report errors in a transaction set",
+      "loopId": "AK2",
+      "fields": [
+        {
+          "fieldId": "AK501",
+          "fieldName": "Transaction Set Acknowledgment Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating acceptance or rejection condition based on the syntax editing of the transaction set",
+          "allowedValues": [
+            {
+              "value": "A",
+              "label": "Accepted"
+            },
+            {
+              "value": "E",
+              "label": "Accepted but errors were noted"
+            },
+            {
+              "value": "R",
+              "label": "Rejected"
+            }
+          ]
+        },
+        {
+          "fieldId": "AK502",
+          "fieldName": "Transaction Set Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of a transaction set",
+          "allowedValues": [
+            {
+              "value": "1",
+              "label": "Transaction set not supported"
+            },
+            {
+              "value": "2",
+              "label": "Transaction set trailer missing"
+            },
+            {
+              "value": "3",
+              "label": "Transaction set control number in header and trailer do not match"
+            },
+            {
+              "value": "4",
+              "label": "Number of included segments does not match actual count"
+            },
+            {
+              "value": "5",
+              "label": "One or more segments in error"
+            },
+            {
+              "value": "6",
+              "label": "Missing or invalid transaction set identifier"
+            },
+            {
+              "value": "7",
+              "label": "Missing or invalid transaction set control number"
+            }
+          ]
+        },
+        {
+          "fieldId": "AK503",
+          "fieldName": "Transaction Set Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of a transaction set (additional error code 2)"
+        },
+        {
+          "fieldId": "AK504",
+          "fieldName": "Transaction Set Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of a transaction set (additional error code 3)"
+        },
+        {
+          "fieldId": "AK505",
+          "fieldName": "Transaction Set Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of a transaction set (additional error code 4)"
+        },
+        {
+          "fieldId": "AK506",
+          "fieldName": "Transaction Set Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of a transaction set (additional error code 5)"
+        }
+      ]
+    },
+    {
+      "segmentId": "AK9",
+      "segmentName": "Functional Group Response Trailer",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To acknowledge acceptance or rejection of a functional group and report the number of included transaction sets from the original trailer, the accepted sets, and the received sets",
+      "fields": [
+        {
+          "fieldId": "AK901",
+          "fieldName": "Functional Group Acknowledgment Code",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 1,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating acceptance or rejection condition based on the syntax editing of the functional group",
+          "allowedValues": [
+            {
+              "value": "A",
+              "label": "Accepted"
+            },
+            {
+              "value": "E",
+              "label": "Accepted but errors were noted"
+            },
+            {
+              "value": "P",
+              "label": "Partially accepted; at least one transaction set was rejected"
+            },
+            {
+              "value": "R",
+              "label": "Rejected"
+            }
+          ]
+        },
+        {
+          "fieldId": "AK902",
+          "fieldName": "Number of Transaction Sets Included",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 6,
+          "dataType": "N0",
+          "fieldDescription": "Total number of transaction sets included in the functional group or interchange. Must match the value from the original GE01"
+        },
+        {
+          "fieldId": "AK903",
+          "fieldName": "Number of Received Transaction Sets",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 6,
+          "dataType": "N0",
+          "fieldDescription": "Number of transaction sets received"
+        },
+        {
+          "fieldId": "AK904",
+          "fieldName": "Number of Accepted Transaction Sets",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 6,
+          "dataType": "N0",
+          "fieldDescription": "Number of transaction sets accepted"
+        },
+        {
+          "fieldId": "AK905",
+          "fieldName": "Functional Group Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of the functional group header and/or trailer",
+          "allowedValues": [
+            {
+              "value": "1",
+              "label": "Functional group not supported"
+            },
+            {
+              "value": "2",
+              "label": "Functional group version not supported"
+            },
+            {
+              "value": "3",
+              "label": "Functional group trailer missing"
+            },
+            {
+              "value": "4",
+              "label": "Group control number in the functional group header and trailer do not agree"
+            },
+            {
+              "value": "5",
+              "label": "Number of included transaction sets does not match actual count"
+            },
+            {
+              "value": "6",
+              "label": "Group control number violates syntax"
+            }
+          ]
+        },
+        {
+          "fieldId": "AK906",
+          "fieldName": "Functional Group Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of the functional group (additional error code 2)"
+        },
+        {
+          "fieldId": "AK907",
+          "fieldName": "Functional Group Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of the functional group (additional error code 3)"
+        },
+        {
+          "fieldId": "AK908",
+          "fieldName": "Functional Group Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of the functional group (additional error code 4)"
+        },
+        {
+          "fieldId": "AK909",
+          "fieldName": "Functional Group Syntax Error Code",
+          "usage": "O",
+          "minLength": 1,
+          "maxLength": 3,
+          "dataType": "ID",
+          "fieldDescription": "Code indicating error found based on the syntax editing of the functional group (additional error code 5)"
+        }
+      ]
+    },
+    {
+      "segmentId": "SE",
+      "segmentName": "Transaction Set Trailer",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the end of the transaction set and provide the count of transmitted segments",
+      "fields": [
+        {
+          "fieldId": "SE01",
+          "fieldName": "Number of Included Segments",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 10,
+          "dataType": "N0",
+          "fieldDescription": "Total number of segments including ST and SE segments"
+        },
+        {
+          "fieldId": "SE02",
+          "fieldName": "Transaction Set Control Number",
+          "usage": "M",
+          "minLength": 4,
+          "maxLength": 9,
+          "dataType": "AN",
+          "fieldDescription": "Transaction set control number (must match ST02)"
+        }
+      ]
+    },
+    {
+      "segmentId": "GE",
+      "segmentName": "Functional Group Trailer",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To indicate the end of a functional group and to provide control information",
+      "fields": [
+        {
+          "fieldId": "GE01",
+          "fieldName": "Number of Transaction Sets Included",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 6,
+          "dataType": "N0",
+          "fieldDescription": "Total number of transaction sets included in the functional group"
+        },
+        {
+          "fieldId": "GE02",
+          "fieldName": "Group Control Number",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "Assigned number originated and maintained by the sender (must match GS06)"
+        }
+      ]
+    },
+    {
+      "segmentId": "IEA",
+      "segmentName": "Interchange Control Trailer",
+      "usage": "M",
+      "maxRepeat": 1,
+      "purpose": "To define the end of an interchange of zero or more functional groups and interchange-related control segments",
+      "fields": [
+        {
+          "fieldId": "IEA01",
+          "fieldName": "Number of Included Functional Groups",
+          "usage": "M",
+          "minLength": 1,
+          "maxLength": 5,
+          "dataType": "N0",
+          "fieldDescription": "A count of the number of functional groups included in an interchange"
+        },
+        {
+          "fieldId": "IEA02",
+          "fieldName": "Interchange Control Number",
+          "usage": "M",
+          "minLength": 9,
+          "maxLength": 9,
+          "dataType": "N0",
+          "fieldDescription": "A control number assigned by the interchange sender (must match ISA13)"
+        }
+      ]
+    }
+  ]
+}
