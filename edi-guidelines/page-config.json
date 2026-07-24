@@ -30,7 +30,7 @@
   "testPortal": {
     "title": "Validate end-to-end",
     "paragraphs": [
-      "The EDI Test Portal runs against real account data, so your test transactions flow through the same logic as production.",
+      "The EDI Test Portal runs against real account data, so your test transactions flow through the same logic as production. A 997 Functional Acknowledgment is expected for every inbound functional group.",
       "The portal walks you through each transaction in sequence — tender a load, accept or decline, send status updates, invoice — with pass/fail validation at every step."
     ],
     "ctaLabel": "Open EDI Test Portal",
