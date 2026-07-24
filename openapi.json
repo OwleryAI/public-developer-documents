@@ -589,7 +589,7 @@
                         {
                           "orderNumber": "ORD-10001",
                           "pickupStopIndex": 0,
-                          "dropOffStopIndex": 1,
+                          "dropoffStopIndex": 1,
                           "pickupSequenceNumber": 0,
                           "dropoffSequenceNumber": 0
                         }
@@ -871,14 +871,14 @@
                         {
                           "orderNumber": "ORD-10001",
                           "pickupStopIndex": 0,
-                          "dropOffStopIndex": 2,
+                          "dropoffStopIndex": 2,
                           "pickupSequenceNumber": 0,
                           "dropoffSequenceNumber": 0
                         },
                         {
                           "orderNumber": "ORD-10002",
                           "pickupStopIndex": 1,
-                          "dropOffStopIndex": 3,
+                          "dropoffStopIndex": 3,
                           "pickupSequenceNumber": 1,
                           "dropoffSequenceNumber": 1
                         }
@@ -920,7 +920,7 @@
                 },
                 "multiOrderDifferentStopIndexes": {
                   "summary": "Multiple orders with different route and stop-type indexes",
-                  "description": "Demonstrates that pickupStopIndex/dropOffStopIndex are route stop indexes, while pickupSequenceNumber/dropoffSequenceNumber are zero-based within pickup or dropoff stops only.",
+                  "description": "Demonstrates that pickupStopIndex/dropoffStopIndex are route stop indexes, while pickupSequenceNumber/dropoffSequenceNumber are zero-based within pickup or dropoff stops only.",
                   "value": [
                     {
                       "id": "507f1f77bcf86cd799439033",
@@ -1161,14 +1161,14 @@
                         {
                           "orderNumber": "ORD-10001",
                           "pickupStopIndex": 0,
-                          "dropOffStopIndex": 3,
+                          "dropoffStopIndex": 3,
                           "pickupSequenceNumber": 0,
                           "dropoffSequenceNumber": 1
                         },
                         {
                           "orderNumber": "ORD-10002",
                           "pickupStopIndex": 1,
-                          "dropOffStopIndex": 2,
+                          "dropoffStopIndex": 2,
                           "pickupSequenceNumber": 1,
                           "dropoffSequenceNumber": 0
                         }
@@ -5262,7 +5262,7 @@
             "type": "number",
             "description": "Zero-based index of the route stop where this order is picked up."
           },
-          "dropOffStopIndex": {
+          "dropoffStopIndex": {
             "type": "number",
             "description": "Zero-based index of the route stop where this order is dropped off."
           },
