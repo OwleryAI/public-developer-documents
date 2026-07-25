@@ -1,9 +1,15 @@
 {
   "schemaVersion": "1.0",
   "guidelineTitle": "EDI 997 Functional Acknowledgment",
-  "guidelineVersion": "1.0",
+  "guidelineVersion": "1.1",
   "transactionCode": "997",
   "x12Version": "004010",
+  "implementationNotes": [
+    {
+      "topic": "Owlery requirement: acknowledge every transaction set",
+      "description": "Base X12 permits a group-level 997 without an AK2 loop. Owlery requires one AK2/AK5 loop for every transaction set in the acknowledged functional group so each result can be matched to the original ST01/ST02 control number, including mixed accept/reject outcomes. Send the loops in the same order as the original transaction sets."
+    }
+  ],
   "definitions": [
     {
       "segmentId": "ISA",
@@ -326,9 +332,9 @@
     {
       "segmentId": "AK2",
       "segmentName": "Transaction Set Response Header",
-      "usage": "O",
+      "usage": "M",
       "maxRepeat": 999999,
-      "purpose": "To start acknowledgment of a single transaction set within the functional group. Required when reporting errors; recommended when accepting",
+      "purpose": "To start acknowledgment of a single transaction set within the functional group. Owlery requires one AK2/AK5 loop for every transaction set, including accepted transactions",
       "loopId": "AK2",
       "fields": [
         {
