@@ -169,7 +169,17 @@
           "minLength": 1,
           "maxLength": 1,
           "dataType": "ID",
-          "fieldDescription": "Code indicating whether data enclosed by this interchange envelope is test, production or information"
+          "fieldDescription": "Owlery relies on this flag to determine whether an EDI interchange is processed as test or production. Set ISA15 to T for the Test stream or P for the Production stream. The value must match the intended Owlery stream; the interchange is processed on the stream specified by ISA15.",
+          "allowedValues": [
+            {
+              "value": "T",
+              "label": "Test"
+            },
+            {
+              "value": "P",
+              "label": "Production"
+            }
+          ]
         },
         {
           "fieldId": "ISA16",
