@@ -2608,7 +2608,7 @@
           "carrier-webhooks"
         ],
         "summary": "Rate Quote Requested",
-        "description": "Webhook sent by Owlery to a carrier when Owlery requests rates. The request body itself is the rate quote request. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context. Return `200 OK` to acknowledge receipt only. Submit all quote responses asynchronously to `POST /api/ext/v1/rate-quote/responses`; Owlery does not process quote results from the webhook response body.",
+        "description": "Webhook sent by Owlery to a carrier when Owlery requests rates. Configure one active webhook connection per shipper organization and carrier integration; a child shipper organization may inherit its parent's carrier configuration. The request body itself is the rate quote request. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context. Return `200 OK` to acknowledge receipt only. Submit all quote responses asynchronously to `POST /api/ext/v1/rate-quote/responses`; Owlery does not process quote results from the webhook response body.",
         "operationId": "carrierWebhookRateQuoteRequested",
         "security": [
           {
@@ -2624,6 +2624,7 @@
               },
               "example": {
                 "id": "RQ-0042",
+                "isTest": true,
                 "equipmentType": "Reefer",
                 "reeferSettings": {
                   "minTemperature": 34,
@@ -2762,6 +2763,7 @@
                 },
                 "loadNumber": "LOAD-12345",
                 "revision": 0,
+                "isTest": true,
                 "mode": "FTL",
                 "equipmentType": "Reefer",
                 "reeferSettings": {
@@ -2786,6 +2788,14 @@
                     "dates": {
                       "startAt": "2026-06-01T08:00:00Z",
                       "endAt": "2026-06-01T10:00:00Z"
+                    },
+                    "requirements": {
+                      "liftgate": true,
+                      "inside": false,
+                      "limitedAccess": false,
+                      "residential": false,
+                      "appointment": true,
+                      "tradeshow": false
                     },
                     "items": [
                       {
@@ -2929,6 +2939,7 @@
               "example": {
                 "loadNumber": "LOAD-12345",
                 "revision": 1,
+                "isTest": true,
                 "mode": "FTL",
                 "equipmentType": "Reefer",
                 "reeferSettings": {
@@ -3094,7 +3105,8 @@
                 "$ref": "#/components/schemas/CarrierWebhookCancelRequest"
               },
               "example": {
-                "loadNumber": "LOAD-12345"
+                "loadNumber": "LOAD-12345",
+                "isTest": true
               }
             }
           }
@@ -3741,6 +3753,7 @@
                 "$ref": "#/components/schemas/CreateRateQuoteFromExistingOrderRequest"
               },
               "example": {
+                "isTest": true,
                 "orderNumber": "ORD-1234",
                 "pickupDates": {
                   "startAt": "2025-06-01",
@@ -3815,6 +3828,7 @@
                 },
                 "example": [
                   {
+                    "isTest": true,
                     "shortId": "RQ-0042",
                     "equipmentType": "Dryvan",
                     "referenceNumbers": [
@@ -3975,6 +3989,7 @@
                 "$ref": "#/components/schemas/CreateRateQuoteRequest"
               },
               "example": {
+                "isTest": true,
                 "stops": [
                   {
                     "type": "Pickup",
@@ -7313,6 +7328,10 @@
       "CreateRateQuoteFromExistingOrderRequest": {
         "type": "object",
         "properties": {
+          "isTest": {
+            "type": "boolean",
+            "description": "Set to `true` to create a test quote. Quotes for orders already marked as test remain test quotes regardless of this value. Test quotes are identified as test requests in carrier webhooks."
+          },
           "orderNumber": {
             "type": "string",
             "description": "Order number to quote. Either this or `orderReferenceNumber` is required."
@@ -7368,6 +7387,11 @@
           "stops"
         ],
         "properties": {
+          "isTest": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to create a test quote. Test quotes are identified as test requests in carrier webhooks."
+          },
           "stops": {
             "type": "array",
             "items": {
@@ -7655,11 +7679,16 @@
       "RateQuote": {
         "type": "object",
         "required": [
+          "isTest",
           "shortId",
           "stops",
           "responses"
         ],
         "properties": {
+          "isTest": {
+            "type": "boolean",
+            "description": "Whether this is a test quote."
+          },
           "shortId": {
             "type": "string",
             "description": "Short human-readable ID for the rate quote."
@@ -8065,12 +8094,17 @@
         "type": "object",
         "required": [
           "id",
+          "isTest",
           "stops"
         ],
         "properties": {
           "id": {
             "type": "string",
             "description": "Carrier-facing Owlery rate quote ID. Return this value as `id` when submitting quote responses to Owlery."
+          },
+          "isTest": {
+            "type": "boolean",
+            "description": "Whether this is a test quote. Carriers should return test/sandbox responses and avoid production booking side effects when true."
           },
           "equipmentType": {
             "type": "string",
@@ -8203,6 +8237,7 @@
           "rateQuote",
           "loadNumber",
           "revision",
+          "isTest",
           "stops",
           "referenceNumbers"
         ],
@@ -8232,6 +8267,10 @@
             "type": "integer",
             "minimum": 0,
             "description": "Zero-based tender revision for this load. Version `0` is the initial tender. Version `1` or greater is a tender/load edit. Carriers must include this same value when accepting or rejecting this tender version."
+          },
+          "isTest": {
+            "type": "boolean",
+            "description": "Whether this tender belongs to a test quote. Carriers should keep booking and downstream activity in their test/sandbox flow when true."
           },
           "mode": {
             "type": "string",
@@ -8285,6 +8324,7 @@
           "rateQuote",
           "loadNumber",
           "revision",
+          "isTest",
           "stops",
           "referenceNumbers"
         ],
@@ -8314,6 +8354,10 @@
             "type": "integer",
             "minimum": 0,
             "description": "Zero-based tender revision for this load. Version `0` is the initial tender. Version `1` or greater is a tender/load edit. Carriers must include this same value when accepting or rejecting this tender version."
+          },
+          "isTest": {
+            "type": "boolean",
+            "description": "Whether this tender belongs to a test quote. Carriers should keep booking and downstream activity in their test/sandbox flow when true."
           },
           "mode": {
             "type": "string",
@@ -8364,12 +8408,17 @@
       "CarrierWebhookCancelRequest": {
         "type": "object",
         "required": [
-          "loadNumber"
+          "loadNumber",
+          "isTest"
         ],
         "properties": {
           "loadNumber": {
             "type": "string",
             "description": "Owlery load number being cancelled."
+          },
+          "isTest": {
+            "type": "boolean",
+            "description": "Whether the cancelled tender/load is a test. Carriers should keep cancellation activity in their test/sandbox flow when true."
           }
         }
       },
@@ -8647,6 +8696,44 @@
           }
         }
       },
+      "CarrierTenderWebhookStopRequirements": {
+        "type": "object",
+        "required": [
+          "liftgate",
+          "inside",
+          "limitedAccess",
+          "residential",
+          "appointment",
+          "tradeshow"
+        ],
+        "properties": {
+          "liftgate": {
+            "type": "boolean",
+            "description": "Whether liftgate service is required at this stop."
+          },
+          "inside": {
+            "type": "boolean",
+            "description": "Whether inside pickup or delivery service is required at this stop."
+          },
+          "limitedAccess": {
+            "type": "boolean",
+            "description": "Whether this stop is at a limited-access location."
+          },
+          "residential": {
+            "type": "boolean",
+            "description": "Whether this stop is at a residential location."
+          },
+          "appointment": {
+            "type": "boolean",
+            "description": "Whether an appointment is required at this stop."
+          },
+          "tradeshow": {
+            "type": "boolean",
+            "description": "Whether this stop is at a trade show or convention location."
+          }
+        },
+        "description": "Stop-specific service requirements. When this object is present, every flag is included; `true` means the service or condition applies and `false` means it does not."
+      },
       "CarrierTenderWebhookStop": {
         "type": "object",
         "required": [
@@ -8678,6 +8765,9 @@
           "dates": {
             "$ref": "#/components/schemas/DatePair"
           },
+          "requirements": {
+            "$ref": "#/components/schemas/CarrierTenderWebhookStopRequirements"
+          },
           "items": {
             "type": "array",
             "items": {
@@ -8699,6 +8789,7 @@
         "required": [
           "loadNumber",
           "revision",
+          "isTest",
           "stops",
           "referenceNumbers"
         ],
@@ -8711,6 +8802,10 @@
             "type": "integer",
             "minimum": 1,
             "description": "Zero-based tender revision for this edit. Version `0` is the initial tender. Version `1` or greater is a tender/load edit. Carriers must include this same value when accepting or rejecting this edit."
+          },
+          "isTest": {
+            "type": "boolean",
+            "description": "Whether this edit belongs to a test tender/load. Carriers should keep the update in their test/sandbox flow when true."
           },
           "mode": {
             "type": "string",
