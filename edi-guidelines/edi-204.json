@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "guidelineTitle": "EDI 204 Motor Carrier Load Tender",
-  "guidelineVersion": "1.0",
+  "guidelineVersion": "1.1",
   "transactionCode": "204",
   "x12Version": "004010",
   "definitions": [
@@ -302,6 +302,15 @@
       "purpose": "To transmit identifying numbers and other basic data relating to the shipment",
       "fields": [
         {
+          "fieldId": "B202",
+          "fieldName": "Standard Carrier Alpha Code",
+          "usage": "O",
+          "minLength": 2,
+          "maxLength": 4,
+          "dataType": "ID",
+          "fieldDescription": "Standard Carrier Alpha Code (SCAC) for the carrier handling the shipment. If no SCAC is available, Owlery leaves this field blank."
+        },
+        {
           "fieldId": "B204",
           "fieldName": "Shipment Identification Number",
           "usage": "M",
@@ -309,6 +318,29 @@
           "maxLength": 30,
           "dataType": "AN",
           "fieldDescription": "Identification number assigned to the shipment by the shipper. Unique load number"
+        },
+        {
+          "fieldId": "B206",
+          "fieldName": "Shipment Method of Payment",
+          "usage": "M",
+          "minLength": 2,
+          "maxLength": 2,
+          "dataType": "ID",
+          "fieldDescription": "Code identifying who pays the transportation charges. PP means the shipper pays, CC means the consignee pays, and TP means a third party pays. If payment responsibility is unavailable, Owlery sends TP.",
+          "allowedValues": [
+            {
+              "value": "PP",
+              "label": "Prepaid"
+            },
+            {
+              "value": "CC",
+              "label": "Collect"
+            },
+            {
+              "value": "TP",
+              "label": "Third Party Pay"
+            }
+          ]
         }
       ]
     },
@@ -404,6 +436,22 @@
             {
               "value": "OQ",
               "label": "Order Number"
+            },
+            {
+              "value": "Q1",
+              "label": "Quote Number"
+            },
+            {
+              "value": "PI",
+              "label": "Price Identifier"
+            },
+            {
+              "value": "DO",
+              "label": "Delivery Order Number"
+            },
+            {
+              "value": "SN",
+              "label": "Seal Number"
             }
           ]
         }
@@ -433,7 +481,7 @@
               "minLength": 2,
               "maxLength": 3,
               "dataType": "ID",
-              "fieldDescription": "Code specifying special transportation handling instructions. Used for LTL, TL, Partial Shipment and Intermodal",
+              "fieldDescription": "Code specifying special transportation handling instructions. Used for LTL, solo or team-driver truckload, partial shipment, and intermodal",
               "allowedValues": [
                 {
                   "value": "LTT",
@@ -450,6 +498,10 @@
                 {
                   "value": "OPT",
                   "label": "Partial Shipment"
+                },
+                {
+                  "value": "TDC",
+                  "label": "Truckload-Team Driver-Common Carrier"
                 }
               ]
             }
@@ -687,7 +739,7 @@
       "segmentId": "S5",
       "segmentName": "Stop-off Details Loop",
       "usage": "M",
-      "maxRepeat": 1,
+      "maxRepeat": 999,
       "isLoopStart": true,
       "purpose": "Loop containing stop-off information",
       "fields": [],
@@ -782,6 +834,18 @@
                 {
                   "value": "OQ",
                   "label": "Order Number"
+                },
+                {
+                  "value": "PI",
+                  "label": "Price Identifier"
+                },
+                {
+                  "value": "DO",
+                  "label": "Delivery Order Number"
+                },
+                {
+                  "value": "SN",
+                  "label": "Seal Number"
                 }
               ]
             }
@@ -792,7 +856,7 @@
           "segmentId": "G62",
           "segmentName": "Date/Time Reference",
           "usage": "O",
-          "maxRepeat": 999,
+          "maxRepeat": 2,
           "purpose": "To specify pertinent dates and times",
           "fields": [
             {
@@ -802,7 +866,7 @@
               "minLength": 2,
               "maxLength": 2,
               "dataType": "ID",
-              "fieldDescription": "Code specifying type of stop date. Owlery outbound 204 tenders use 10 for pickup stop dates and 68 for delivery stop dates. RQ is a non-standard legacy value that was deprecated in July 2026.",
+              "fieldDescription": "Code specifying the type of stop date. Owlery uses 10 for pickup stops and 68 for delivery stops.",
               "allowedValues": [
                 {
                   "value": "10",
@@ -811,14 +875,6 @@
                 {
                   "value": "68",
                   "label": "Current Scheduled Delivery Date. Used for delivery stops."
-                },
-                {
-                  "value": "RQ",
-                  "label": "Requested stop date. Non-standard legacy value; deprecated by Owlery in July 2026."
-                },
-                {
-                  "value": "AT",
-                  "label": "The appointment date for the stop, as confirmed by the shipper"
                 }
               ]
             },
@@ -992,11 +1048,15 @@
                   "minLength": 2,
                   "maxLength": 3,
                   "dataType": "ID",
-                  "fieldDescription": "Code identifying an organizational entity, a physical location, property or an individual",
+                  "fieldDescription": "Code identifying the stop location. Owlery sends SF for pickup stops and ST for delivery stops.",
                   "allowedValues": [
                     {
-                      "value": "WH",
-                      "label": "Warehouse"
+                      "value": "SF",
+                      "label": "Ship From"
+                    },
+                    {
+                      "value": "ST",
+                      "label": "Ship To"
                     }
                   ]
                 },
@@ -1021,10 +1081,6 @@
                     {
                       "value": "93",
                       "label": "Code assigned by the organization that is the ultimate destination of the transaction set"
-                    },
-                    {
-                      "value": "ZZ",
-                      "label": "Mutually Defined"
                     }
                   ]
                 },
