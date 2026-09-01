@@ -2750,7 +2750,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Requested",
-        "description": "Webhook sent by Owlery to tender a shipment to a carrier. Owlery sends `loadNumber` and `revision`; carriers should use that Owlery load number when accepting or rejecting the tender and when later referencing tracking, invoices, and documents for this load. The initial tender uses `revision: 0`. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context.",
+        "description": "Webhook sent by Owlery to tender a carrier quote. The carrier already has the shipment details from the Rate Quote Requested webhook, so Owlery sends only the carrier-provided `carrierQuoteId` that identifies the selected quote. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context.",
         "operationId": "carrierWebhookTenderRequested",
         "security": [
           {
@@ -2765,100 +2765,7 @@
                 "$ref": "#/components/schemas/CarrierWebhookTenderRequest"
               },
               "example": {
-                "rateQuote": {
-                  "carrierQuoteId": "carrier-quote-789"
-                },
-                "loadNumber": "LOAD-12345",
-                "revision": 0,
-                "isTest": true,
-                "mode": "FTL",
-                "equipmentType": "Reefer",
-                "reeferSettings": {
-                  "minTemperature": 34,
-                  "maxTemperature": 38,
-                  "unit": "F",
-                  "sentryMode": "Continuous"
-                },
-                "stops": [
-                  {
-                    "type": "Pickup",
-                    "facility": {
-                      "name": "Origin Warehouse",
-                      "location": {
-                        "city": "Chicago",
-                        "state": "IL",
-                        "zipcode": "60601",
-                        "countryCode": "US",
-                        "street": "123 W Fulton Market"
-                      }
-                    },
-                    "dates": {
-                      "startAt": "2026-06-01T08:00:00Z",
-                      "endAt": "2026-06-01T10:00:00Z"
-                    },
-                    "requirements": {
-                      "liftgate": true,
-                      "inside": false,
-                      "limitedAccess": false,
-                      "residential": false,
-                      "appointment": true,
-                      "tradeshow": false
-                    },
-                    "items": [
-                      {
-                        "description": "Frozen prepared meals",
-                        "quantity": {
-                          "count": 10,
-                          "unit": "Pallet"
-                        },
-                        "weight": {
-                          "value": 1200,
-                          "unit": "LB"
-                        }
-                      }
-                    ],
-                    "referenceNumbers": [
-                      {
-                        "type": "Pickup",
-                        "value": "PU-123"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "Dropoff",
-                    "facility": {
-                      "name": "Destination DC",
-                      "location": {
-                        "zipcode": "10001",
-                        "countryCode": "US",
-                        "street": "456 9th Ave",
-                        "city": "New York",
-                        "state": "NY"
-                      }
-                    },
-                    "dates": {
-                      "startAt": "2026-06-03T08:00:00Z",
-                      "endAt": "2026-06-03T12:00:00Z"
-                    },
-                    "liveDropType": "drop",
-                    "referenceNumbers": [
-                      {
-                        "type": "Dropoff",
-                        "value": "DEL-456"
-                      }
-                    ]
-                  }
-                ],
-                "referenceNumbers": [
-                  {
-                    "type": "PO",
-                    "value": "PO-100045"
-                  },
-                  {
-                    "type": "BOL",
-                    "value": "BOL-778899"
-                  }
-                ]
+                "carrierQuoteId": "carrier-quote-789"
               }
             }
           }
@@ -2886,7 +2793,7 @@
                 },
                 "example": {
                   "error": "Bad Request",
-                  "message": "Missing required field: rateQuote.carrierQuoteId"
+                  "message": "Missing required field: carrierQuoteId"
                 }
               }
             }
@@ -8263,164 +8170,24 @@
       "CarrierWebhookTenderRequest": {
         "type": "object",
         "required": [
-          "rateQuote",
-          "loadNumber",
-          "revision",
-          "stops",
-          "referenceNumbers"
+          "carrierQuoteId"
         ],
         "properties": {
-          "rateQuote": {
-            "type": "object",
-            "required": [
-              "carrierQuoteId"
-            ],
-            "properties": {
-              "carrierQuoteId": {
-                "type": "string",
-                "description": "Carrier quote ID returned when submitting rate quote responses."
-              }
-            }
-          },
-          "loadNumber": {
+          "carrierQuoteId": {
             "type": "string",
-            "description": "Owlery load number. Use this value when later referencing tracking, invoices, and documents for this load."
-          },
-          "revision": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Tender revision for this load. The initial tender uses `0`; carriers must include this same value when accepting or rejecting the tender."
-          },
-          "isTest": {
-            "type": "boolean",
-            "default": false,
-            "description": "Present with value `true` when this tender belongs to a test quote. Owlery omits this field otherwise; if omitted or explicitly set to `false`, interpret it as `false`. Carriers should keep booking and downstream activity in their test/sandbox flow when true."
-          },
-          "mode": {
-            "type": "string",
-            "enum": [
-              "FTL",
-              "LTL",
-              "PTL",
-              "VLTL",
-              "IMDL"
-            ]
-          },
-          "equipmentType": {
-            "type": "string",
-            "enum": [
-              "Dryvan",
-              "Reefer",
-              "Flatbed",
-              "Drayage",
-              "Tanker"
-            ]
-          },
-          "reeferSettings": {
-            "$ref": "#/components/schemas/ReeferSettings"
-          },
-          "stops": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CarrierTenderWebhookStop"
-            },
-            "description": "Tender stops. Each stop includes its own `referenceNumbers` array; send an empty array when there are no stop-level reference numbers. Facility location must include street, city, state, zipcode, and countryCode."
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RateQuoteItem"
-            },
-            "description": "Tender freight items, if not already provided on stops."
-          },
-          "referenceNumbers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ReferenceNumber"
-            },
-            "description": "Reference numbers associated with this tender/load. Send an empty array when there are no top-level reference numbers. Carriers should use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
+            "description": "Carrier quote ID returned when submitting the selected rate quote response."
           }
         }
       },
       "CarrierTenderWebhookTender": {
         "type": "object",
         "required": [
-          "rateQuote",
-          "loadNumber",
-          "revision",
-          "stops",
-          "referenceNumbers"
+          "carrierQuoteId"
         ],
         "properties": {
-          "rateQuote": {
-            "type": "object",
-            "required": [
-              "carrierQuoteId"
-            ],
-            "properties": {
-              "carrierQuoteId": {
-                "type": "string",
-                "description": "Carrier quote ID returned when submitting rate quote responses."
-              }
-            }
-          },
-          "loadNumber": {
+          "carrierQuoteId": {
             "type": "string",
-            "description": "Owlery load number. Use this value when later referencing tracking, invoices, and documents for this load."
-          },
-          "revision": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Tender revision for this load. The initial tender uses `0`; carriers must include this same value when accepting or rejecting the tender."
-          },
-          "isTest": {
-            "type": "boolean",
-            "default": false,
-            "description": "Present with value `true` when this tender belongs to a test quote. Owlery omits this field otherwise; if omitted or explicitly set to `false`, interpret it as `false`. Carriers should keep booking and downstream activity in their test/sandbox flow when true."
-          },
-          "mode": {
-            "type": "string",
-            "enum": [
-              "FTL",
-              "LTL",
-              "PTL",
-              "VLTL",
-              "IMDL"
-            ]
-          },
-          "equipmentType": {
-            "type": "string",
-            "enum": [
-              "Dryvan",
-              "Reefer",
-              "Flatbed",
-              "Drayage",
-              "Tanker"
-            ]
-          },
-          "reeferSettings": {
-            "$ref": "#/components/schemas/ReeferSettings"
-          },
-          "stops": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CarrierTenderWebhookStop"
-            },
-            "description": "Tender stops. Each stop includes its own `referenceNumbers` array; send an empty array when there are no stop-level reference numbers. Facility location must include street, city, state, zipcode, and countryCode."
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RateQuoteItem"
-            },
-            "description": "Tender freight items, if not already provided on stops."
-          },
-          "referenceNumbers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ReferenceNumber"
-            },
-            "description": "Reference numbers associated with this tender/load. Send an empty array when there are no top-level reference numbers. Carriers should use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
+            "description": "Carrier quote ID returned when submitting the selected rate quote response."
           }
         }
       },
