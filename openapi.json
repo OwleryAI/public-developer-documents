@@ -7339,7 +7339,7 @@
           "isTest": {
             "type": "boolean",
             "default": false,
-            "description": "Set to `true` to create a test quote. Quotes for orders already marked as test remain test quotes regardless of this value. Test quotes are identified as test requests in carrier webhooks."
+            "description": "Set to `true` to create a test quote; omit otherwise. If omitted or explicitly set to `false`, this value is interpreted as `false`. Quotes for orders already marked as test remain test quotes regardless of this value. Test quotes are identified as test requests in carrier webhooks."
           },
           "orderNumber": {
             "type": "string",
@@ -7399,7 +7399,7 @@
           "isTest": {
             "type": "boolean",
             "default": false,
-            "description": "Whether to create a test quote. Test quotes are identified as test requests in carrier webhooks."
+            "description": "Set to `true` to create a test quote; omit otherwise. If omitted or explicitly set to `false`, this value is interpreted as `false`. Test quotes are identified as test requests in carrier webhooks."
           },
           "stops": {
             "type": "array",
@@ -7688,7 +7688,6 @@
       "RateQuote": {
         "type": "object",
         "required": [
-          "isTest",
           "shortId",
           "stops",
           "responses"
@@ -7696,7 +7695,8 @@
         "properties": {
           "isTest": {
             "type": "boolean",
-            "description": "Whether this is a test quote."
+            "default": false,
+            "description": "Present with value `true` when this is a test quote. If omitted, interpret this value as `false`."
           },
           "shortId": {
             "type": "string",
@@ -8103,7 +8103,6 @@
         "type": "object",
         "required": [
           "id",
-          "isTest",
           "stops"
         ],
         "properties": {
@@ -8113,7 +8112,8 @@
           },
           "isTest": {
             "type": "boolean",
-            "description": "Whether this is a test quote. Carriers should return test/sandbox responses and avoid production booking side effects when true."
+            "default": false,
+            "description": "Present with value `true` when this is a test quote. Owlery omits this field otherwise; if omitted or explicitly set to `false`, interpret it as `false`. Carriers should return test/sandbox responses and avoid production booking side effects when true."
           },
           "equipmentType": {
             "type": "string",
@@ -8246,7 +8246,6 @@
           "rateQuote",
           "loadNumber",
           "revision",
-          "isTest",
           "stops",
           "referenceNumbers"
         ],
@@ -8279,7 +8278,8 @@
           },
           "isTest": {
             "type": "boolean",
-            "description": "Whether this tender belongs to a test quote. Carriers should keep booking and downstream activity in their test/sandbox flow when true."
+            "default": false,
+            "description": "Present with value `true` when this tender belongs to a test quote. Owlery omits this field otherwise; if omitted or explicitly set to `false`, interpret it as `false`. Carriers should keep booking and downstream activity in their test/sandbox flow when true."
           },
           "mode": {
             "type": "string",
@@ -8333,7 +8333,6 @@
           "rateQuote",
           "loadNumber",
           "revision",
-          "isTest",
           "stops",
           "referenceNumbers"
         ],
@@ -8366,7 +8365,8 @@
           },
           "isTest": {
             "type": "boolean",
-            "description": "Whether this tender belongs to a test quote. Carriers should keep booking and downstream activity in their test/sandbox flow when true."
+            "default": false,
+            "description": "Present with value `true` when this tender belongs to a test quote. Owlery omits this field otherwise; if omitted or explicitly set to `false`, interpret it as `false`. Carriers should keep booking and downstream activity in their test/sandbox flow when true."
           },
           "mode": {
             "type": "string",
@@ -8417,8 +8417,7 @@
       "CarrierWebhookCancelRequest": {
         "type": "object",
         "required": [
-          "loadNumber",
-          "isTest"
+          "loadNumber"
         ],
         "properties": {
           "loadNumber": {
@@ -8427,7 +8426,8 @@
           },
           "isTest": {
             "type": "boolean",
-            "description": "Whether the cancelled tender/load is a test. Carriers should keep cancellation activity in their test/sandbox flow when true."
+            "default": false,
+            "description": "Present with value `true` when the cancelled tender/load is a test. Owlery omits this field otherwise; if omitted or explicitly set to `false`, interpret it as `false`. Carriers should keep cancellation activity in their test/sandbox flow when true."
           }
         }
       },
@@ -8798,7 +8798,6 @@
         "required": [
           "loadNumber",
           "revision",
-          "isTest",
           "stops",
           "referenceNumbers"
         ],
@@ -8814,7 +8813,8 @@
           },
           "isTest": {
             "type": "boolean",
-            "description": "Whether this edit belongs to a test tender/load. Carriers should keep the update in their test/sandbox flow when true."
+            "default": false,
+            "description": "Present with value `true` when this edit belongs to a test tender/load. Owlery omits this field otherwise; if omitted or explicitly set to `false`, interpret it as `false`. Carriers should keep the update in their test/sandbox flow when true."
           },
           "mode": {
             "type": "string",
