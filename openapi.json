@@ -2608,7 +2608,7 @@
           "carrier-webhooks"
         ],
         "summary": "Rate Quote Requested",
-        "description": "Webhook sent by Owlery to a carrier when Owlery requests rates. Configure one active webhook connection per shipper organization and carrier integration; a child shipper organization may inherit its parent's carrier configuration. The request body itself is the rate quote request. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context. Return `200 OK` to acknowledge receipt only. Submit all quote responses asynchronously to `POST /api/ext/v1/rate-quote/responses`; Owlery does not process quote results from the webhook response body.",
+        "description": "Webhook sent by Owlery to a carrier when Owlery requests rates. The request body itself is the rate quote request. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context. Return `200 OK` to acknowledge receipt only. Submit all quote responses asynchronously to `POST /api/ext/v1/rate-quote/responses`; Owlery does not process quote results from the webhook response body.",
         "operationId": "carrierWebhookRateQuoteRequested",
         "security": [
           {
@@ -2964,6 +2964,14 @@
                     "dates": {
                       "startAt": "2026-06-01T09:00:00Z",
                       "endAt": "2026-06-01T11:00:00Z"
+                    },
+                    "requirements": {
+                      "liftgate": true,
+                      "inside": false,
+                      "limitedAccess": true,
+                      "residential": false,
+                      "appointment": true,
+                      "tradeshow": false
                     },
                     "items": [
                       {
@@ -7330,6 +7338,7 @@
         "properties": {
           "isTest": {
             "type": "boolean",
+            "default": false,
             "description": "Set to `true` to create a test quote. Quotes for orders already marked as test remain test quotes regardless of this value. Test quotes are identified as test requests in carrier webhooks."
           },
           "orderNumber": {
