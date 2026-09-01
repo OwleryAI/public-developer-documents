@@ -2648,6 +2648,14 @@
                       "startAt": "2026-06-01T08:00:00Z",
                       "endAt": "2026-06-01T10:00:00Z"
                     },
+                    "requirements": {
+                      "liftgate": true,
+                      "inside": false,
+                      "limitedAccess": false,
+                      "residential": false,
+                      "appointment": true,
+                      "tradeshow": false
+                    },
                     "items": [
                       {
                         "description": "Frozen prepared meals",
@@ -4014,6 +4022,14 @@
                     "dates": {
                       "startAt": "2025-06-01",
                       "endAt": "2025-06-02"
+                    },
+                    "requirements": {
+                      "liftgate": true,
+                      "inside": false,
+                      "limitedAccess": false,
+                      "residential": false,
+                      "appointment": true,
+                      "tradeshow": false
                     },
                     "items": [
                       {
@@ -7457,6 +7473,9 @@
           "dates": {
             "$ref": "#/components/schemas/DatePair"
           },
+          "requirements": {
+            "$ref": "#/components/schemas/StopRequirements"
+          },
           "items": {
             "type": "array",
             "items": {
@@ -7770,6 +7789,9 @@
           },
           "dates": {
             "$ref": "#/components/schemas/StopDatesView"
+          },
+          "requirements": {
+            "$ref": "#/components/schemas/StopRequirements"
           },
           "referenceNumbers": {
             "type": "array",
@@ -8530,6 +8552,9 @@
           "dates": {
             "$ref": "#/components/schemas/DatePair"
           },
+          "requirements": {
+            "$ref": "#/components/schemas/StopRequirements"
+          },
           "items": {
             "type": "array",
             "items": {
@@ -8705,7 +8730,7 @@
           }
         }
       },
-      "CarrierTenderWebhookStopRequirements": {
+      "StopRequirements": {
         "type": "object",
         "required": [
           "liftgate",
@@ -8775,7 +8800,7 @@
             "$ref": "#/components/schemas/DatePair"
           },
           "requirements": {
-            "$ref": "#/components/schemas/CarrierTenderWebhookStopRequirements"
+            "$ref": "#/components/schemas/StopRequirements"
           },
           "items": {
             "type": "array",
