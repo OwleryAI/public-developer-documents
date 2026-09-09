@@ -3424,7 +3424,7 @@
           "shipper-items"
         ],
         "summary": "Create or Update Items",
-        "description": "This endpoint allows shippers to create or update one or more inventory items in Owlery. When the SKU already exists, the item with the same SKU will be updated.",
+        "description": "Create or update one or more inventory items. Most integrations send standard items without `variants`. When a facility uses an alternate SKU, an item may instead include nested variants and facility-specific conversions. A nested variant is stored as a regular inventory item linked to its parent item; it does not require or inherit the parent item's packaging. Identify facilities with `companyEmailDomain` rather than an internal facility organization ID. If a variant fails validation, the parent item and other valid variants may still be ingested and the endpoint returns `207` with per-SKU failures.",
         "operationId": "createOrUpdateItems",
         "requestBody": {
           "required": true,
@@ -3433,33 +3433,81 @@
               "schema": {
                 "$ref": "#/components/schemas/CreateItemsRequest"
               },
-              "example": {
-                "items": [
-                  {
-                    "sku": "A01-COFFEE",
-                    "name": "Night Owl Coffee",
-                    "description": "Premium roasted coffee beans",
-                    "nmfcCode": "12345",
-                    "isStackable": true,
-                    "isTurnable": false,
-                    "packaging": [
+              "examples": {
+                "standardItem": {
+                  "summary": "Standard inventory item without variants (most common)",
+                  "description": "Omit `variants` and `facilityConversions` when facilities use the same SKU and quantity representation.",
+                  "value": {
+                    "items": [
                       {
-                        "type": "Case",
-                        "weight": {
-                          "value": 20,
-                          "unit": "LB"
+                        "sku": "A01-COFFEE",
+                        "name": "Night Owl Coffee",
+                        "description": "Premium roasted coffee beans",
+                        "nmfcCode": "12345",
+                        "isStackable": true,
+                        "isTurnable": false,
+                        "packaging": [
+                          {
+                            "type": "Each",
+                            "parentType": "Case",
+                            "quantityPerParent": 12
+                          },
+                          {
+                            "type": "Case",
+                            "parentType": "Pallet",
+                            "quantityPerParent": 50,
+                            "weight": {
+                              "value": 20,
+                              "unit": "LB"
+                            }
+                          },
+                          {
+                            "type": "Pallet"
+                          }
+                        ],
+                        "reeferSettings": {
+                          "minTemperature": 34,
+                          "maxTemperature": 38,
+                          "unit": "F",
+                          "preCoolTemperature": 36,
+                          "sentryMode": "Continuous"
                         }
                       }
-                    ],
-                    "reeferSettings": {
-                      "minTemperature": 34,
-                      "maxTemperature": 38,
-                      "unit": "F",
-                      "preCoolTemperature": 36,
-                      "sentryMode": "Continuous"
-                    }
+                    ]
                   }
-                ]
+                },
+                "itemWithVariants": {
+                  "summary": "Inventory item with a facility-specific variant SKU",
+                  "description": "Use a nested variant only when a facility identifies or counts the item differently.",
+                  "value": {
+                    "items": [
+                      {
+                        "sku": "A01-COFFEE",
+                        "name": "Night Owl Coffee",
+                        "packaging": [
+                          {
+                            "type": "Pallet"
+                          }
+                        ],
+                        "variants": [
+                          {
+                            "sku": "A01-COFFEE-CASE",
+                            "facilityConversions": [
+                              {
+                                "companyEmailDomain": "distribution-center.example",
+                                "quantityUnit": "Case",
+                                "sameUnitConversion": {
+                                  "from": 12,
+                                  "to": 1
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
               }
             }
           }
@@ -3498,8 +3546,8 @@
                   ],
                   "failures": [
                     {
-                      "sku": "A01-TEA",
-                      "error": "Reason why failed"
+                      "sku": "A01-COFFEE-CASE",
+                      "error": "Facility distribution-center.example is unavailable or not accessible"
                     }
                   ]
                 }
@@ -7103,9 +7151,9 @@
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CreateInventoryItem"
+              "$ref": "#/components/schemas/IngestInventoryItem"
             },
-            "description": "Array of inventory items to create."
+            "description": "Array of inventory items to create or update. Most requests omit variants; include them only when a facility uses an alternate SKU."
           }
         }
       },
@@ -7117,14 +7165,14 @@
             "items": {
               "$ref": "#/components/schemas/UpsertedItemSummary"
             },
-            "description": "Items that were successfully created or updated."
+            "description": "Top-level items that were successfully created or updated. Nested variant SKUs are not repeated in this array."
           },
           "failures": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UpsertItemFailure"
             },
-            "description": "Validation or processing failures per item."
+            "description": "Validation or processing failures per top-level or variant SKU. A top-level item may appear in `upsertedItems` even when one of its variants appears here."
           }
         }
       },
@@ -7191,12 +7239,115 @@
             "items": {
               "$ref": "#/components/schemas/InventoryItemPackaging"
             },
-            "description": "Packaging information for the item."
+            "description": "Optional packaging information for the parent item. When provided, the hierarchy must include a Pallet level. Nested variants do not accept or inherit packaging."
           },
           "reeferSettings": {
             "$ref": "#/components/schemas/ReeferSettings"
           }
         }
+      },
+      "IngestInventoryItem": {
+        "description": "Inventory item accepted by the bulk ingestion endpoint. Variant fields are optional; omit them to retain standard item ingestion behavior.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CreateInventoryItem"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "facilityConversions": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/InventoryItemFacilityConversion"
+                },
+                "description": "Facility conversions for the top-level SKU itself. Use this when a facility uses the same SKU with a different unit or quantity conversion. A facility can have only one conversion configuration for a given parent item."
+              },
+              "variants": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/InventoryItemVariant"
+                },
+                "description": "Optional variant SKUs linked to this parent item. Variants are regular inventory items and do not require or inherit packaging."
+              }
+            }
+          }
+        ]
+      },
+      "InventoryItemVariant": {
+        "type": "object",
+        "required": [
+          "sku"
+        ],
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "Unique SKU for the variant. It must differ from the parent item's SKU and cannot already belong to another parent item."
+          },
+          "facilityConversions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryItemFacilityConversion"
+            },
+            "description": "Optional facility-specific unit and quantity conversions for this variant."
+          }
+        }
+      },
+      "InventoryItemFacilityConversion": {
+        "type": "object",
+        "required": [
+          "companyEmailDomain",
+          "quantityUnit"
+        ],
+        "properties": {
+          "companyEmailDomain": {
+            "type": "string",
+            "description": "Company email domain of a facility visible to the authenticated organization. Values are trimmed and matched case-insensitively. Internal facility organization IDs are not accepted."
+          },
+          "quantityUnit": {
+            "type": "string",
+            "enum": [
+              "Each",
+              "Bottle",
+              "Bag",
+              "Pack",
+              "Tray",
+              "Case",
+              "Carton",
+              "Pallet",
+              "Skid",
+              "Roll",
+              "Pail",
+              "Drum",
+              "Tote",
+              "Kd",
+              "Poly"
+            ],
+            "description": "Unit of measure used by this facility for the top-level or variant SKU."
+          },
+          "sameUnitConversion": {
+            "$ref": "#/components/schemas/InventoryItemSameUnitConversion"
+          }
+        }
+      },
+      "InventoryItemSameUnitConversion": {
+        "type": "object",
+        "required": [
+          "from",
+          "to"
+        ],
+        "properties": {
+          "from": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Positive quantity in the original SKU."
+          },
+          "to": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Equivalent positive quantity in the facility's SKU."
+          }
+        },
+        "description": "Optional quantity ratio from the original SKU to the facility SKU. For example, `{\"from\": 12, \"to\": 1}` means 12 original units equal 1 facility unit. `from` and `to` must be positive integers and cannot be equal."
       },
       "InventoryItemPackaging": {
         "type": "object",
