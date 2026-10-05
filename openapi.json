@@ -2750,7 +2750,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Requested",
-        "description": "Webhook sent by Owlery to tender a carrier quote. The carrier already has the shipment details from the Rate Quote Requested webhook, so Owlery sends only the carrier-provided `carrierQuoteId` that identifies the selected quote. Owlery sends carrier-configured authentication headers with this request. The carrier should use those headers to identify the shipper/account context.",
+        "description": "Webhook sent by Owlery to tender a carrier quote. The carrier already has the shipment details from the Rate Quote Requested webhook. Owlery sends the selected carrierQuoteId together with the Owlery loadNumber and revision 0. Return 200 OK to acknowledge receipt; this does not accept the tender. Accept or reject asynchronously through POST /api/ext/v1/tenders/accept or POST /api/ext/v1/tenders/reject, echoing loadNumber and revision. Owlery sends carrier-configured authentication headers; the carrier should use them to identify the shipper/account context.",
         "operationId": "carrierWebhookTenderRequested",
         "security": [
           {
@@ -2765,14 +2765,16 @@
                 "$ref": "#/components/schemas/CarrierWebhookTenderRequest"
               },
               "example": {
-                "carrierQuoteId": "carrier-quote-789"
+                "carrierQuoteId": "carrier-quote-789",
+                "loadNumber": "LOAD-12345",
+                "revision": 0
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Webhook processed successfully",
+            "description": "Tender webhook acknowledged. Acknowledge receipt only; accept or reject through the carrier callback API using the supplied loadNumber and revision.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2836,7 +2838,7 @@
           "carrier-webhooks"
         ],
         "summary": "Tender Edited",
-        "description": "Webhook sent by Owlery when a tendered load changes. This same payload is used for load edits after the carrier already knows the load. The payload is a full replacement view of the current tender/load details; carriers should update their shipment using `loadNumber` as the identifier.",
+        "description": "Webhook sent by Owlery when a tendered load changes. This same payload is used for load edits after the carrier already knows the load. The payload is a full replacement view of the current tender/load details. Identify the shipment by loadNumber and the version by revision. The first edit is revision 1; each new edit increments the revision, while redelivery of the same version retains it. Return 200 OK to acknowledge receipt, then accept or reject asynchronously through the carrier callback API, echoing loadNumber and revision. A callback for a superseded revision returns 409 Conflict.",
         "operationId": "carrierWebhookTenderEdited",
         "security": [
           {
@@ -2940,14 +2942,15 @@
                     "type": "BOL",
                     "value": "BOL-778899"
                   }
-                ]
+                ],
+                "revision": 1
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Webhook processed successfully",
+            "description": "Tender edit webhook acknowledged. Acknowledge receipt only; accept or reject through the carrier callback API using the supplied loadNumber and revision.",
             "content": {
               "application/json": {
                 "schema": {
@@ -8321,24 +8324,46 @@
       "CarrierWebhookTenderRequest": {
         "type": "object",
         "required": [
-          "carrierQuoteId"
+          "carrierQuoteId",
+          "loadNumber",
+          "revision"
         ],
         "properties": {
           "carrierQuoteId": {
             "type": "string",
             "description": "Carrier quote ID returned when submitting the selected rate quote response."
+          },
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number for this tender. Echo this value with revision in the tender accept/reject callback; use it for tracking, invoices, documents, and later load updates."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based tender revision. The original tender is 0. A new tender edit increments the revision; redelivery of the same version retains its revision. Echo this value with loadNumber when accepting or rejecting the tender."
           }
         }
       },
       "CarrierTenderWebhookTender": {
         "type": "object",
         "required": [
-          "carrierQuoteId"
+          "carrierQuoteId",
+          "loadNumber",
+          "revision"
         ],
         "properties": {
           "carrierQuoteId": {
             "type": "string",
             "description": "Carrier quote ID returned when submitting the selected rate quote response."
+          },
+          "loadNumber": {
+            "type": "string",
+            "description": "Owlery load number for this tender. Echo this value with revision in the tender accept/reject callback; use it for tracking, invoices, documents, and later load updates."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based tender revision. The original tender is 0. A new tender edit increments the revision; redelivery of the same version retains its revision. Echo this value with loadNumber when accepting or rejecting the tender."
           }
         }
       },
@@ -8728,6 +8753,7 @@
         "type": "object",
         "required": [
           "loadNumber",
+          "revision",
           "stops",
           "referenceNumbers"
         ],
@@ -8784,6 +8810,11 @@
               "$ref": "#/components/schemas/ReferenceNumber"
             },
             "description": "Updated reference numbers associated with this tender/load. Treat this as the current full reference number list. Send an empty array when there are no top-level reference numbers. Carriers should still use Owlery `loadNumber` as the primary identifier for tracking, invoices, documents, and tender responses."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based tender revision. The original tender is 0. A new tender edit increments the revision; redelivery of the same version retains its revision. Echo this value with loadNumber when accepting or rejecting the tender."
           }
         }
       },
