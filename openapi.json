@@ -115,17 +115,24 @@
           "shipper-plan"
         ],
         "summary": "Create a Plan",
-        "description": "This endpoint creates a transportation plan for one or more orders.",
+        "description": "This endpoint creates a transportation plan for one or more orders. The request body can be a single order or an array of orders.",
         "operationId": "createPlan",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/UpsertOrder"
-                }
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/UpsertOrder"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/UpsertOrder"
+                    }
+                  }
+                ]
               },
               "example": [
                 {
@@ -151,7 +158,6 @@
                       "type": "pickup",
                       "facility": {
                         "lookupCode": "INT",
-                        "source": "NetSuite",
                         "sourceId": "F100001",
                         "location": {
                           "street": "123 Main Street",
@@ -170,7 +176,6 @@
                       "type": "dropoff",
                       "facility": {
                         "lookupCode": "NJ",
-                        "source": "NetSuite",
                         "sourceId": "F100002",
                         "location": {
                           "street": "456 First Ave",
@@ -201,7 +206,64 @@
                 "example": {
                   "createdOrders": [
                     {
-                      "orderNumber": "TEST-INT20230201NJ"
+                      "orderNumber": "TEST-123"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was rejected and none of its orders were saved. Depending on the check that failed, the body is either:\n\n- a `PlanOrderResponse` whose `failures` explain the error, for example for an empty request body, an unsupported order `type`, an invalid stop `type`, or a stop without a `facility`; or\n- an error object with `statusCode`, `message`, `userFacingMessages`, and `detail`, for example for a missing `orderNumber`, a missing or unknown `source`, an invalid reference number, a facility `location` without any address fields, or an invalid date.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/PlanOrderResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/PlanErrorResponse"
+                    }
+                  ]
+                },
+                "examples": {
+                  "planFailure": {
+                    "summary": "Unsupported order type",
+                    "value": {
+                      "createdOrders": [],
+                      "failures": [
+                        {
+                          "failureErrorString": "Orders must be order types (purchase, sales, or transfer). Invalid orders: TEST-123"
+                        }
+                      ]
+                    }
+                  },
+                  "requestError": {
+                    "summary": "Missing order number",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Order number must be provided",
+                      "userFacingMessages": [],
+                      "detail": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Some or all orders were not saved, or a stop's facility could not be found. `createdOrders` lists the orders that were saved and `failures` describes each error. Some unexpected errors, such as orders with different `source` values in one request, return a plain-text message instead.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanOrderResponse"
+                },
+                "example": {
+                  "createdOrders": [],
+                  "failures": [
+                    {
+                      "failureErrorString": "We did not find the expected facility for order TEST-123 at stop 1"
                     }
                   ]
                 }
@@ -4454,9 +4516,8 @@
         "type": "object",
         "required": [
           "type",
-          "isTest",
+          "orderNumber",
           "source",
-          "sourceId",
           "status",
           "stops",
           "items"
@@ -4786,12 +4847,14 @@
               "bottle",
               "bag",
               "pack",
+              "tray",
               "case",
               "carton",
               "pallet",
               "skid",
               "roll",
               "pail",
+              "drum",
               "tote",
               "kd",
               "poly"
@@ -5324,11 +5387,11 @@
         "properties": {
           "lookupCode": {
             "type": "string",
-            "description": "Internal lookup code for the facility. At least one of this or (source + sourceId) must be provided."
+            "description": "Internal lookup code for the facility. At least one of this or `sourceId` must be provided."
           },
           "sourceId": {
             "type": "string",
-            "description": "Unique identifier of the facility in the source system. At least one of lookupCode or (source + sourceId) must be provided."
+            "description": "Unique identifier of the facility in the source system, matched together with the order's `source`. At least one of this or `lookupCode` must be provided."
           },
           "location": {
             "$ref": "#/components/schemas/Location"
@@ -5545,6 +5608,48 @@
           "failureErrorString": {
             "type": "string",
             "description": "Error message."
+          }
+        }
+      },
+      "PlanErrorResponse": {
+        "type": "object",
+        "required": [
+          "statusCode",
+          "message",
+          "userFacingMessages",
+          "detail"
+        ],
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code of the response."
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message."
+          },
+          "userFacingMessages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "level": {
+                  "type": "string",
+                  "enum": [
+                    "Warning",
+                    "Error"
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Additional messages. Empty for errors from this endpoint."
+          },
+          "detail": {
+            "type": "object",
+            "description": "Additional error details. An empty object for errors from this endpoint."
           }
         }
       },
