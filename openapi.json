@@ -115,7 +115,7 @@
           "shipper-plan"
         ],
         "summary": "Create a Plan",
-        "description": "This endpoint creates a transportation plan for one or more orders.",
+        "description": "This endpoint creates a transportation plan for one or more orders.\n\nEach order may include pallet rows in `loadItems`. Pallet rows are checked before anything in the request is saved: if any order has invalid pallet rows (`400`) or omits the pallet rows of an order that already has them (`409`), the whole request is rejected and nothing is saved. A `200` response means only that the orders were saved; existing quotes and loads are not recalculated when an order's items or pallet rows change.",
         "operationId": "createPlan",
         "requestBody": {
           "required": true,
@@ -127,66 +127,189 @@
                   "$ref": "#/components/schemas/UpsertOrder"
                 }
               },
-              "example": [
-                {
-                  "type": "transfer",
-                  "isTest": true,
-                  "orderNumber": "TEST-123",
-                  "source": "NetSuite",
-                  "sourceId": "123456",
-                  "status": "open",
-                  "items": [
+              "examples": {
+                "standardOrder": {
+                  "summary": "Order without pallet rows",
+                  "value": [
                     {
-                      "expectedQuantity": 200,
-                      "unitOfMeasure": "case",
-                      "inventory": {
-                        "sku": "A01-COFFEE",
-                        "name": "Night Owl Coffee"
-                      }
+                      "type": "transfer",
+                      "isTest": true,
+                      "orderNumber": "TEST-123",
+                      "source": "NetSuite",
+                      "sourceId": "123456",
+                      "status": "open",
+                      "items": [
+                        {
+                          "expectedQuantity": 200,
+                          "unitOfMeasure": "case",
+                          "inventory": {
+                            "sku": "A01-COFFEE",
+                            "name": "Night Owl Coffee"
+                          }
+                        }
+                      ],
+                      "stops": [
+                        {
+                          "index": 0,
+                          "type": "pickup",
+                          "facility": {
+                            "lookupCode": "INT",
+                            "source": "NetSuite",
+                            "sourceId": "F100001",
+                            "location": {
+                              "street": "123 Main Street",
+                              "city": "Joliet",
+                              "state": "IL",
+                              "zipcode": "60436"
+                            }
+                          },
+                          "orderDates": {
+                            "startAt": "2023-02-23"
+                          },
+                          "preventSendOrder": false
+                        },
+                        {
+                          "index": 1,
+                          "type": "dropoff",
+                          "facility": {
+                            "lookupCode": "NJ",
+                            "source": "NetSuite",
+                            "sourceId": "F100002",
+                            "location": {
+                              "street": "456 First Ave",
+                              "city": "Newfield",
+                              "state": "NJ",
+                              "zipcode": "08344"
+                            }
+                          },
+                          "orderDates": {
+                            "startAt": "2023-02-26"
+                          },
+                          "preventSendOrder": false
+                        }
+                      ]
                     }
-                  ],
-                  "stops": [
+                  ]
+                },
+                "orderWithPalletRows": {
+                  "summary": "Order with pallet rows",
+                  "description": "Each pallet row lists the positions of its items in `items`. Every item is on exactly one row.",
+                  "value": [
                     {
-                      "index": 0,
-                      "type": "pickup",
-                      "facility": {
-                        "lookupCode": "INT",
-                        "source": "NetSuite",
-                        "sourceId": "F100001",
-                        "location": {
-                          "street": "123 Main Street",
-                          "city": "Joliet",
-                          "state": "IL",
-                          "zipcode": "60436"
+                      "type": "sales",
+                      "isTest": true,
+                      "orderNumber": "TEST-124",
+                      "source": "NetSuite",
+                      "sourceId": "123457",
+                      "status": "open",
+                      "items": [
+                        {
+                          "expectedQuantity": 200,
+                          "unitOfMeasure": "case",
+                          "inventory": {
+                            "sku": "A01-COFFEE",
+                            "name": "Night Owl Coffee"
+                          }
+                        },
+                        {
+                          "expectedQuantity": 120,
+                          "unitOfMeasure": "case",
+                          "inventory": {
+                            "sku": "A02-TEA",
+                            "name": "Early Bird Tea"
+                          }
                         }
-                      },
-                      "orderDates": {
-                        "startAt": "2023-02-23"
-                      },
-                      "preventSendOrder": false
-                    },
-                    {
-                      "index": 1,
-                      "type": "dropoff",
-                      "facility": {
-                        "lookupCode": "NJ",
-                        "source": "NetSuite",
-                        "sourceId": "F100002",
-                        "location": {
-                          "street": "456 First Ave",
-                          "city": "Newfield",
-                          "state": "NJ",
-                          "zipcode": "08344"
+                      ],
+                      "loadItems": [
+                        {
+                          "quantity": {
+                            "count": 2,
+                            "unit": "pallet"
+                          },
+                          "dimensions": {
+                            "length": 48,
+                            "width": 40,
+                            "height": 50,
+                            "unit": "in"
+                          },
+                          "weight": {
+                            "value": 1800,
+                            "unit": "lb"
+                          },
+                          "class": "CLASS_70",
+                          "isStackable": false,
+                          "isTurnable": true,
+                          "orderItemIndexes": [
+                            0
+                          ]
+                        },
+                        {
+                          "quantity": {
+                            "count": 1,
+                            "unit": "pallet"
+                          },
+                          "dimensions": {
+                            "length": 48,
+                            "width": 40,
+                            "height": 45,
+                            "unit": "in"
+                          },
+                          "weight": {
+                            "value": 650,
+                            "unit": "lb"
+                          },
+                          "class": "CLASS_85",
+                          "nmfcCode": "12345",
+                          "description": "Tea cases",
+                          "isStackable": true,
+                          "isTurnable": true,
+                          "orderItemIndexes": [
+                            1
+                          ]
                         }
-                      },
-                      "orderDates": {
-                        "startAt": "2023-02-26"
-                      },
-                      "preventSendOrder": false
+                      ],
+                      "stops": [
+                        {
+                          "index": 0,
+                          "type": "pickup",
+                          "facility": {
+                            "lookupCode": "INT",
+                            "sourceId": "F100001",
+                            "location": {
+                              "street": "123 Main Street",
+                              "city": "Joliet",
+                              "state": "IL",
+                              "zipcode": "60436"
+                            }
+                          },
+                          "orderDates": {
+                            "startAt": "2023-02-23"
+                          },
+                          "preventSendOrder": false
+                        },
+                        {
+                          "index": 1,
+                          "type": "dropoff",
+                          "facility": {
+                            "lookupCode": "NJ",
+                            "sourceId": "F100002",
+                            "location": {
+                              "street": "456 First Ave",
+                              "city": "Newfield",
+                              "state": "NJ",
+                              "zipcode": "08344"
+                            }
+                          },
+                          "orderDates": {
+                            "startAt": "2023-02-26"
+                          },
+                          "preventSendOrder": false
+                        }
+                      ]
                     }
                   ]
                 }
-              ]
+              }
             }
           }
         },
@@ -204,6 +327,80 @@
                       "orderNumber": "TEST-INT20230201NJ"
                     }
                   ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Pallet rows are invalid. Nothing in the request is saved. `detail.validationIssues` lists each value to fix.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanValidationErrorResponse"
+                },
+                "examples": {
+                  "invalidPalletRow": {
+                    "summary": "Invalid pallet row value",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Pallet rows on order TEST-124 are missing or invalid. Send 1 to 100 rows, each with a pallet count and the quantity unit \"pallet\", positive dimensions, a total weight, a freight class such as CLASS_70, and stackable and turnable flags, then send the order again.",
+                      "userFacingMessages": [],
+                      "detail": {
+                        "validationIssues": [
+                          {
+                            "path": [
+                              0,
+                              "loadItems",
+                              1,
+                              "weight",
+                              "value"
+                            ],
+                            "message": "Enter a value that is greater than 0."
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "itemNotOnPalletRow": {
+                    "summary": "Item not on any pallet row",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Add A02-TEA to a pallet row on order TEST-124, then send the order again. Every item must be on one pallet row.",
+                      "userFacingMessages": [],
+                      "detail": {
+                        "validationIssues": [
+                          {
+                            "path": [
+                              0,
+                              "items",
+                              1
+                            ],
+                            "message": "Add this item to a pallet row."
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "An order in the request already has pallet rows but was sent without `loadItems`. Nothing in the request is saved. Send the whole request again with every pallet row of each order in `detail.orderNumbers`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanConflictErrorResponse"
+                },
+                "example": {
+                  "statusCode": 409,
+                  "message": "Pallet rows already exist on TEST-124, so nothing in this request was saved. Send the whole request again with every pallet row of each listed order in loadItems.",
+                  "userFacingMessages": [],
+                  "detail": {
+                    "orderNumbers": [
+                      "TEST-124"
+                    ]
+                  }
                 }
               }
             }
@@ -4515,6 +4712,165 @@
               "$ref": "#/components/schemas/ShipmentItem"
             },
             "description": "The items being shipped as part of the order."
+          },
+          "loadItems": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/UpsertOrderLoadItem"
+            },
+            "description": "Pallet rows for the order. Quotes for the order use these rows instead of calculating pallets from `items`. Omit this field when you have no pallet details; an empty array or `null` is rejected. Every item in `items` must be on exactly one row, and the items of an order with pallet rows cannot use the `pallet` or `skid` unit of measure.\n\nSending an order again with `loadItems` replaces its items and pallet rows together. Once an order has pallet rows, every later request for that order must include all of its rows: a request that omits `loadItems` for such an order returns `409` and nothing in the request is saved. Send the same `orderNumber`, `type`, `source`, and `sourceId` every time; a request that changes any of them is saved as a separate order."
+          }
+        }
+      },
+      "UpsertOrderLoadItem": {
+        "type": "object",
+        "required": [
+          "quantity",
+          "dimensions",
+          "weight",
+          "class",
+          "isStackable",
+          "isTurnable",
+          "orderItemIndexes"
+        ],
+        "properties": {
+          "quantity": {
+            "type": "object",
+            "required": [
+              "count",
+              "unit"
+            ],
+            "properties": {
+              "count": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Number of pallets on this row."
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "pallet"
+                ],
+                "description": "Quantity unit. Must be `pallet`."
+              }
+            },
+            "description": "Number of pallets on this row."
+          },
+          "dimensions": {
+            "type": "object",
+            "required": [
+              "length",
+              "width",
+              "height",
+              "unit"
+            ],
+            "properties": {
+              "length": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "description": "Length value."
+              },
+              "width": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "description": "Width value."
+              },
+              "height": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "description": "Height value."
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "in",
+                  "cm"
+                ],
+                "description": "Length unit."
+              }
+            },
+            "description": "Dimensions of a single pallet on this row."
+          },
+          "weight": {
+            "type": "object",
+            "required": [
+              "value",
+              "unit"
+            ],
+            "properties": {
+              "value": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "description": "Weight value."
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "lb",
+                  "kg"
+                ],
+                "description": "Weight unit."
+              }
+            },
+            "description": "Total weight of all pallets on this row."
+          },
+          "class": {
+            "type": "string",
+            "enum": [
+              "CLASS_50",
+              "CLASS_55",
+              "CLASS_60",
+              "CLASS_65",
+              "CLASS_70",
+              "CLASS_77_5",
+              "CLASS_85",
+              "CLASS_92_5",
+              "CLASS_100",
+              "CLASS_110",
+              "CLASS_125",
+              "CLASS_150",
+              "CLASS_175",
+              "CLASS_200",
+              "CLASS_250",
+              "CLASS_300",
+              "CLASS_400",
+              "CLASS_500"
+            ],
+            "description": "Freight class of this row. For example, `CLASS_70` is class 70 and `CLASS_77_5` is class 77.5."
+          },
+          "nmfcCode": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "NMFC code."
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Description of the pallets on this row."
+          },
+          "isStackable": {
+            "type": "boolean",
+            "description": "Whether the pallets on this row can be stacked."
+          },
+          "isTurnable": {
+            "type": "boolean",
+            "description": "Whether the pallets on this row can be turned."
+          },
+          "orderItemIndexes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Zero-based positions in the same order's `items` array of the items on this row. Each item must be on exactly one row of the order."
           }
         }
       },
@@ -5545,6 +5901,139 @@
           "failureErrorString": {
             "type": "string",
             "description": "Error message."
+          }
+        }
+      },
+      "PlanValidationErrorResponse": {
+        "type": "object",
+        "required": [
+          "statusCode",
+          "message",
+          "userFacingMessages",
+          "detail"
+        ],
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code of the response."
+          },
+          "message": {
+            "type": "string",
+            "description": "Full explanation of the error and how to fix the request."
+          },
+          "userFacingMessages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "level": {
+                  "type": "string",
+                  "enum": [
+                    "Warning",
+                    "Error"
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Additional messages. Empty for pallet row errors."
+          },
+          "detail": {
+            "type": "object",
+            "required": [
+              "validationIssues"
+            ],
+            "properties": {
+              "validationIssues": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ValidationIssue"
+                },
+                "description": "The request values to fix."
+              }
+            }
+          }
+        }
+      },
+      "ValidationIssue": {
+        "type": "object",
+        "required": [
+          "path",
+          "message"
+        ],
+        "properties": {
+          "path": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "description": "Location of the value in the request body. When the request body is an array of orders, the path starts with the order's position, such as `[1, \"loadItems\", 0, \"weight\", \"value\"]`. When the request body is a single order object, the path has no order position, such as `[\"loadItems\", 0, \"weight\", \"value\"]`."
+          },
+          "message": {
+            "type": "string",
+            "description": "Short hint on how to fix the value."
+          }
+        }
+      },
+      "PlanConflictErrorResponse": {
+        "type": "object",
+        "required": [
+          "statusCode",
+          "message",
+          "userFacingMessages",
+          "detail"
+        ],
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code of the response."
+          },
+          "message": {
+            "type": "string",
+            "description": "Full explanation of the error and how to fix the request."
+          },
+          "userFacingMessages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "level": {
+                  "type": "string",
+                  "enum": [
+                    "Warning",
+                    "Error"
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Additional messages. Empty for pallet row errors."
+          },
+          "detail": {
+            "type": "object",
+            "required": [
+              "orderNumbers"
+            ],
+            "properties": {
+              "orderNumbers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Orders that already have pallet rows but were sent without `loadItems`."
+              }
+            }
           }
         }
       },
