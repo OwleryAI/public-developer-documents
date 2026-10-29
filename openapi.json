@@ -473,7 +473,7 @@
                       "isTeamRate": false,
                       "isContractRate": true,
                       "isDirectTender": false,
-                      "shipmentMode": "Normal",
+                      "shipmentMode": "Truck",
                       "stops": [
                         {
                           "index": 0,
@@ -590,8 +590,8 @@
                         }
                       ],
                       "price": {
-                        "cents": 125000,
-                        "currencyCode": "USD"
+                        "currencyCode": "USD",
+                        "total": 125000
                       },
                       "lineItems": [
                         {
@@ -618,7 +618,7 @@
                         "dotNumber": "DOT789012",
                         "scac": "GRFT"
                       },
-                      "status": "Tendered",
+                      "status": "tendered",
                       "updatedAtInMs": 1776787200000,
                       "updatedBy": "user@example.com"
                     }
@@ -651,7 +651,7 @@
                       "isTeamRate": false,
                       "isContractRate": true,
                       "isDirectTender": false,
-                      "shipmentMode": "Normal",
+                      "shipmentMode": "Truck",
                       "stops": [
                         {
                           "index": 0,
@@ -879,8 +879,8 @@
                         }
                       ],
                       "price": {
-                        "cents": 125000,
-                        "currencyCode": "USD"
+                        "currencyCode": "USD",
+                        "total": 125000
                       },
                       "lineItems": [
                         {
@@ -907,7 +907,7 @@
                         "dotNumber": "DOT789012",
                         "scac": "GRFT"
                       },
-                      "status": "Tendered",
+                      "status": "tendered",
                       "updatedAtInMs": 1776787200000,
                       "updatedBy": "user@example.com"
                     }
@@ -941,7 +941,7 @@
                       "isTeamRate": false,
                       "isContractRate": true,
                       "isDirectTender": false,
-                      "shipmentMode": "Normal",
+                      "shipmentMode": "Truck",
                       "stops": [
                         {
                           "index": 0,
@@ -1169,8 +1169,8 @@
                         }
                       ],
                       "price": {
-                        "cents": 125000,
-                        "currencyCode": "USD"
+                        "currencyCode": "USD",
+                        "total": 125000
                       },
                       "lineItems": [
                         {
@@ -1197,7 +1197,7 @@
                         "dotNumber": "DOT789012",
                         "scac": "GRFT"
                       },
-                      "status": "Tendered",
+                      "status": "tendered",
                       "updatedAtInMs": 1776787200000,
                       "updatedBy": "user@example.com"
                     }
@@ -4433,6 +4433,250 @@
           }
         }
       }
+    },
+    "/webhooks/quote-write-back": {
+      "post": {
+        "x-webhook": true,
+        "tags": [
+          "shipper-webhooks"
+        ],
+        "summary": "Quote Write-back",
+        "operationId": "webhookQuoteWriteBack",
+        "security": [],
+        "description": "Owlery posts one object to each configured QuoteWriteBack endpoint after a user confirms Record Freight Cost and the existing recording flow succeeds. ERP failures retain their existing behavior and prevent this event. A delivery failure does not undo saved pricing. The payload includes the complete Tender contract: id remains the quote response/tender ID, price remains the awarded carrier cost in cents, and updatedAtInMs remains the tender status time. Customer charges are separate. Source order numbers do not replace customer order/line references. No load is required; unavailable linkedLoad or trackingUrl fields are omitted, not null. Creating a load later does not automatically send another event. Event persistence, automatic retries, delivery history and resend controls are delivered separately; eventId defines the identity receivers should use for duplicate handling.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuoteWriteBackWebhookMessage"
+              },
+              "examples": {
+                "withLoad": {
+                  "summary": "Recorded customer charge and available tracking",
+                  "value": {
+                    "id": "507f1f77bcf86cd799439011",
+                    "referenceNumbers": [
+                      {
+                        "type": "PO",
+                        "value": "CUSTOMER-PO-42"
+                      }
+                    ],
+                    "mode": "FTL",
+                    "equipmentType": "Dryvan",
+                    "isTeamRate": false,
+                    "isContractRate": false,
+                    "isDirectTender": false,
+                    "shipmentMode": "Truck",
+                    "stops": [
+                      {
+                        "index": 0,
+                        "type": "Pickup",
+                        "orders": [
+                          {
+                            "orderNumber": "SHIP-001"
+                          }
+                        ]
+                      },
+                      {
+                        "index": 1,
+                        "type": "Dropoff",
+                        "orders": [
+                          {
+                            "orderNumber": "SHIP-001"
+                          }
+                        ]
+                      }
+                    ],
+                    "orders": [
+                      {
+                        "orderNumber": "SHIP-001",
+                        "pickupStopIndex": 0,
+                        "dropoffStopIndex": 1
+                      }
+                    ],
+                    "price": {
+                      "total": 42500,
+                      "currencyCode": "USD"
+                    },
+                    "broker": {
+                      "name": "Example Carrier",
+                      "scac": "EXAM"
+                    },
+                    "status": "accepted",
+                    "updatedAtInMs": 1793260800000,
+                    "updatedBy": "507f1f77bcf86cd799439012",
+                    "eventId": "a916c3be-b834-46d1-a494-05239c1bde69",
+                    "occurredAt": "2026-10-29T09:00:00.000Z",
+                    "quote": {
+                      "id": "507f1f77bcf86cd799439013",
+                      "shortId": "Q12345"
+                    },
+                    "customerFreightCharges": [
+                      {
+                        "sourceNumber": "SHIP-001",
+                        "orderId": "507f1f77bcf86cd799439014",
+                        "orderNumber": "SHIP-001",
+                        "price": {
+                          "total": 50000,
+                          "currencyCode": "USD"
+                        }
+                      }
+                    ],
+                    "loadNumber": "LOAD-12345",
+                    "linkedLoad": {
+                      "id": "507f1f77bcf86cd799439015",
+                      "number": "LOAD-12345",
+                      "trackingUrl": "https://app.owlery.ai/open/load/tracking?trackingId=6c2c4645-deea-4d40-a068-85d52b833a22"
+                    }
+                  }
+                },
+                "withoutLoad": {
+                  "summary": "Recorded pricing before a load exists",
+                  "value": {
+                    "id": "507f1f77bcf86cd799439011",
+                    "referenceNumbers": [
+                      {
+                        "type": "PO",
+                        "value": "CUSTOMER-PO-42"
+                      }
+                    ],
+                    "mode": "FTL",
+                    "equipmentType": "Dryvan",
+                    "isTeamRate": false,
+                    "isContractRate": false,
+                    "isDirectTender": false,
+                    "shipmentMode": "Truck",
+                    "stops": [
+                      {
+                        "index": 0,
+                        "type": "Pickup",
+                        "orders": [
+                          {
+                            "orderNumber": "SHIP-001"
+                          }
+                        ]
+                      },
+                      {
+                        "index": 1,
+                        "type": "Dropoff",
+                        "orders": [
+                          {
+                            "orderNumber": "SHIP-001"
+                          }
+                        ]
+                      }
+                    ],
+                    "orders": [
+                      {
+                        "orderNumber": "SHIP-001",
+                        "pickupStopIndex": 0,
+                        "dropoffStopIndex": 1
+                      }
+                    ],
+                    "price": {
+                      "total": 42500,
+                      "currencyCode": "USD"
+                    },
+                    "broker": {
+                      "name": "Example Carrier",
+                      "scac": "EXAM"
+                    },
+                    "status": "accepted",
+                    "updatedAtInMs": 1793260800000,
+                    "updatedBy": "507f1f77bcf86cd799439012",
+                    "eventId": "a916c3be-b834-46d1-a494-05239c1bde69",
+                    "occurredAt": "2026-10-29T09:00:00.000Z",
+                    "quote": {
+                      "id": "507f1f77bcf86cd799439013",
+                      "shortId": "Q12345"
+                    },
+                    "customerFreightCharges": [
+                      {
+                        "sourceNumber": "SHIP-001",
+                        "orderId": "507f1f77bcf86cd799439014",
+                        "orderNumber": "SHIP-001",
+                        "price": {
+                          "total": 50000,
+                          "currencyCode": "USD"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "noRecordedCharges": {
+                  "summary": "Confirmation without recorded customer charges",
+                  "value": {
+                    "id": "507f1f77bcf86cd799439011",
+                    "referenceNumbers": [
+                      {
+                        "type": "PO",
+                        "value": "CUSTOMER-PO-42"
+                      }
+                    ],
+                    "mode": "FTL",
+                    "equipmentType": "Dryvan",
+                    "isTeamRate": false,
+                    "isContractRate": false,
+                    "isDirectTender": false,
+                    "shipmentMode": "Truck",
+                    "stops": [
+                      {
+                        "index": 0,
+                        "type": "Pickup",
+                        "orders": [
+                          {
+                            "orderNumber": "SHIP-001"
+                          }
+                        ]
+                      },
+                      {
+                        "index": 1,
+                        "type": "Dropoff",
+                        "orders": [
+                          {
+                            "orderNumber": "SHIP-001"
+                          }
+                        ]
+                      }
+                    ],
+                    "orders": [
+                      {
+                        "orderNumber": "SHIP-001",
+                        "pickupStopIndex": 0,
+                        "dropoffStopIndex": 1
+                      }
+                    ],
+                    "price": {
+                      "total": 42500,
+                      "currencyCode": "USD"
+                    },
+                    "broker": {
+                      "name": "Example Carrier",
+                      "scac": "EXAM"
+                    },
+                    "status": "accepted",
+                    "updatedAtInMs": 1793260800000,
+                    "updatedBy": "507f1f77bcf86cd799439012",
+                    "eventId": "bfc1dcf6-ff59-4ba2-86df-0c073d26d015",
+                    "occurredAt": "2026-10-29T09:00:00.000Z",
+                    "quote": {
+                      "id": "507f1f77bcf86cd799439013",
+                      "shortId": "Q12345"
+                    },
+                    "customerFreightCharges": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received successfully."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -5024,8 +5268,10 @@
           "shipmentMode": {
             "type": "string",
             "enum": [
-              "Normal",
-              "Expedited"
+              "Ocean",
+              "Air",
+              "Truck",
+              "Rail"
             ],
             "description": "Shipment mode."
           },
@@ -5044,7 +5290,22 @@
             "description": "Order-level mapping to pickup/dropoff route stops and zero-based stop-type sequence numbers."
           },
           "price": {
-            "$ref": "#/components/schemas/Price"
+            "type": "object",
+            "description": "Awarded carrier quote price, distinct from any customer freight charge.",
+            "required": [
+              "total",
+              "currencyCode"
+            ],
+            "properties": {
+              "total": {
+                "type": "number",
+                "description": "Awarded carrier cost in cents."
+              },
+              "currencyCode": {
+                "type": "string",
+                "description": "Currency code, such as USD."
+              }
+            }
           },
           "lineItems": {
             "type": "array",
@@ -5059,10 +5320,10 @@
           "status": {
             "type": "string",
             "enum": [
-              "BOLCreated",
-              "CarrierSelected",
-              "Tendered",
-              "Accepted"
+              "bolCreated",
+              "carrierSelected",
+              "tendered",
+              "accepted"
             ],
             "description": "Tender status."
           },
@@ -8898,6 +9159,119 @@
             "description": "Document submission status."
           }
         }
+      },
+      "QuoteWriteBackWebhookMessage": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TenderWebhookMessage"
+          },
+          {
+            "type": "object",
+            "required": [
+              "eventId",
+              "occurredAt",
+              "quote",
+              "customerFreightCharges"
+            ],
+            "properties": {
+              "eventId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique event ID. Every manual confirmation creates a new event, including unchanged pricing. Multiple endpoints receive the same event ID. Any retry of this event must preserve its ID and payload."
+              },
+              "occurredAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Time this write-back event was created, distinct from the tender status timestamp."
+              },
+              "quote": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Owlery quote ID."
+                  },
+                  "shortId": {
+                    "type": "string",
+                    "description": "Owlery quote number, when available."
+                  }
+                }
+              },
+              "customerFreightCharges": {
+                "type": "array",
+                "description": "Recorded customer freight charges on the current parent orders. Amounts are in cents. Orders without a recorded charge are omitted; this array may be empty. Zero is a recorded amount. Blank input preserves an existing charge. Tender order references remain in the inherited orders and stops fields.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "sourceNumber",
+                    "orderId",
+                    "orderNumber",
+                    "price"
+                  ],
+                  "properties": {
+                    "sourceNumber": {
+                      "type": "string",
+                      "description": "ERP source order number, mapped from Owlery orderNumber. For BCI this is the imported SyteLine Shipment ID, not a customer order reference or sourceId."
+                    },
+                    "orderId": {
+                      "type": "string",
+                      "description": "Owlery parent order ID."
+                    },
+                    "orderNumber": {
+                      "type": "string",
+                      "description": "Owlery parent order number; currently the same value as sourceNumber."
+                    },
+                    "price": {
+                      "type": "object",
+                      "required": [
+                        "total",
+                        "currencyCode"
+                      ],
+                      "properties": {
+                        "total": {
+                          "type": "number",
+                          "description": "Recorded customer freight charge in cents."
+                        },
+                        "currencyCode": {
+                          "type": "string",
+                          "description": "Currency code, such as USD."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "linkedLoad": {
+                "type": "object",
+                "description": "The load linked to this quote booking. Omitted when no load exists. The inherited Tender loadNumber keeps its original meaning and may be present without linkedLoad.",
+                "required": [
+                  "id",
+                  "number"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 24,
+                    "maxLength": 24,
+                    "description": "Full Owlery load ID (24 characters). Never truncated to fit an external field."
+                  },
+                  "number": {
+                    "type": "string",
+                    "description": "Actual linked load number."
+                  },
+                  "trackingUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Public Owlery tracking URL. Omitted when the load has no tracking ID."
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     }
   },
