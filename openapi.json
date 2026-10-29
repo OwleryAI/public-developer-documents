@@ -674,7 +674,7 @@
                       "stops": [
                         {
                           "index": 0,
-                          "type": "Pickup",
+                          "type": "pickup",
                           "orders": [
                             {
                               "orderNumber": "ORD-10001"
@@ -732,7 +732,7 @@
                         },
                         {
                           "index": 1,
-                          "type": "Dropoff",
+                          "type": "dropoff",
                           "orders": [
                             {
                               "orderNumber": "ORD-10001"
@@ -817,7 +817,7 @@
                       },
                       "status": "tendered",
                       "updatedAtInMs": 1776787200000,
-                      "updatedBy": "user@example.com"
+                      "updatedBy": "507f1f77bcf86cd799439012"
                     }
                   ]
                 },
@@ -852,7 +852,7 @@
                       "stops": [
                         {
                           "index": 0,
-                          "type": "Pickup",
+                          "type": "pickup",
                           "orders": [
                             {
                               "orderNumber": "ORD-10001"
@@ -910,7 +910,7 @@
                         },
                         {
                           "index": 1,
-                          "type": "Pickup",
+                          "type": "pickup",
                           "orders": [
                             {
                               "orderNumber": "ORD-10002"
@@ -968,7 +968,7 @@
                         },
                         {
                           "index": 2,
-                          "type": "Dropoff",
+                          "type": "dropoff",
                           "orders": [
                             {
                               "orderNumber": "ORD-10001"
@@ -1014,7 +1014,7 @@
                         },
                         {
                           "index": 3,
-                          "type": "Dropoff",
+                          "type": "dropoff",
                           "orders": [
                             {
                               "orderNumber": "ORD-10002"
@@ -1106,7 +1106,7 @@
                       },
                       "status": "tendered",
                       "updatedAtInMs": 1776787200000,
-                      "updatedBy": "user@example.com"
+                      "updatedBy": "507f1f77bcf86cd799439012"
                     }
                   ]
                 },
@@ -1142,7 +1142,7 @@
                       "stops": [
                         {
                           "index": 0,
-                          "type": "Pickup",
+                          "type": "pickup",
                           "orders": [
                             {
                               "orderNumber": "ORD-10001"
@@ -1200,7 +1200,7 @@
                         },
                         {
                           "index": 1,
-                          "type": "Pickup",
+                          "type": "pickup",
                           "orders": [
                             {
                               "orderNumber": "ORD-10002"
@@ -1258,7 +1258,7 @@
                         },
                         {
                           "index": 2,
-                          "type": "Dropoff",
+                          "type": "dropoff",
                           "orders": [
                             {
                               "orderNumber": "ORD-10002"
@@ -1304,7 +1304,7 @@
                         },
                         {
                           "index": 3,
-                          "type": "Dropoff",
+                          "type": "dropoff",
                           "orders": [
                             {
                               "orderNumber": "ORD-10001"
@@ -1396,7 +1396,7 @@
                       },
                       "status": "tendered",
                       "updatedAtInMs": 1776787200000,
-                      "updatedBy": "user@example.com"
+                      "updatedBy": "507f1f77bcf86cd799439012"
                     }
                   ]
                 }
@@ -4668,7 +4668,7 @@
                     "stops": [
                       {
                         "index": 0,
-                        "type": "Pickup",
+                        "type": "pickup",
                         "orders": [
                           {
                             "orderNumber": "SHIP-001"
@@ -4677,7 +4677,7 @@
                       },
                       {
                         "index": 1,
-                        "type": "Dropoff",
+                        "type": "dropoff",
                         "orders": [
                           {
                             "orderNumber": "SHIP-001"
@@ -4747,7 +4747,7 @@
                     "stops": [
                       {
                         "index": 0,
-                        "type": "Pickup",
+                        "type": "pickup",
                         "orders": [
                           {
                             "orderNumber": "SHIP-001"
@@ -4756,7 +4756,7 @@
                       },
                       {
                         "index": 1,
-                        "type": "Dropoff",
+                        "type": "dropoff",
                         "orders": [
                           {
                             "orderNumber": "SHIP-001"
@@ -4820,7 +4820,7 @@
                     "stops": [
                       {
                         "index": 0,
-                        "type": "Pickup",
+                        "type": "pickup",
                         "orders": [
                           {
                             "orderNumber": "SHIP-001"
@@ -4829,7 +4829,7 @@
                       },
                       {
                         "index": 1,
-                        "type": "Dropoff",
+                        "type": "dropoff",
                         "orders": [
                           {
                             "orderNumber": "SHIP-001"
@@ -5689,7 +5689,7 @@
           },
           "updatedBy": {
             "type": "string",
-            "description": "Email address of the user who created the tender."
+            "description": "Owlery user ID of the quote creator. This is not the user who confirmed freight recording."
           }
         }
       },
@@ -5808,8 +5808,8 @@
           "type": {
             "type": "string",
             "enum": [
-              "Pickup",
-              "Dropoff"
+              "pickup",
+              "dropoff"
             ],
             "description": "Type of stop."
           },
