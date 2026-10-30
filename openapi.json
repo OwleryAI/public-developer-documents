@@ -4640,7 +4640,7 @@
         "summary": "Quote Write-back",
         "operationId": "webhookQuoteWriteBack",
         "security": [],
-        "description": "Owlery posts one object to each configured QuoteWriteBack endpoint after a user confirms Record Freight Cost and the existing recording flow succeeds. ERP failures retain their existing behavior and prevent this event. A delivery failure does not undo saved pricing. The payload includes the complete Tender contract: id remains the quote response/tender ID, price remains the awarded carrier cost in cents, and updatedAtInMs remains the tender status time. Customer charges are separate. Source order numbers do not replace customer order/line references. No load is required; unavailable linkedLoad or trackingUrl fields are omitted, not null. Creating a load later does not automatically send another event. Event persistence, automatic retries, delivery history and resend controls are delivered separately; eventId defines the identity receivers should use for duplicate handling.",
+        "description": "Owlery posts one object to each configured QuoteWriteBack endpoint after a user confirms Record Freight Cost and the existing recording flow succeeds. ERP failures retain their existing behavior and prevent this event. A delivery failure does not undo saved pricing. The payload includes the complete Tender contract: id remains the quote response/tender ID, price remains the awarded carrier cost in cents, and updatedAtInMs remains the tender status time. Customer charges are separate. Order mappings and order-linked item references are limited to the eligible parent orders used for freight recording. Source order numbers do not replace customer order/line references. No load is required; unavailable linkedLoad or trackingUrl fields are omitted, not null. Creating a load later does not automatically send another event. Event persistence, automatic retries, delivery history and resend controls are delivered separately; eventId defines the identity receivers should use for duplicate handling.",
         "requestBody": {
           "required": true,
           "content": {
@@ -10012,7 +10012,7 @@
                 }
               }
             },
-            "description": "Order-level mapping to pickup/dropoff route stops and zero-based stop-type sequence numbers."
+            "description": "Eligible parent-order mapping to pickup/dropoff route stops and zero-based stop-type sequence numbers. Uses the same order eligibility as freight recording."
           },
           "price": {
             "type": "object",
@@ -10151,7 +10151,7 @@
           },
           "customerFreightCharges": {
             "type": "array",
-            "description": "Recorded customer freight charges on the current parent orders. Amounts are in cents. Orders without a recorded charge are omitted; this array may be empty. Zero is a recorded amount. Blank input preserves an existing charge. Tender order references remain in the orders and stops fields.",
+            "description": "Recorded customer freight charges on eligible parent orders from the shared freight-recording context. Child orders are excluded. Amounts are in cents. Orders without a recorded charge are omitted; this array may be empty. Zero is a recorded amount. Blank input preserves an existing charge.",
             "items": {
               "type": "object",
               "required": [
