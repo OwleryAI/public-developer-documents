@@ -10151,7 +10151,7 @@
           },
           "customerFreightCharges": {
             "type": "array",
-            "description": "Recorded customer freight charges on eligible parent orders from the shared freight-recording context. Child orders are excluded. Amounts are in cents. Orders without a recorded charge are omitted; this array may be empty. Zero is a recorded amount. Blank input preserves an existing charge.",
+            "description": "Recorded customer freight charges on eligible parent orders from the shared freight-recording context. Child orders are excluded. Amounts are in cents. Orders without a recorded charge are omitted; this array may be empty. Zero is a recorded amount. When a Quote Write-back webhook is configured, clearing an amount in Record Freight Cost records zero. Omitted amounts preserve existing charges.",
             "items": {
               "type": "object",
               "required": [
