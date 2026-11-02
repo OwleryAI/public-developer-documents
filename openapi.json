@@ -4640,7 +4640,7 @@
         "summary": "Quote Write-back",
         "operationId": "webhookQuoteWriteBack",
         "security": [],
-        "description": "Owlery posts one object to each configured QuoteWriteBack endpoint after a user confirms Record Freight Cost and the existing recording flow succeeds. ERP failures retain their existing behavior and prevent this event. A delivery failure does not undo saved pricing. The payload includes the complete Tender contract: id remains the quote response/tender ID, price remains the awarded carrier cost in cents, and updatedAtInMs remains the tender status time. Customer charges are separate. Order mappings and order-linked item references are limited to the eligible parent orders used for freight recording. Source order numbers do not replace customer order/line references. No load is required; unavailable linkedLoad or trackingUrl fields are omitted, not null. Creating a load later does not automatically send another event. Event persistence, automatic retries, delivery history and resend controls are delivered separately; eventId defines the identity receivers should use for duplicate handling.",
+        "description": "Owlery posts one object to each configured QuoteWriteBack endpoint after a user confirms Record Freight Cost and the existing recording flow succeeds. ERP failures retain their existing behavior and prevent this event. A delivery failure does not undo saved pricing. The payload includes the complete Tender contract: id remains the quote response/tender ID, price remains the awarded carrier cost in cents, and updatedAtInMs remains the tender status time. Customer charges are separate. Order mappings and order-linked item references are limited to the eligible parent orders used for freight recording. Source order numbers do not replace customer order/line references. No load is required; unavailable linkedLoad or trackingUrl fields are omitted, not null. Creating a load later does not automatically send another event. Respond with any 2xx status within 10 seconds to acknowledge the event. Timeouts, network errors, 5xx and 429 responses are retried after 3, 9, 27, 81 and 243 minutes, then every 10 hours, for up to 10 retries over about 56 hours. Redirects and other non-2xx responses end retries for that endpoint. Each endpoint is retried independently, and a user can resend the event to endpoints that have not acknowledged it, including after retries end. Retries and resends carry the same eventId and payload, so the same event may arrive more than once; use eventId to ignore duplicates. Recording freight cost again for the same quote creates a new event and stops retries and resends of older events, but an older event already being sent can still arrive after the newer one. Ignore an event whose occurredAt is earlier than one already applied for the same quote.id.",
         "requestBody": {
           "required": true,
           "content": {
@@ -10126,7 +10126,7 @@
           "eventId": {
             "type": "string",
             "format": "uuid",
-            "description": "Unique event ID. Every manual confirmation creates a new event, including unchanged pricing. Multiple endpoints receive the same event ID. Any retry of this event must preserve its ID and payload."
+            "description": "Unique event ID. Every manual confirmation creates a new event, including unchanged pricing. Multiple endpoints receive the same event ID. Retries and resends keep the same ID and payload."
           },
           "occurredAt": {
             "type": "string",
