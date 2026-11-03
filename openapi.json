@@ -1535,7 +1535,7 @@
           "shipper-webhooks"
         ],
         "summary": "Order Load Stop Dates Updated",
-        "description": "Webhook payload sent when a tendered order's related load stop estimated, appointment, or actual dates are first populated or later changed. This includes the initial tender when those load dates first become available. The payload is order-based: each stop `index` is zero-based within the order itself, not within the underlying load, so the index is `0` for pickup and `1` for dropoff even when the load is consolidated across more stops. Owlery only sends this webhook for orders it tendered, because Owlery must have the order-to-load stop mapping from the tender/BOL flow.",
+        "description": "Webhook payload sent when a tendered order's related load stop estimated, appointment, or actual dates are first populated or later changed. This includes the initial tender when those load dates first become available. The payload is order-based: each stop `index` is zero-based within the order itself, not within the underlying load, so the index is `0` for pickup and `1` for dropoff even when the load is consolidated across more stops. Owlery only sends this webhook for orders it tendered, because Owlery must have the order-to-load stop mapping from the tender/BOL flow.\n\n### Stop Date Types\n\nEach date group describes the same pickup or dropoff stop:\n\n| Field | Meaning | `startAt` | `endAt` |\n| --- | --- | --- | --- |\n| `orderDates` | The customer's requested pickup or delivery window. | Start of the requested window. | End of the requested window. |\n| `estimatedDates` | The estimated pickup or delivery window. | Start of the estimated window. | End of the estimated window. |\n| `appointmentDates` | The scheduled appointment window at the facility. | Start of the appointment. | End of the appointment. |\n| `actualDates` | Recorded in and out times at the stop. | Actual in-time (arrival). | Actual out-time (departure). |\n\nStart and end refer to one stop, not to the pickup and delivery ends of the load.\n\n### Partial Dates and Date-Only Values\n\nThe webhook can arrive before all dates are known. All four date groups are optional, and `startAt` and `endAt` are independently optional within each group. For example, `actualDates` can contain an arrival time before a departure time is available. Read only the values provided; do not require a complete set of dates.\n\nFor each changed stop, Owlery includes its available date groups, not just the individual date field that changed.\n\nEach supplied value contains `dateTime`, `timeZone`, and `isDateOnly`. When `isDateOnly` is `false`, use the date and time. When it is `true`, interpret the value as a calendar date in `timeZone`, without a specific time. The `dateTime` field is still an ISO8601 timestamp; the flag determines whether its time portion is meaningful.",
         "operationId": "webhookOrderLoadStopDatesUpdated",
         "security": [],
         "requestBody": {
@@ -6828,6 +6828,7 @@
         }
       },
       "OrderLoadStopDatesUpdatedStop": {
+        "description": "Dates for a changed order stop. All date groups are optional; each group may contain startAt, endAt, or both. See Stop Date Types and Partial Dates and Date-Only Values in the webhook description.",
         "type": "object",
         "required": [
           "index",
@@ -6847,16 +6848,36 @@
             "description": "Type of the order stop."
           },
           "orderDates": {
-            "$ref": "#/components/schemas/StartEndDatePair"
+            "description": "The customer's requested pickup or delivery window. startAt is the beginning of the requested window; endAt is its end. This group and either endpoint may be omitted when unavailable.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StartEndDatePair"
+              }
+            ]
           },
           "estimatedDates": {
-            "$ref": "#/components/schemas/StartEndDatePair"
+            "description": "The estimated pickup or delivery window. startAt is the beginning of the estimated window; endAt is its end. This group and either endpoint may be omitted when unavailable.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StartEndDatePair"
+              }
+            ]
           },
           "appointmentDates": {
-            "$ref": "#/components/schemas/StartEndDatePair"
+            "description": "The scheduled appointment window at the facility. startAt is the appointment start; endAt is the appointment end. This group and either endpoint may be omitted when unavailable.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StartEndDatePair"
+              }
+            ]
           },
           "actualDates": {
-            "$ref": "#/components/schemas/StartEndDatePair"
+            "description": "Recorded times at the stop. startAt is the actual in-time (arrival); endAt is the actual out-time (departure). This group and either endpoint may be omitted when unavailable, such as before departure is recorded.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StartEndDatePair"
+              }
+            ]
           }
         }
       },
@@ -6864,10 +6885,20 @@
         "type": "object",
         "properties": {
           "startAt": {
-            "$ref": "#/components/schemas/DateTimeWithZone"
+            "description": "Start of the requested, estimated, or appointment window, or the actual in-time (arrival) for actualDates. Optional independently of endAt. The value may represent a date only when isDateOnly is true.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DateTimeWithZone"
+              }
+            ]
           },
           "endAt": {
-            "$ref": "#/components/schemas/DateTimeWithZone"
+            "description": "End of the requested, estimated, or appointment window, or the actual out-time (departure) for actualDates. Optional independently of startAt. The value may represent a date only when isDateOnly is true.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DateTimeWithZone"
+              }
+            ]
           }
         }
       },
