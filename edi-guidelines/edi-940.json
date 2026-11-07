@@ -326,7 +326,8 @@
               "value": "D",
               "label": "Delete"
             }
-          ]
+          ],
+          "notes": "For the legacy 940 profile, Owlery sends 'R' (Change) for both new and updated orders; treat it as an upsert. The canonical 4010 profile sends 'N' (Original) for a new order, 'R' for a later update, and 'D' (Delete) when the order is cancelled."
         },
         {
           "fieldId": "W0502",
