@@ -4,6 +4,12 @@
   "guidelineVersion": "1.0",
   "transactionCode": "210",
   "x12Version": "004010",
+  "implementationNotes": [
+    {
+      "topic": "Shipment ID and Tender Matching",
+      "description": "B303 must contain the exact shipment ID sent in B204 of the related 204 load tender. Owlery uses this value to match the invoice to the tendered load. Send one shipment ID per invoice."
+    }
+  ],
   "definitions": [
     {
       "segmentId": "ISA",
@@ -321,7 +327,7 @@
           "minLength": 1,
           "maxLength": 30,
           "dataType": "AN",
-          "fieldDescription": "Identification number assigned to the shipment by the shipper that uniquely identifies the shipment from origin to ultimate destination"
+          "fieldDescription": "Shipment ID assigned by the shipper. This must match B204 of the EDI 204 load tender exactly so Owlery can match the invoice to the tendered load."
         },
         {
           "fieldId": "B304",
