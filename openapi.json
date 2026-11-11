@@ -64,7 +64,7 @@
     {
       "name": "shipper-webhooks",
       "x-displayName": "Webhooks",
-      "description": "Webhooks sent by Owlery when orders, tenders, invoices, order-level load stop dates, or optionally other load details are updated."
+      "description": "Webhooks sent by Owlery when orders, tenders, invoices, order-level load stop dates, or loads are updated."
     },
     {
       "name": "carrier-invoices",
@@ -1535,7 +1535,7 @@
           "shipper-webhooks"
         ],
         "summary": "Order Load Stop Dates Updated",
-        "description": "Webhook payload sent when a tendered order's related load stop estimated, appointment, or actual dates are first populated or later changed. This includes the initial tender when those load dates first become available. The payload is order-based: each stop `index` is zero-based within the order itself, not within the underlying load, so the index is `0` for pickup and `1` for dropoff even when the load is consolidated across more stops. Owlery only sends this webhook for orders it tendered, because Owlery must have the order-to-load stop mapping from the tender/BOL flow.\n\n### Load Update Notifications\n\nOwlery can also send this webhook when other load details change. Contact `support@owlery.ai` to enable it. Examples include:\n\n- Pallet quantity, weight, or dimensions\n- Equipment\n- Load number\n- Tracking added or removed\n- Cancellation requested, confirmed, or withdrawn\n- Non-date changes from accepted tenders or load amendments\n\nThe payload format is the same and does not say what changed. In these notifications, `stops` includes all of the order's stops on the load, even when no date changed, and `loadNumber` is the current load number. To read the change, fetch the load with Search Loads (`POST /api/ext/v1/loads/search`).\n\n### Stop Date Types\n\nEach date group describes the same pickup or dropoff stop:\n\n| Field | Meaning | `startAt` | `endAt` |\n| --- | --- | --- | --- |\n| `orderDates` | The customer's requested pickup or delivery window. | Start of the requested window. | End of the requested window. |\n| `estimatedDates` | The estimated pickup or delivery window. | Start of the estimated window. | End of the estimated window. |\n| `appointmentDates` | The scheduled appointment window at the facility. | Start of the appointment. | End of the appointment. |\n| `actualDates` | Recorded in and out times at the stop. | Actual in-time (arrival). | Actual out-time (departure). |\n\nStart and end refer to one stop, not to the pickup and delivery ends of the load.\n\n### Partial Dates and Date-Only Values\n\nThe webhook can arrive before all dates are known. All four date groups are optional, and `startAt` and `endAt` are independently optional within each group. For example, `actualDates` can contain an arrival time before a departure time is available. Read only the values provided; do not require a complete set of dates.\n\nFor each changed stop, Owlery includes its available date groups, not just the individual date field that changed.\n\nWhen a pickup stop has both `actualDates.startAt` and `actualDates.endAt`, the order is considered picked up. Carrier data can be incomplete, so either actual date may be missing even after pickup. When consuming this webhook, apply your business rules to partial actual dates rather than assuming a missing value means pickup has not occurred. For example, decide whether an out-time without an in-time is enough to mark the order as picked up, or whether your workflow needs additional confirmation.\n\nEach supplied value contains `dateTime`, `timeZone`, and `isDateOnly`. When `isDateOnly` is `false`, use the date and time. When it is `true`, interpret the value as a calendar date in `timeZone`, without a specific time. The `dateTime` field is still an ISO8601 timestamp; the flag determines whether its time portion is meaningful.",
+        "description": "Webhook payload sent when a tendered order's related load stop estimated, appointment, or actual dates are first populated or later changed. This includes the initial tender when those load dates first become available. The payload is order-based: each stop `index` is zero-based within the order itself, not within the underlying load, so the index is `0` for pickup and `1` for dropoff even when the load is consolidated across more stops. Owlery only sends this webhook for orders it tendered, because Owlery must have the order-to-load stop mapping from the tender/BOL flow.\n\n### Stop Date Types\n\nEach date group describes the same pickup or dropoff stop:\n\n| Field | Meaning | `startAt` | `endAt` |\n| --- | --- | --- | --- |\n| `orderDates` | The customer's requested pickup or delivery window. | Start of the requested window. | End of the requested window. |\n| `estimatedDates` | The estimated pickup or delivery window. | Start of the estimated window. | End of the estimated window. |\n| `appointmentDates` | The scheduled appointment window at the facility. | Start of the appointment. | End of the appointment. |\n| `actualDates` | Recorded in and out times at the stop. | Actual in-time (arrival). | Actual out-time (departure). |\n\nStart and end refer to one stop, not to the pickup and delivery ends of the load.\n\n### Partial Dates and Date-Only Values\n\nThe webhook can arrive before all dates are known. All four date groups are optional, and `startAt` and `endAt` are independently optional within each group. For example, `actualDates` can contain an arrival time before a departure time is available. Read only the values provided; do not require a complete set of dates.\n\nFor each changed stop, Owlery includes its available date groups, not just the individual date field that changed.\n\nWhen a pickup stop has both `actualDates.startAt` and `actualDates.endAt`, the order is considered picked up. Carrier data can be incomplete, so either actual date may be missing even after pickup. When consuming this webhook, apply your business rules to partial actual dates rather than assuming a missing value means pickup has not occurred. For example, decide whether an out-time without an in-time is enough to mark the order as picked up, or whether your workflow needs additional confirmation.\n\nEach supplied value contains `dateTime`, `timeZone`, and `isDateOnly`. When `isDateOnly` is `false`, use the date and time. When it is `true`, interpret the value as a calendar date in `timeZone`, without a specific time. The `dateTime` field is still an ISO8601 timestamp; the flag determines whether its time portion is meaningful.",
         "operationId": "webhookOrderLoadStopDatesUpdated",
         "security": [],
         "requestBody": {
@@ -1840,6 +1840,226 @@
                     "value": {
                       "error": "Internal Server Error",
                       "message": "Unable to process order load stop date webhook"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/load-updated": {
+      "post": {
+        "x-webhook": true,
+        "tags": [
+          "shipper-webhooks"
+        ],
+        "summary": "Load Updated",
+        "description": "Webhook payload sent when a tendered order's load details other than stop dates change. Contact `support@owlery.ai` to enable it. Examples include:\n\n- Pallet quantity, weight, or dimensions\n- Equipment\n- Load number\n- Tracking added or removed\n- Cancellation requested, confirmed, or withdrawn\n- Non-date changes from accepted tenders or load amendments\n\nThe payload does not say what changed. To read the change, fetch the load with Search Loads (`POST /api/ext/v1/loads/search`).\n\nThe format matches Order Load Stop Dates Updated, except `stops` includes all of the order's stops on the load, even when no date changed, and `loadNumber` is the current load number. Stop date changes are sent on Order Load Stop Dates Updated. See that webhook for how to read stop dates.",
+        "operationId": "webhookLoadUpdated",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LoadUpdatedWebhook"
+                }
+              },
+              "examples": {
+                "singleOrder": {
+                  "summary": "Single order on a load",
+                  "value": [
+                    {
+                      "orderNumber": "SO-10001",
+                      "loadNumber": "LOAD-12345",
+                      "source": "NetSuite",
+                      "sourceId": "123456",
+                      "stops": [
+                        {
+                          "index": 0,
+                          "stopType": "pickup",
+                          "orderDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T08:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            },
+                            "endAt": {
+                              "dateTime": "2026-04-21T10:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          },
+                          "estimatedDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T08:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            },
+                            "endAt": {
+                              "dateTime": "2026-04-21T10:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          },
+                          "appointmentDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-21T09:00:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            },
+                            "endAt": {
+                              "dateTime": "2026-04-21T09:30:00.000Z",
+                              "timeZone": "America/Chicago",
+                              "isDateOnly": false
+                            }
+                          }
+                        },
+                        {
+                          "index": 1,
+                          "stopType": "dropoff",
+                          "estimatedDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-22T15:00:00.000Z",
+                              "timeZone": "America/New_York",
+                              "isDateOnly": false
+                            }
+                          },
+                          "actualDates": {
+                            "startAt": {
+                              "dateTime": "2026-04-22T15:12:00.000Z",
+                              "timeZone": "America/New_York",
+                              "isDateOnly": false
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Load update received successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Receiver rejected the webhook as invalid. Owlery logs the failed delivery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidPayload": {
+                    "summary": "Invalid payload",
+                    "value": {
+                      "error": "Bad Request",
+                      "message": "Missing required field: orderNumber",
+                      "details": [
+                        "orderNumber is required"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Receiver rejected the webhook because custom authentication headers were missing or invalid. Owlery logs the failed delivery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "error": "Unauthorized",
+                      "message": "Invalid webhook signature or API key"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Receiver failed while processing the webhook. Owlery logs the failed delivery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "receiverError": {
+                    "summary": "Receiver error",
+                    "value": {
+                      "error": "Internal Server Error",
+                      "message": "Unable to process load update webhook"
                     }
                   }
                 }
@@ -6808,6 +7028,39 @@
           },
           "loadNumber": {
             "type": "string",
+            "description": "Load number whose stop dates changed."
+          },
+          "source": {
+            "type": "string",
+            "description": "The source system the order originates from, such as NetSuite."
+          },
+          "sourceId": {
+            "type": "string",
+            "description": "The unique order identifier from the source system."
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderLoadStopDatesUpdatedStop"
+            },
+            "description": "Changed order stops. Stop indexes are zero-based within the order, not within the load."
+          }
+        }
+      },
+      "LoadUpdatedWebhook": {
+        "type": "object",
+        "required": [
+          "orderNumber",
+          "source",
+          "stops"
+        ],
+        "properties": {
+          "orderNumber": {
+            "type": "string",
+            "description": "The unique number of the order."
+          },
+          "loadNumber": {
+            "type": "string",
             "description": "Current number of the load."
           },
           "source": {
@@ -6823,7 +7076,7 @@
             "items": {
               "$ref": "#/components/schemas/OrderLoadStopDatesUpdatedStop"
             },
-            "description": "Order stops whose dates changed, or all of the order's stops for a load update notification. Stop indexes are zero-based within the order, not within the load."
+            "description": "All of the order's stops on the load, with their current dates. Stop indexes are zero-based within the order, not within the load."
           }
         }
       },
