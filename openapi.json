@@ -1856,7 +1856,7 @@
           "shipper-webhooks"
         ],
         "summary": "Load Updated",
-        "description": "Webhook payload sent when a tendered order's load details other than stop dates change. Contact `support@owlery.ai` to enable it. Examples include:\n\n- Pallet quantity, weight, or dimensions\n- Equipment\n- Load number\n- Tracking added or removed\n- Cancellation requested, confirmed, or withdrawn\n- Non-date changes from accepted tenders or load amendments\n\nThe payload does not say what changed. To read the change, fetch the load with Search Loads (`POST /api/ext/v1/loads/search`).\n\nThe format matches Order Load Stop Dates Updated, except `stops` includes all of the order's stops on the load, even when no date changed, and `loadNumber` is the current load number. Stop date changes are sent on Order Load Stop Dates Updated. See that webhook for how to read stop dates.",
+        "description": "Sent when load details other than stop dates change, such as pallet quantity, dimensions, equipment, freight price, tracking, or cancellation status. Contact `support@owlery.ai` to enable this webhook.\n\nThe payload is an array with one record per associated order. Each record contains the same load fields as a single Search Loads (`POST /api/ext/v1/loads/search`) result, plus `orderNumber`, `source`, and `sourceId` when available, all at the top level. `stops` lists the full load route, not just the stops for that order. Load fields repeat for each associated order; do not sum pallet counts or freight prices across those records.\n\nThe payload is a current snapshot, not a list of changed fields. The separate Order Load Stop Dates Updated webhook still reports changed order stops in its own format.",
         "operationId": "webhookLoadUpdated",
         "security": [],
         "requestBody": {
@@ -1878,66 +1878,49 @@
                       "loadNumber": "LOAD-12345",
                       "source": "NetSuite",
                       "sourceId": "123456",
+                      "referenceNumbers": [
+                        {
+                          "type": "PO",
+                          "value": "PO-10001"
+                        }
+                      ],
+                      "mode": "FTL",
+                      "status": "Open",
                       "stops": [
                         {
-                          "index": 0,
-                          "stopType": "pickup",
-                          "orderDates": {
-                            "startAt": {
-                              "dateTime": "2026-04-21T08:00:00.000Z",
-                              "timeZone": "America/Chicago",
-                              "isDateOnly": false
-                            },
-                            "endAt": {
-                              "dateTime": "2026-04-21T10:00:00.000Z",
-                              "timeZone": "America/Chicago",
-                              "isDateOnly": false
+                          "type": "pickup",
+                          "dates": {
+                            "appointmentDates": {
+                              "startAt": {
+                                "tsInMs": 1793952000000,
+                                "timeZone": "America/Chicago",
+                                "isDateOnly": false
+                              }
                             }
                           },
-                          "estimatedDates": {
-                            "startAt": {
-                              "dateTime": "2026-04-21T08:00:00.000Z",
-                              "timeZone": "America/Chicago",
-                              "isDateOnly": false
-                            },
-                            "endAt": {
-                              "dateTime": "2026-04-21T10:00:00.000Z",
-                              "timeZone": "America/Chicago",
-                              "isDateOnly": false
-                            }
+                          "facilityProfile": {
+                            "name": "Pickup Warehouse"
                           },
-                          "appointmentDates": {
-                            "startAt": {
-                              "dateTime": "2026-04-21T09:00:00.000Z",
-                              "timeZone": "America/Chicago",
-                              "isDateOnly": false
-                            },
-                            "endAt": {
-                              "dateTime": "2026-04-21T09:30:00.000Z",
-                              "timeZone": "America/Chicago",
-                              "isDateOnly": false
+                          "items": [
+                            {
+                              "quantity": { "count": 10, "unit": "Pallet" },
+                              "weight": { "value": 800, "unit": "LB" },
+                              "dimensions": { "length": 48, "width": 40, "height": 60, "unit": "IN" }
                             }
-                          }
+                          ]
                         },
                         {
-                          "index": 1,
-                          "stopType": "dropoff",
-                          "estimatedDates": {
-                            "startAt": {
-                              "dateTime": "2026-04-22T15:00:00.000Z",
-                              "timeZone": "America/New_York",
-                              "isDateOnly": false
-                            }
-                          },
-                          "actualDates": {
-                            "startAt": {
-                              "dateTime": "2026-04-22T15:12:00.000Z",
-                              "timeZone": "America/New_York",
-                              "isDateOnly": false
-                            }
-                          }
+                          "type": "dropoff",
+                          "dates": {},
+                          "items": []
                         }
-                      ]
+                      ],
+                      "brokerProfiles": [{ "name": "Great Freight LLC", "scac": "GRFT" }],
+                      "brokerProfile": { "name": "Great Freight LLC", "scac": "GRFT" },
+                      "equipmentType": "Reefer",
+                      "palletCount": 10,
+                      "priceInCents": 125000,
+                      "currencyCode": "USD"
                     }
                   ]
                 }
@@ -3517,7 +3500,7 @@
           "shipper-loads"
         ],
         "summary": "Search Loads",
-        "description": "Search for loads using reference numbers.",
+        "description": "Search for loads using reference numbers. Results include pickup pallet and skid totals, stop freight measurements, equipment, and the stored load freight price when available and visible to the caller.",
         "operationId": "searchLoads",
         "requestBody": {
           "required": true,
@@ -3595,6 +3578,13 @@
                               }
                             }
                           },
+                          "items": [
+                            {
+                              "quantity": { "count": 10, "unit": "Pallet" },
+                              "weight": { "value": 800, "unit": "LB" },
+                              "dimensions": { "length": 48, "width": 40, "height": 60, "unit": "IN" }
+                            }
+                          ],
                           "facilityProfile": {
                             "name": "My Warehouse",
                             "location": {
@@ -3602,8 +3592,7 @@
                               "city": "Joliet",
                               "state": "IL",
                               "countryCode": "US",
-                              "zipcode": "60436",
-                              "timeZone": "America/Chicago"
+                              "zipcode": "60436"
                             }
                           }
                         },
@@ -3647,6 +3636,7 @@
                               }
                             }
                           },
+                          "items": [],
                           "facilityProfile": {
                             "name": "RLS Newfield FC",
                             "location": {
@@ -3654,8 +3644,7 @@
                               "city": "Newfield",
                               "state": "NJ",
                               "countryCode": "US",
-                              "zipcode": "08344",
-                              "timeZone": "America/New_York"
+                              "zipcode": "08344"
                             }
                           }
                         }
@@ -3675,7 +3664,10 @@
                         "scac": "ACME"
                       },
                       "equipmentType": "Reefer",
-                      "trackingNumber": "TRACK-12345"
+                      "trackingNumber": "TRACK-12345",
+                      "palletCount": 10,
+                      "priceInCents": 125000,
+                      "currencyCode": "USD"
                     }
                   ]
                 }
@@ -7048,37 +7040,32 @@
         }
       },
       "LoadUpdatedWebhook": {
-        "type": "object",
-        "required": [
-          "orderNumber",
-          "source",
-          "stops"
-        ],
-        "properties": {
-          "orderNumber": {
-            "type": "string",
-            "description": "The unique number of the order."
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LoadViewModel"
           },
-          "loadNumber": {
-            "type": "string",
-            "description": "Current number of the load."
-          },
-          "source": {
-            "type": "string",
-            "description": "The source system the order originates from, such as NetSuite."
-          },
-          "sourceId": {
-            "type": "string",
-            "description": "The unique order identifier from the source system."
-          },
-          "stops": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OrderLoadStopDatesUpdatedStop"
-            },
-            "description": "All of the order's stops on the load, with their current dates. Stop indexes are zero-based within the order, not within the load."
+          {
+            "type": "object",
+            "required": [
+              "orderNumber",
+              "source"
+            ],
+            "properties": {
+              "orderNumber": {
+                "type": "string",
+                "description": "The associated order's number."
+              },
+              "source": {
+                "type": "string",
+                "description": "The source system for the order, such as NetSuite."
+              },
+              "sourceId": {
+                "type": "string",
+                "description": "The order identifier in the source system, when available."
+              }
+            }
           }
-        }
+        ]
       },
       "OrderLoadStopDatesUpdatedStop": {
         "description": "Dates for an order stop. All date groups are optional; each group may contain startAt, endAt, or both. See Stop Date Types and Partial Dates and Date-Only Values in the webhook description.",
@@ -7325,7 +7312,10 @@
           "referenceNumbers",
           "mode",
           "status",
-          "stops"
+          "stops",
+          "brokerProfiles",
+          "brokerProfile",
+          "palletCount"
         ],
         "properties": {
           "loadNumber": {
@@ -7343,7 +7333,14 @@
             "type": "string",
             "enum": [
               "FTL",
-              "LTL"
+              "LTL",
+              "PTL",
+              "VLTL",
+              "Consolidation",
+              "IMDL",
+              "STL",
+              "CarrierDecides",
+              "Unknown"
             ],
             "description": "Mode of transportation."
           },
@@ -7356,7 +7353,7 @@
             "items": {
               "$ref": "#/components/schemas/LoadStop"
             },
-            "description": "Array of stops in the load's route."
+            "description": "All stops in load route order."
           },
           "brokerProfiles": {
             "type": "array",
@@ -7379,13 +7376,28 @@
               "Reefer",
               "Flatbed",
               "Drayage",
-              "Tanker"
+              "Tanker",
+              "BoxTruck",
+              "Bulk"
             ],
             "description": "Equipment type."
           },
           "trackingNumber": {
             "type": "string",
             "description": "Tracking number used for carrier API tracking."
+          },
+          "palletCount": {
+            "type": "number",
+            "description": "Total quantity of pallets and skids at pickup stops. Dropoff rows are not counted. Returns 0 when no pallet or skid quantity is recorded."
+          },
+          "priceInCents": {
+            "type": "integer",
+            "description": "Stored freight price for the entire load in cents, not an invoice total or an order allocation. An explicit zero is returned as 0. Omitted when no price is stored or the organization cannot view it."
+          },
+          "currencyCode": {
+            "type": "string",
+            "enum": ["CAD", "EUR", "MXN", "USD"],
+            "description": "Currency of priceInCents, when recorded. Omitted when the price is omitted."
           }
         }
       },
@@ -7394,7 +7406,7 @@
         "required": [
           "type",
           "dates",
-          "facilityProfile"
+          "items"
         ],
         "properties": {
           "type": {
@@ -7410,6 +7422,13 @@
           },
           "facilityProfile": {
             "$ref": "#/components/schemas/FacilityProfile"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoadStopFreightItem"
+            },
+            "description": "Freight item rows recorded at this stop. The same freight can appear on both pickup and dropoff rows. Empty when no items are recorded."
           }
         }
       },
@@ -7417,13 +7436,43 @@
         "type": "object",
         "properties": {
           "orderDates": {
-            "$ref": "#/components/schemas/DateWithTimeZone"
+            "$ref": "#/components/schemas/LoadStopDateWindow"
+          },
+          "estimatedDates": {
+            "$ref": "#/components/schemas/LoadStopDateWindow"
           },
           "appointmentDates": {
-            "$ref": "#/components/schemas/DateWithTimeZone"
+            "$ref": "#/components/schemas/LoadStopDateWindow"
           },
           "actualDates": {
-            "$ref": "#/components/schemas/DateWithTimeZone"
+            "$ref": "#/components/schemas/LoadStopDateWindow"
+          }
+        }
+      },
+      "LoadStopDateWindow": {
+        "type": "object",
+        "description": "A stop date window. Either endpoint can be omitted when unavailable.",
+        "properties": {
+          "startAt": {
+            "$ref": "#/components/schemas/TimeStampWithZone"
+          },
+          "endAt": {
+            "$ref": "#/components/schemas/TimeStampWithZone"
+          }
+        }
+      },
+      "LoadStopFreightItem": {
+        "type": "object",
+        "description": "Freight quantity, row weight in LB or KG, and per-unit dimensions. Each measurement is omitted when unavailable. Dimensions require all three measurements and a unit.",
+        "properties": {
+          "quantity": {
+            "$ref": "#/components/schemas/Quantity"
+          },
+          "weight": {
+            "$ref": "#/components/schemas/ItemWeight"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/Dimensions"
           }
         }
       },
@@ -7466,30 +7515,18 @@
       },
       "FacilityProfile": {
         "type": "object",
-        "required": [
-          "name",
-          "location"
-        ],
         "properties": {
           "name": {
             "type": "string",
             "description": "Name of the facility."
           },
           "location": {
-            "$ref": "#/components/schemas/LocationWithTimeZone"
+            "$ref": "#/components/schemas/LoadStopLocation"
           }
         }
       },
-      "LocationWithTimeZone": {
+      "LoadStopLocation": {
         "type": "object",
-        "required": [
-          "street",
-          "city",
-          "state",
-          "countryCode",
-          "zipcode",
-          "timeZone"
-        ],
         "properties": {
           "street": {
             "type": "string",
@@ -7511,9 +7548,13 @@
             "type": "string",
             "description": "Postal code."
           },
-          "timeZone": {
-            "type": "string",
-            "description": "IANA time zone identifier."
+          "coordinates": {
+            "type": "object",
+            "required": ["lat", "lng"],
+            "properties": {
+              "lat": { "type": "number", "description": "Latitude in decimal degrees." },
+              "lng": { "type": "number", "description": "Longitude in decimal degrees." }
+            }
           }
         }
       },
