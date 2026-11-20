@@ -1905,7 +1905,12 @@
                             {
                               "quantity": { "count": 10, "unit": "Pallet" },
                               "weight": { "value": 800, "unit": "LB" },
-                              "dimensions": { "length": 48, "width": 40, "height": 60, "unit": "IN" }
+                              "dimensions": { "length": 48, "width": 40, "height": 60, "unit": "IN" },
+                              "class": "77.5",
+                              "description": "Packaged food",
+                              "nmfcCode": "12345",
+                              "isStackable": false,
+                              "isTurnable": true
                             }
                           ]
                         },
@@ -1919,8 +1924,11 @@
                       "brokerProfile": { "name": "Great Freight LLC", "scac": "GRFT" },
                       "equipmentType": "Reefer",
                       "palletCount": 10,
-                      "priceInCents": 125000,
-                      "currencyCode": "USD"
+                      "price": { "cents": 125000, "currencyCode": "USD" },
+                      "lineItems": [
+                        { "category": "lineHaul", "total": 110000, "currencyCode": "USD" },
+                        { "category": "fuelSurcharge", "total": 15000, "currencyCode": "USD" }
+                      ]
                     }
                   ]
                 }
@@ -3500,7 +3508,7 @@
           "shipper-loads"
         ],
         "summary": "Search Loads",
-        "description": "Search for loads using reference numbers. Results include pickup pallet and skid totals, stop freight measurements, equipment, and the stored load freight price when available and visible to the caller.",
+        "description": "Search for loads using reference numbers. Results include pickup pallet and skid totals, stop freight details, equipment, and the resolved freight price with its charge breakdown when available and visible to the caller. The price object contains cents and currencyCode, replacing the former top-level priceInCents and currencyCode fields; lineItems lists the charges.",
         "operationId": "searchLoads",
         "requestBody": {
           "required": true,
@@ -3582,7 +3590,12 @@
                             {
                               "quantity": { "count": 10, "unit": "Pallet" },
                               "weight": { "value": 800, "unit": "LB" },
-                              "dimensions": { "length": 48, "width": 40, "height": 60, "unit": "IN" }
+                              "dimensions": { "length": 48, "width": 40, "height": 60, "unit": "IN" },
+                              "class": "77.5",
+                              "description": "Packaged food",
+                              "nmfcCode": "12345",
+                              "isStackable": false,
+                              "isTurnable": true
                             }
                           ],
                           "facilityProfile": {
@@ -3666,8 +3679,11 @@
                       "equipmentType": "Reefer",
                       "trackingNumber": "TRACK-12345",
                       "palletCount": 10,
-                      "priceInCents": 125000,
-                      "currencyCode": "USD"
+                      "price": { "cents": 125000, "currencyCode": "USD" },
+                      "lineItems": [
+                        { "category": "lineHaul", "total": 110000, "currencyCode": "USD" },
+                        { "category": "fuelSurcharge", "total": 15000, "currencyCode": "USD" }
+                      ]
                     }
                   ]
                 }
@@ -7390,14 +7406,20 @@
             "type": "number",
             "description": "Total quantity of pallets and skids at pickup stops. Dropoff rows are not counted. Returns 0 when no pallet or skid quantity is recorded."
           },
-          "priceInCents": {
-            "type": "integer",
-            "description": "Stored freight price for the entire load in cents, not an invoice total or an order allocation. An explicit zero is returned as 0. Omitted when no price is stored or the organization cannot view it."
+          "price": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Price"
+              }
+            ],
+            "description": "Freight total for the load: a single linked invoice covering only this load, otherwise an active draft invoice, otherwise the latest accepted quote, otherwise the stored load price. Omitted when unavailable, hidden from the caller, or linked invoices cannot be attributed to one load. Explicit zero is preserved. Missing stored currency defaults to USD."
           },
-          "currencyCode": {
-            "type": "string",
-            "enum": ["CAD", "EUR", "MXN", "USD"],
-            "description": "Currency of priceInCents, when recorded. Omitted when the price is omitted."
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoadPriceLineItem"
+            },
+            "description": "Charge breakdown from the same invoice, draft, or quote as price. Empty when no breakdown is recorded or a draft covers multiple loads. Omitted when price is omitted. Amounts are in cents."
           }
         }
       },
@@ -7461,9 +7483,55 @@
           }
         }
       },
+      "LoadPriceLineItem": {
+        "type": "object",
+        "required": [
+          "category",
+          "total",
+          "currencyCode"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "description": "Normalized Owlery charge category, such as lineHaul or fuelSurcharge."
+          },
+          "unitCount": {
+            "type": "number"
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "Unit price in cents."
+          },
+          "unitOfMeasure": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number",
+            "description": "Charge total in cents."
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "ISO 4217 currency code."
+          },
+          "code": {
+            "type": "string",
+            "description": "Carrier-specific charge code."
+          },
+          "stopType": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "dropoff"
+            ]
+          }
+        }
+      },
       "LoadStopFreightItem": {
         "type": "object",
-        "description": "Freight quantity, row weight in LB or KG, and per-unit dimensions. Each measurement is omitted when unavailable. Dimensions require all three measurements and a unit.",
+        "description": "Freight details recorded at this stop. Optional fields are omitted when unavailable. Weight is normalized to LB or KG; dimensions require all three measurements and a unit.",
         "properties": {
           "quantity": {
             "$ref": "#/components/schemas/Quantity"
@@ -7473,6 +7541,76 @@
           },
           "dimensions": {
             "$ref": "#/components/schemas/Dimensions"
+          },
+          "description": {
+            "type": "string",
+            "description": "Item description."
+          },
+          "class": {
+            "type": "string",
+            "enum": [
+              "50",
+              "55",
+              "60",
+              "65",
+              "70",
+              "77.5",
+              "85",
+              "92.5",
+              "100",
+              "110",
+              "125",
+              "150",
+              "175",
+              "200",
+              "250",
+              "300",
+              "400",
+              "500"
+            ],
+            "description": "Freight class."
+          },
+          "nmfcCode": {
+            "type": "string",
+            "description": "NMFC code."
+          },
+          "isStackable": {
+            "type": "boolean",
+            "description": "Whether the shipment can be stacked."
+          },
+          "isTurnable": {
+            "type": "boolean",
+            "description": "Whether the shipment can be turned."
+          },
+          "cargoValue": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Price"
+              }
+            ],
+            "description": "Declared cargo value."
+          },
+          "contentQuantity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Quantity"
+              }
+            ],
+            "description": "Quantity of contents within the handling units."
+          },
+          "hazmatSettings": {
+            "type": "object",
+            "required": [
+              "hazardClass"
+            ],
+            "properties": {
+              "hazardClass": {
+                "type": "string",
+                "enum": [
+                  "unknown"
+                ]
+              }
+            }
           }
         }
       },
