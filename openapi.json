@@ -1856,7 +1856,7 @@
           "shipper-webhooks"
         ],
         "summary": "Load Updated",
-        "description": "Webhook payload sent when a tendered order's load details other than stop dates change. Contact `support@owlery.ai` to enable it. Examples include:\n\n- Pallet quantity, weight, or dimensions\n- Equipment\n- Load number\n- Tracking added or removed\n- Cancellation requested, confirmed, or withdrawn\n- Non-date changes from accepted tenders or load amendments\n\nThe payload does not say what changed. To read the change, fetch the load with Search Loads (`POST /api/ext/v1/loads/search`).\n\nThe format matches Order Load Stop Dates Updated, except `stops` includes all of the order's stops on the load, even when no date changed, and `loadNumber` is the current load number. Stop date changes are sent on Order Load Stop Dates Updated. See that webhook for how to read stop dates.",
+        "description": "Webhook payload sent when a tendered order's load details other than stop dates change. Contact `support@owlery.ai` to enable it. Examples include:\n\n- Pallet quantity, weight, or dimensions\n- Equipment\n- Load number\n- Tracking added or removed\n- Cancellation requested, confirmed, or withdrawn\n- Non-date changes from accepted tenders or load amendments\n\nThe payload includes the current freight rows and stored freight price in `load`. It does not identify which field changed. You can also retrieve the freight rows and price with Search Loads (`POST /api/ext/v1/loads/search`).\n\nThe existing order and date fields match Order Load Stop Dates Updated, except `stops` includes all of the order's stops on the load, even when no date changed, and `loadNumber` is the current load number. Stop date changes are sent on Order Load Stop Dates Updated. See that webhook for how to read stop dates.\n\n### Freight Data\n\n`load.stops[].items[]` contains quantity, row weight, and per-handling-unit dimensions using the same units as Create Loads. `load.priceInCents` and `load.currencyCode` contain the stored load freight price. Missing measurements or prices are omitted. These values describe the full load, not an allocation to the order. Count pickup rows only, and count each load once across order entries. The top-level `stops` indexes remain order-relative; `load.stops` indexes are load-relative.",
         "operationId": "webhookLoadUpdated",
         "security": [],
         "requestBody": {
@@ -1937,7 +1937,57 @@
                             }
                           }
                         }
-                      ]
+                      ],
+                      "load": {
+                        "priceInCents": 125000,
+                        "currencyCode": "USD",
+                        "stops": [
+                          {
+                            "index": 0,
+                            "type": "pickup",
+                            "items": [
+                              {
+                                "quantity": {
+                                  "count": 12,
+                                  "unit": "Pallet"
+                                },
+                                "weight": {
+                                  "value": 2400,
+                                  "unit": "LB"
+                                },
+                                "dimensions": {
+                                  "length": 48,
+                                  "width": 40,
+                                  "height": 60,
+                                  "unit": "IN"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "index": 1,
+                            "type": "dropoff",
+                            "items": [
+                              {
+                                "quantity": {
+                                  "count": 12,
+                                  "unit": "Pallet"
+                                },
+                                "weight": {
+                                  "value": 2400,
+                                  "unit": "LB"
+                                },
+                                "dimensions": {
+                                  "length": 48,
+                                  "width": 40,
+                                  "height": 60,
+                                  "unit": "IN"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
                     }
                   ]
                 }
@@ -7077,6 +7127,9 @@
               "$ref": "#/components/schemas/OrderLoadStopDatesUpdatedStop"
             },
             "description": "All of the order's stops on the load, with their current dates. Stop indexes are zero-based within the order, not within the load."
+          },
+          "load": {
+            "$ref": "#/components/schemas/LoadFreight"
           }
         }
       },
@@ -7386,6 +7439,14 @@
           "trackingNumber": {
             "type": "string",
             "description": "Tracking number used for carrier API tracking."
+          },
+          "priceInCents": {
+            "type": "number",
+            "description": "Stored load freight price in cents. This is the load price, not an invoice total or an allocated order cost. Omitted when unavailable; zero is a valid price. Omitted when the viewer cannot access financials."
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "Currency code for the stored load price. Omitted when unavailable."
           }
         }
       },
@@ -7410,6 +7471,13 @@
           },
           "facilityProfile": {
             "$ref": "#/components/schemas/FacilityProfile"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoadFreightItem"
+            },
+            "description": "Freight rows at this stop. Sum pickup rows only when calculating a shipment total; the same freight can appear again at delivery."
           }
         }
       },
@@ -10504,6 +10572,69 @@
           }
         },
         "description": "Quote Write-back event containing the complete Tender payload and recorded customer freight charges. Field names and meanings match the outbound JSON."
+      },
+      "LoadFreightItem": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "$ref": "#/components/schemas/Quantity"
+          },
+          "weight": {
+            "$ref": "#/components/schemas/ItemWeight"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/Dimensions"
+          }
+        },
+        "description": "A freight row. Quantity is the number of handling units, weight is the total weight of the row, and dimensions describe one handling unit. Fields are omitted when unknown."
+      },
+      "LoadFreight": {
+        "type": "object",
+        "required": [
+          "stops"
+        ],
+        "properties": {
+          "priceInCents": {
+            "type": "number",
+            "description": "Stored load freight price in cents. This is the load price, not an invoice total or an allocated order cost. Omitted when unavailable; zero is a valid price. Omitted when the viewer cannot access financials."
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "Currency code for the stored load price. Omitted when unavailable."
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "index",
+                "type",
+                "items"
+              ],
+              "properties": {
+                "index": {
+                  "type": "integer",
+                  "description": "Zero-based index within the full load route."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "pickup",
+                    "dropoff"
+                  ]
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoadFreightItem"
+                  },
+                  "description": "Freight rows at this stop. Sum pickup rows only when calculating a shipment total; the same freight can appear again at delivery."
+                }
+              }
+            }
+          }
+        },
+        "description": "Current freight data for the entire load. Repeated for each order in this webhook; do not add the price or quantities across order entries."
       }
     }
   },
