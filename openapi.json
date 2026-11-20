@@ -7166,7 +7166,7 @@
           "dateTime": {
             "type": "string",
             "format": "date-time",
-            "description": "ISO8601 timestamp for the date/time value."
+            "description": "ISO8601 timestamp that can use any UTC offset, including Z (UTC), +05:30, or -07:00. The offset does not need to match timeZone. For example, 2026-04-21T08:00:00Z and 2026-04-21T01:00:00-07:00 represent the same instant. Use timeZone to interpret that instant in the stop's local time. When isDateOnly is true, use the calendar date in timeZone and ignore the time of day."
           },
           "timeZone": {
             "type": "string",
